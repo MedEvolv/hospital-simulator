@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Print styles — results screen is designed to be readable on paper/projector */
+  @media print {
+    body {
+      background: white;
+      color: black;
+    }
+    .no-print {
+      display: none;
+    }
+  }
+}
