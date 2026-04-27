@@ -530,6 +530,28 @@ export default function ReportPage() {
         )}
       </section>
 
+      {/* ── Navigation ───────────────────────────────────────────────── */}
+      <div className="flex gap-3 mb-12 flex-wrap">
+        <button
+          onClick={() => router.push('/results')}
+          className="flex-1 bg-slate-50 text-slate-950 font-medium py-3 rounded-lg hover:bg-white transition-colors text-sm"
+        >
+          ← Patient flow &amp; results
+        </button>
+        <button
+          onClick={() => router.push('/inspector')}
+          className="flex-1 border border-slate-700 text-slate-200 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+        >
+          Decision Inspector →
+        </button>
+        <button
+          onClick={() => router.replace('/')}
+          className="border border-slate-800 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
+        >
+          New simulation
+        </button>
+      </div>
+
       <Disclaimer />
     </main>
   )
