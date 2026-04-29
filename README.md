@@ -15,7 +15,7 @@ Runs a synthetic patient-flow simulation and surfaces the ethical debt, value dr
 
 ## Structure
 
-```
+```text
 vercel-app/
   api/                  # Python simulation engine (Vercel serverless)
   app/                  # Next.js App Router pages + API routes
