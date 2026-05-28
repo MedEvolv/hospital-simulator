@@ -1,0 +1,107 @@
+{
+  "id": "security-stress-test",
+  "name": "The Credential Cascade: Cybersecurity Under Clinical Load",
+  "description": "A mid-sized private hospital is managing a typical Tuesday afternoon when a targeted phishing campaign hits the clinical staff during a moderate patient surge. One radiologist clicks a link. What follows is a nine-step cascade that demonstrates how cybersecurity failures are not separate from clinical governance — they accelerate every existing fragility: review decay, accountability diffusion, alert fatigue, and trust collapse. By the time ransomware is triggered, five separate governance failures have made it inevitable.",
+  "packId": "security-stress-test",
+  "simulationProfile": "Private Hospital",
+  "durationTicks": 260,
+  "seed": 1004,
+  "hospitalContext": {
+    "hospitalType": "private_chain",
+    "department": "radiology",
+    "beds": 90,
+    "digitizationMaturity": 4,
+    "governanceMaturity": 3,
+    "baselineOverload": 40
+  },
+  "stressors": [
+    {
+      "triggerTick": 15,
+      "type": "OVERLOAD_SURGE",
+      "magnitude": 0.5,
+      "narrative": "Moderate patient surge: 6 imaging requests arrive in 20 minutes, pushing the radiology team to process AI-assisted reads without full review."
+    },
+    {
+      "triggerTick": 25,
+      "type": "PHISHING_ATTEMPT",
+      "magnitude": 0.8,
+      "narrative": "A phishing email impersonating the hospital IT helpdesk lands in 12 staff inboxes during the surge. Subject line: 'Urgent: PACS system password reset required'. One radiologist clicks the link."
+    },
+    {
+      "triggerTick": 38,
+      "type": "ALERT_SUPPRESSION",
+      "magnitude": 0.6,
+      "narrative": "The hospital SIEM generates 4 anomalous-login alerts from the radiologist's compromised account. The IT security team, receiving 200+ alerts per day, auto-dismisses three as 'low confidence' during a peak alert period."
+    },
+    {
+      "triggerTick": 50,
+      "type": "CREDENTIAL_SHARE",
+      "magnitude": 0.7,
+      "narrative": "The radiologist's account is locked after two failed access attempts from an overseas IP. Needing to access a patient scan urgently, the radiologist borrows the registrar's login credentials — an informal workaround that is technically prohibited but widely practised."
+    },
+    {
+      "triggerTick": 65,
+      "type": "ACCOUNTABILITY_AMBIGUOUS",
+      "magnitude": 0.7,
+      "narrative": "Actions taken under the registrar's credentials are now attributed to the registrar in the audit log. The radiologist who ordered the scan, the registrar whose account was used, and the IT team who dismissed the alert all share partial responsibility. No one owns the event."
+    },
+    {
+      "triggerTick": 80,
+      "type": "ALERT_FLOOD",
+      "magnitude": 0.9,
+      "narrative": "The compromised credentials are used by the attacker to probe the PACS system. The SIEM generates 340 alerts in 18 minutes. The IT team implements a temporary alert suppression rule to 'reduce noise'. Clinical systems are still live."
+    },
+    {
+      "triggerTick": 100,
+      "type": "DATA_ACCESS_BREACH",
+      "magnitude": 1.0,
+      "narrative": "Using the credential chain (phished account → borrowed registrar credentials → lateral movement), the attacker accesses 2,300 patient imaging records including oncology and cardiology scans. The access is not detected in real time."
+    },
+    {
+      "triggerTick": 125,
+      "type": "ESCALATION_FAILED",
+      "magnitude": 0.8,
+      "narrative": "A junior IT analyst notices the data access anomaly and attempts to escalate to the CISO. The CISO is in a board presentation. The escalation pathway for cybersecurity incidents during business hours has no deputy escalation contact documented."
+    },
+    {
+      "triggerTick": 150,
+      "type": "RANSOMWARE_TRIGGER",
+      "magnitude": 1.0,
+      "narrative": "At 14:47, ransomware is deployed across the clinical network. PACS goes dark. The radiology AI system, the discharge summary LLM, and the scheduling optimizer all become unavailable simultaneously. Clinical staff revert to paper. Three active imaging sessions are lost."
+    },
+    {
+      "triggerTick": 175,
+      "type": "ACCOUNTABILITY_AMBIGUOUS",
+      "magnitude": 0.9,
+      "narrative": "The incident response team identifies at least six decisions that contributed to the breach: the dismissed alerts, the credential share, the alert suppression rule, the missing deputy escalation contact, and the absence of PACS network segmentation. No single actor is responsible. The system failed."
+    },
+    {
+      "triggerTick": 200,
+      "type": "GOVERNANCE_INTERVENTION",
+      "magnitude": 0.6,
+      "narrative": "The hospital board convenes an emergency session. An independent forensic team is engaged. All clinical AI systems are taken offline pending security review. A 30-day governance freeze is imposed on any new AI system activations."
+    },
+    {
+      "triggerTick": 230,
+      "type": "ESCALATION_SUCCESS",
+      "magnitude": 0.7,
+      "narrative": "The forensic team successfully traces the full attack chain and presents it to the board. The report names six systemic governance failures — not individuals. A redesigned cybersecurity governance framework is approved and resourced."
+    }
+  ],
+  "expectedRiskPathways": [
+    "Clinical load → alert fatigue → security alert dismissal (same cognitive mechanism as clinical alert fatigue)",
+    "Credential sharing normalised under workload pressure → identity accountability collapses",
+    "Alert suppression implemented as a workaround → creates blind spot for active attack",
+    "Accountability diffusion across multiple roles → no one owns the escalation",
+    "Ransomware cascade: compromised credentials → lateral movement → clinical data breach → system shutdown",
+    "Trust collapse: every AI system loses institutional trust simultaneously, not just the compromised one"
+  ],
+  "learningObjectives": [
+    "Recognise that clinical alert fatigue and security alert fatigue are the same institutional failure with different consequences",
+    "Trace how a single credential share creates an accountability gap that persists through an incident investigation",
+    "Analyse how informal workarounds (credential borrowing) become structural vulnerabilities at scale",
+    "Identify why ransomware is a governance failure before it is a technical failure",
+    "Design a cybersecurity escalation pathway that remains operable when the primary contact is unavailable",
+    "Evaluate why post-incident accountability should focus on systemic failures rather than individual actors"
+  ]
+}

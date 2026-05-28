@@ -168,10 +168,11 @@ class Patient:
     chief_complaint: str
     age: int
     history: List[str]
-    
+
     # Derived state (reconstructed from events)
     triage_stage_1: Optional[str] = None
     triage_stage_2: Optional[str] = None
+    esi_level: Optional[int] = None   # ESI 1–5 (set by ESI_LEVEL_ASSIGNED)
     status: PatientStatus = PatientStatus.WAITING
     queue_position: Optional[int] = None
     current_queue: Optional[str] = None
@@ -235,6 +236,11 @@ class SimulationState:
             patient_id = payload["patient_id"]
             if patient_id in self.patients:
                 self.patients[patient_id].triage_stage_2 = payload["triage"]
+
+        elif event.event_type == "ESI_LEVEL_ASSIGNED":
+            patient_id = payload["patient_id"]
+            if patient_id in self.patients:
+                self.patients[patient_id].esi_level = payload["esi_level"]
         
         elif event.event_type == "QUEUE_ASSIGNMENT":
             patient_id = payload["patient_id"]
@@ -365,6 +371,59 @@ def refined_triage(chief_complaint: str, age: int, history: List[str],
         return "YELLOW"
     else:
         return "BLUE"
+
+# ── ESI 1–5 level assignment ──────────────────────────────────────────────────
+# Maps RED/YELLOW/BLUE triage band → ESI level with clinical sub-stratification.
+#
+#  ESI 1 — Immediate: requires immediate life-saving intervention
+#  ESI 2 — Emergent:  high-risk situation, severe pain/distress
+#  ESI 3 — Urgent:    multiple resources needed, stable but time-sensitive
+#  ESI 4 — Less Urgent: one resource needed
+#  ESI 5 — Non-Urgent: no resources needed, self-care possible
+
+ESI_1_KEYWORDS = [
+    "unconscious", "unresponsive", "cardiac arrest", "not breathing",
+    "respiratory arrest", "no pulse", "apnoeic", "comatose",
+]
+
+def assign_esi_level(
+    triage_band: str,
+    chief_complaint: str,
+    age: int,
+    history: List[str],
+) -> int:
+    """
+    Assign ESI level 1–5 from triage band and clinical context.
+    IRREVOCABLE: ESI 1 is never downgraded.
+    """
+    complaint_lower = chief_complaint.lower()
+    high_risk_age = age > 65 or age < 5
+    high_risk_history = any(
+        cond in " ".join(history).lower()
+        for cond in ["diabetes", "hypertension", "cardiac", "respiratory", "renal"]
+    )
+
+    if triage_band == "RED":
+        # Differentiate ESI 1 vs 2 within RED
+        if any(kw in complaint_lower for kw in ESI_1_KEYWORDS):
+            return 1
+        return 2
+
+    if triage_band == "YELLOW":
+        # Differentiate ESI 3 vs 4 within YELLOW
+        # ESI 3: multiple resources likely needed (labs + imaging + consult)
+        needs_multiple = (
+            high_risk_age and high_risk_history
+            or "severe pain" in complaint_lower
+            or "fracture" in complaint_lower
+            or "infection" in complaint_lower
+            or "abdominal pain" in complaint_lower
+        )
+        return 3 if needs_multiple else 4
+
+    # BLUE → ESI 5
+    return 5
+
 
 # ============================================================================
 # 6. SIMULATION ENGINE (EVENT-SOURCED)
@@ -577,12 +636,26 @@ class EventSourcedSimulationEngine:
                         patient.history,
                         patient.triage_stage_1 or "NOT_RED"
                     )
-                    
+
                     self.run.add_event("TRIAGE_STAGE_2_ASSIGNED", {
                         "patient_id": patient.id,
                         "triage": triage_result,
                         "wait_time": wait_time,
                         "reason": "At front" if at_front else "Wait threshold"
+                    })
+
+                    # ESI level — sub-stratification within the triage band
+                    esi = assign_esi_level(
+                        triage_result,
+                        patient.chief_complaint,
+                        patient.age,
+                        patient.history,
+                    )
+                    self.run.add_event("ESI_LEVEL_ASSIGNED", {
+                        "patient_id": patient.id,
+                        "esi_level": esi,
+                        "triage_band": triage_result,
+                        "wait_time": wait_time,
                     })
     
     def _order(self, state: SimulationState):
@@ -609,7 +682,7 @@ class EventSourcedSimulationEngine:
     def _check_governance(self, state: SimulationState):
         """CHECK: Governance monitoring."""
         recommendations = []
-        
+
         # Separation monitor
         red_waiting = len(state.queue["RED"])
         if red_waiting >= self.run.parameters.red_clustering_threshold:
@@ -618,7 +691,7 @@ class EventSourcedSimulationEngine:
                 "SUGGEST_ROOM_MORPH",
                 "SUGGEST_REAPPOINTMENT"
             ])
-            
+
             self.run.add_event("AGENT_ACTION", {
                 "action": "SEPARATION_ALERT",
                 "rules_triggered": ["RED_CLUSTERING_THRESHOLD"],
@@ -628,12 +701,50 @@ class EventSourcedSimulationEngine:
                 },
                 "human_override_allowed": True
             })
-        
+
         # Queue pressure
         total_waiting = sum(len(q) for q in state.queue.values())
         if total_waiting > self.run.parameters.queue_pressure_threshold:
             recommendations.append("SUGGEST_CAPACITY_INCREASE")
-        
+
+        # ── ROOM_OVERLOAD: ESI 1/2 patients waiting with no Emergency capacity ─
+        # Check every 20 ticks to avoid event spam
+        if self.current_tick % 20 == 0:
+            esi_critical_waiting = [
+                p for p in state.patients.values()
+                if p.status == PatientStatus.WAITING
+                and p.esi_level in (1, 2)
+            ]
+            emergency_rooms_free = sum(
+                1 for r in state.rooms
+                if r.room_type == "Emergency" and r.current_load < r.max_occupancy
+            )
+            if esi_critical_waiting and emergency_rooms_free == 0:
+                self.run.add_event("ROOM_OVERLOAD", {
+                    "esi_1_2_waiting": len(esi_critical_waiting),
+                    "emergency_rooms_free": 0,
+                    "tick": self.current_tick,
+                    "patient_ids": [p.id for p in esi_critical_waiting[:5]],
+                })
+
+        # ── CORRECTION_BURDEN: patients needing triage revision under overload ─
+        # Every 50 ticks: flag patients whose ESI level suggests they should have
+        # been triaged higher (proxy: YELLOW/ESI 3 patients waiting > 3× threshold)
+        if self.current_tick % 50 == 0 and total_waiting > 5:
+            prolonged_yellow = [
+                p for p in state.patients.values()
+                if p.status == PatientStatus.WAITING
+                and p.triage_stage_2 == "YELLOW"
+                and p.esi_level == 3
+                and (self.current_tick - p.arrival_time) > self.run.parameters.max_wait_yellow * 3
+            ]
+            if prolonged_yellow:
+                self.run.add_event("CORRECTION_BURDEN", {
+                    "patients_needing_revision": len(prolonged_yellow),
+                    "reason": "prolonged_wait_beyond_esi3_threshold",
+                    "tick": self.current_tick,
+                })
+
         # Emit escalation if recommendations exist
         if recommendations:
             self.run.add_event("ESCALATION_SUGGESTED", {

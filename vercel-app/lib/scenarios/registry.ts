@@ -11,12 +11,14 @@ import type { ScenarioConfig } from './schema'
 import hallucinatedDischargeSummary from '@/data/scenarios/hallucinated-discharge-summary.json'
 import aiTriageDrift from '@/data/scenarios/ai-triage-drift-er-overload.json'
 import chronicSchedulingDelay from '@/data/scenarios/chronic-patient-scheduling-delay.json'
+import securityStressTest from '@/data/scenarios/security-stress-test.json'
 
 // Cast to ScenarioConfig — JSON shape is validated by the type at import time
 const SCENARIOS: ScenarioConfig[] = [
   hallucinatedDischargeSummary as ScenarioConfig,
   aiTriageDrift as ScenarioConfig,
   chronicSchedulingDelay as ScenarioConfig,
+  securityStressTest as ScenarioConfig,
 ]
 
 export function getAllScenarios(): ScenarioConfig[] {
