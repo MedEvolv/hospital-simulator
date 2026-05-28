@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import GovernanceConsole from '@/components/GovernanceConsole'
 import Disclaimer from '@/components/Disclaimer'
+import AssumptionsPanel from '@/components/AssumptionsPanel'
 import { SESSION_KEY } from '@/lib/types'
 
 interface ScenarioRunBlock {
@@ -129,6 +130,10 @@ export default function GovernancePage() {
         runId={scenarioRun?.run_id}
         scenarioName={scenarioRun?.scenario.name}
       />
+
+      <div className="mt-6 mb-2">
+        <AssumptionsPanel compact />
+      </div>
 
       <Disclaimer />
     </main>

@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase, type RunRecord } from '@/lib/supabase'
 import { SESSION_KEY } from '@/lib/types'
+import AssumptionsPanel from '@/components/AssumptionsPanel'
 
 // ── Pack colour lookup ─────────────────────────────────────────────────────────
 
@@ -343,6 +344,11 @@ export default function HistoryPage() {
             ))}
           </div>
         )}
+
+        {/* ── Assumptions ──────────────────────────────────────────────────── */}
+        <div className="mt-8">
+          <AssumptionsPanel compact />
+        </div>
 
         {/* ── Audit note ────────────────────────────────────────────────────── */}
         <div className="mt-10 pt-6 border-t border-slate-800/50">

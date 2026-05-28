@@ -8,6 +8,7 @@
 
 import ScenarioSandbox from '@/components/ScenarioSandbox'
 import Link from 'next/link'
+import AssumptionsPanel from '@/components/AssumptionsPanel'
 
 export const metadata = {
   title: 'Scenario Sandbox — Institutional Mirror v2',
@@ -103,6 +104,11 @@ export default function SandboxPage() {
 
         {/* ── Sandbox component ──────────────────────────────────────────────── */}
         <ScenarioSandbox />
+
+        {/* ── Assumptions ───────────────────────────────────────────────────── */}
+        <div className="mt-10">
+          <AssumptionsPanel compact />
+        </div>
 
         {/* ── Footer ─────────────────────────────────────────────────────────── */}
         <div className="mt-12 pt-6 border-t border-slate-800/50 flex items-center justify-between">

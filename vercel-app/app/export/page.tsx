@@ -8,6 +8,7 @@ import {
   type ReportType,
 } from '@/lib/export/reportGenerator'
 import Disclaimer from '@/components/Disclaimer'
+import AssumptionsPanel from '@/components/AssumptionsPanel'
 import { SESSION_KEY } from '@/lib/types'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -319,6 +320,11 @@ export default function ExportPage() {
           </div>
         </div>
       )}
+
+      {/* ── Assumptions ───────────────────────────────────────── */}
+      <div className="mb-4">
+        <AssumptionsPanel compact />
+      </div>
 
       {/* ── Disclaimer ────────────────────────────────────────── */}
       <Disclaimer />

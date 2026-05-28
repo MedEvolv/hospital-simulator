@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import SeverityBadge from '@/components/SeverityBadge'
 import Disclaimer from '@/components/Disclaimer'
 import CausalReplay from '@/components/CausalReplay'
+import AssumptionsPanel from '@/components/AssumptionsPanel'
 import { SESSION_KEY, type SimulationReport, type SimEvent, type Severity } from '@/lib/types'
 
 type InspectorTab = 'event_log' | 'causal_replay'
@@ -511,6 +512,10 @@ export default function InspectorScreen() {
         >
           New simulation
         </button>
+      </div>
+
+      <div className="mb-4">
+        <AssumptionsPanel compact />
       </div>
 
       <Disclaimer />
