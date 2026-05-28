@@ -1,0 +1,89 @@
+{
+  "id": "ai-triage-drift-er-overload",
+  "name": "Triage AI Under Mass Casualty Conditions",
+  "description": "A public district hospital ER deploys a triage AI declared at autonomy Level 2 (suggests, clinician decides). A multi-vehicle accident sends 40 patients in 90 minutes. Under surge conditions, clinical staff begin accepting triage AI recommendations without independent assessment. Alert flood from edge cases trains staff to dismiss AI alerts. A chronic-illness patient with stable vitals is de-prioritised. The governance committee intervenes — but only after the damage is done.",
+  "packId": "institutional-strain",
+  "simulationProfile": "Government Hospital",
+  "durationTicks": 200,
+  "seed": 1002,
+  "hospitalContext": {
+    "hospitalType": "public_district",
+    "department": "er",
+    "beds": 60,
+    "digitizationMaturity": 3,
+    "governanceMaturity": 2,
+    "baselineOverload": 50
+  },
+  "stressors": [
+    {
+      "triggerTick": 10,
+      "type": "OVERLOAD_SURGE",
+      "magnitude": 0.9,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "A multi-vehicle accident 3 km away sends 40 patients in 90 minutes. The ER has 8 beds."
+    },
+    {
+      "triggerTick": 25,
+      "type": "ALERT_FLOOD",
+      "magnitude": 0.8,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "The triage AI generates 73 alerts in 15 minutes — edge cases, fall-risk flags, medication interactions. Staff begin dismissing without reading."
+    },
+    {
+      "triggerTick": 42,
+      "type": "ALERT_SUPPRESSION",
+      "magnitude": 0.7,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "The senior nurse instructs staff to dismiss all non-critical triage AI alerts to maintain throughput. The decision is informal and undocumented."
+    },
+    {
+      "triggerTick": 60,
+      "type": "ESCALATION_FAILED",
+      "magnitude": 0.8,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "A junior doctor wants senior review of a borderline triage AI decision but cannot reach the registrar. She accepts the AI suggestion under time pressure."
+    },
+    {
+      "triggerTick": 80,
+      "type": "QUEUE_DISPLACEMENT",
+      "magnitude": 0.9,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "A 67-year-old with uncontrolled diabetes and stable vitals is moved down the triage queue to clear a bed for a trauma patient. The displacement is algorithmically justified but ethically contested."
+    },
+    {
+      "triggerTick": 95,
+      "type": "ACCOUNTABILITY_AMBIGUOUS",
+      "magnitude": 0.6,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "The diabetes patient deteriorates 4 hours later. The on-call registrar, the triage AI vendor, and the senior nurse all share partial responsibility for the displacement decision."
+    },
+    {
+      "triggerTick": 120,
+      "type": "GOVERNANCE_INTERVENTION",
+      "magnitude": 0.7,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "The medical director convenes an immediate governance review. Mandatory human confirmation for any triage AI de-prioritisation of chronic patients is implemented."
+    },
+    {
+      "triggerTick": 145,
+      "type": "ESCALATION_SUCCESS",
+      "magnitude": 0.8,
+      "affectedSystems": ["triage-ai"],
+      "narrative": "The next high-severity case with contested triage is escalated to the registrar using the new pathway. It is reviewed, confirmed, and documented in under 4 minutes."
+    }
+  ],
+  "expectedRiskPathways": [
+    "Surge → alert flood → alert suppression → automation drift accelerates",
+    "Alert suppression normalises → staff lose calibration on when to trust AI",
+    "Queue displacement of vulnerable patient → ethical debt spike",
+    "Accountability ambiguity when displacement causes harm → no clear learning owner",
+    "Governance intervention → partial trust restoration, but debt remains"
+  ],
+  "learningObjectives": [
+    "Trace how surge conditions convert declared AI oversight (L2) into effective autonomy (L4+)",
+    "Recognise alert flood as an automation drift accelerator, not just a usability problem",
+    "Analyse how an informal verbal instruction (suppress alerts) bypasses formal governance",
+    "Evaluate the tradeoffs in a governance intervention: it reduces drift but does not erase accumulated debt",
+    "Design a triage AI governance framework that remains operable under surge conditions"
+  ]
+}

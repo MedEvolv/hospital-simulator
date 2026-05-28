@@ -1,0 +1,96 @@
+{
+  "id": "chronic-patient-scheduling-delay",
+  "name": "The Invisible Queue: Chronic Patients and the Scheduling Algorithm",
+  "description": "A private chain hospital OPD uses a scheduling optimiser to maximise appointment throughput. The algorithm systematically deprioritises patients with multiple chronic conditions (longer appointments, lower revenue-per-minute) in favour of patients with single acute complaints. The throughput metrics look excellent. The harm is invisible until a doctor begins tracking it manually.",
+  "packId": "equity-participation",
+  "simulationProfile": "Private Hospital",
+  "durationTicks": 240,
+  "seed": 1003,
+  "hospitalContext": {
+    "hospitalType": "private_chain",
+    "department": "opd",
+    "beds": 80,
+    "digitizationMaturity": 4,
+    "governanceMaturity": 3,
+    "baselineOverload": 25
+  },
+  "stressors": [
+    {
+      "triggerTick": 15,
+      "type": "QUEUE_DISPLACEMENT",
+      "magnitude": 0.5,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "The scheduling AI moves a multi-morbidity patient (diabetes + hypertension + COPD) to a later slot to fit two single-complaint patients. The algorithm is working as designed."
+    },
+    {
+      "triggerTick": 30,
+      "type": "QUEUE_DISPLACEMENT",
+      "magnitude": 0.6,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "The pattern repeats. Five chronic patients were moved down the queue in the past 3 days. No individual displacement is flagged — each is within policy tolerance."
+    },
+    {
+      "triggerTick": 55,
+      "type": "QUEUE_DISPLACEMENT",
+      "magnitude": 0.7,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "A patient with uncontrolled hypertension is deferred for the third consecutive week. The delay is now clinically significant."
+    },
+    {
+      "triggerTick": 70,
+      "type": "ACCOUNTABILITY_AMBIGUOUS",
+      "magnitude": 0.6,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "A GP in the network flags the pattern to the OPD manager. The manager says it is the algorithm's decision; the algorithm vendor says it is optimising to the parameters given. Who set those parameters?"
+    },
+    {
+      "triggerTick": 85,
+      "type": "ESCALATION_FAILED",
+      "magnitude": 0.6,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "The GP formally escalates to the clinical governance committee. The committee acknowledges the concern but defers action — the algorithm is a contractual system and changes require vendor agreement."
+    },
+    {
+      "triggerTick": 110,
+      "type": "QUEUE_DISPLACEMENT",
+      "magnitude": 0.8,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "A 72-year-old patient with three chronic conditions misses her medication review appointment for the fourth time. She stops taking her blood pressure medication."
+    },
+    {
+      "triggerTick": 140,
+      "type": "HUMAN_OVERRIDE_DOCUMENTED",
+      "magnitude": 0.7,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "Dr. Sharma manually reschedules 12 chronic patients who have been displaced more than twice in 60 days. She documents each override with a clinical justification and flags the pattern to the CMO."
+    },
+    {
+      "triggerTick": 165,
+      "type": "GOVERNANCE_INTERVENTION",
+      "magnitude": 0.6,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "The CMO mandates a 60-day audit of all scheduling decisions affecting patients with 3+ chronic conditions. A minimum appointment guarantee is added to the algorithm's constraints."
+    },
+    {
+      "triggerTick": 200,
+      "type": "ESCALATION_SUCCESS",
+      "magnitude": 0.8,
+      "affectedSystems": ["scheduling-optimizer"],
+      "narrative": "The audit reveals 34 patients displaced more than 4 times in 90 days. The finding is presented to the hospital board. The algorithm parameters are renegotiated with the vendor."
+    }
+  ],
+  "expectedRiskPathways": [
+    "Efficiency-optimised AI systematically disadvantages chronically ill patients",
+    "Repeated small displacements accumulate into clinically significant harm",
+    "Accountability diffusion between algorithm, operator, and vendor prevents early action",
+    "Escalation pathway delayed by contractual framing of a clinical governance issue",
+    "Manual override and documentation creates the evidence base for institutional response"
+  ],
+  "learningObjectives": [
+    "Identify how throughput metrics can mask systematic equity erosion",
+    "Recognise accountability diffusion in multi-party AI procurement chains",
+    "Analyse why contractual framing of governance issues delays clinical response",
+    "Evaluate the institutional role of documented human overrides as governance evidence",
+    "Design scheduling AI governance that requires equity audits as a condition of operation"
+  ]
+}
