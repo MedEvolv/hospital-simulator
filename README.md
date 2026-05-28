@@ -10,12 +10,12 @@ Runs a synthetic patient-flow simulation and surfaces the ethical debt, value dr
 
 - **Frontend / API routes**: Next.js 14 (App Router), TypeScript, Tailwind CSS
 - **Simulation engine**: Python (Vercel serverless), event-sourced architecture
-- **AI enrichment**: DeepSeek (`deepseek-chat`) for patient profiles and governance reports
+- **AI enrichment**: DeepSeek (`deepseek-v4-flash`) for patient profiles and governance reports
 - **Deployment**: Vercel
 
 ## Structure
 
-```
+```text
 vercel-app/
   api/                  # Python simulation engine (Vercel serverless)
   app/                  # Next.js App Router pages + API routes

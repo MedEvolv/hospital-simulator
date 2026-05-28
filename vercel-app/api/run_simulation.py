@@ -339,8 +339,21 @@ VALID_PROFILES = set(PROFILE_ROOM_COUNTS.keys())
 # breaks the simulation response.
 # ---------------------------------------------------------------------------
 
+def _supabase_configured() -> bool:
+    """Return True only if both required Supabase env vars are present and non-empty."""
+    url = os.environ.get('SUPABASE_URL', '').strip()
+    key = os.environ.get('SUPABASE_SERVICE_KEY', '').strip()
+    if not url or not key:
+        print("SUPABASE NOT CONFIGURED: SUPABASE_URL or SUPABASE_SERVICE_KEY missing. "
+              "Persistence skipped. Add both env vars in Vercel dashboard to enable.")
+        return False
+    return True
+
+
 def _fetch_sim_config() -> dict:
     """Return live simulation_config key-value pairs, or {} on any error."""
+    if not _supabase_configured():
+        return {}
     try:
         from supabase import create_client
         sb = create_client(os.environ['SUPABASE_URL'], os.environ['SUPABASE_SERVICE_KEY'])
@@ -356,6 +369,8 @@ def _fetch_sim_config() -> dict:
 def _persist_run(profile: str, duration_ticks: int, seed: int,
                  result: dict, event_log: list, survey_data: dict | None = None) -> str | None:
     """Insert a simulation_runs row. Returns the UUID or None on error."""
+    if not _supabase_configured():
+        return None
     try:
         from supabase import create_client
         print(f"SUPABASE PERSIST: attempting insert — profile={profile}, ticks={duration_ticks}, seed={seed}")
@@ -368,6 +383,9 @@ def _persist_run(profile: str, duration_ticks: int, seed: int,
             'event_log': event_log,
             'survey_data': survey_data or None,
         }).execute()
+        if not row.data:
+            print(f"SUPABASE PERSIST: insert returned no data — possible RLS policy block or schema mismatch")
+            return None
         run_id = row.data[0]['id']
         print(f"SUPABASE PERSIST: success — run_id={run_id}")
         return run_id

@@ -172,7 +172,7 @@ Vary the presentations significantly — do not repeat the same complaint type f
 Return ONLY a single valid JSON object where each key is a patient_id and the value is the profile object. No markdown fences, no explanation, no extra keys.`
 
     const response = await deepseek.chat.completions.create({
-      model: 'deepseek-chat',
+      model: 'deepseek-v4-flash',
       messages: [
         {
           role: 'system',

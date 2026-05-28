@@ -666,21 +666,46 @@ export async function POST(req: Request) {
   // NABH report has 6 sections — needs more tokens
   const maxTokens = role === 'nabh' ? 1800 : 1200
 
+  // Fallback narrative drawn from existing synthesis data — used if LLM fails or
+  // returns empty content. Never leaves the client with a blank report section.
+  const fallbackNarrative = [
+    `## Governance summary`,
+    ``,
+    `${summary.scores.interpretation}`,
+    ``,
+    `Value drift peak: **${summary.value_drift.maximum.toFixed(2)}** on "${summary.value_drift.primary_misalignment}". ` +
+    `${summary.value_drift.interpretation}`,
+    ``,
+    `Ethical debt: **${summary.ethical_debt.total.toFixed(0)} units**. ${summary.ethical_debt.interpretation}`,
+    ``,
+    `Harms classified: ${summary.harms.total} total — ${summary.harms.forced} capacity-constrained, ${summary.harms.avoidable} potentially avoidable.`,
+    ``,
+    `## Critical governance question`,
+    ``,
+    `${summary.critical_question}`,
+  ].join('\n')
+
   try {
     const completion = await deepseek.chat.completions.create({
-      model:       'deepseek-chat',
+      model:       'deepseek-v4-flash',
       messages,
       max_tokens:  maxTokens,
       temperature: 0.7,
     })
 
-    const narrative = completion.choices[0]?.message?.content ?? ''
-    return Response.json({ narrative })
+    const raw = completion.choices[0]?.message?.content ?? ''
+
+    if (!raw.trim()) {
+      // DeepSeek returned an empty response — surface the fallback rather than
+      // silently returning an empty narrative with a 200 OK.
+      console.error('[generate-report] DeepSeek returned empty content. Using synthesis fallback.')
+      return Response.json({ narrative: fallbackNarrative, fallback: true })
+    }
+
+    return Response.json({ narrative: raw })
   } catch (err) {
     console.error('[generate-report] DeepSeek error:', err)
-    return new Response(
-      JSON.stringify({ error: 'LLM generation failed', detail: String(err) }),
-      { status: 502 },
-    )
+    // Return fallback narrative with a flag so the client can show a soft warning
+    return Response.json({ narrative: fallbackNarrative, fallback: true, error: String(err) })
   }
 }

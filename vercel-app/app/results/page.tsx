@@ -6,14 +6,52 @@ import MetricCard from '@/components/MetricCard'
 import SeverityBadge from '@/components/SeverityBadge'
 import Disclaimer from '@/components/Disclaimer'
 import HospitalFloor from '@/components/HospitalFloor'
+import InstitutionalVitalSigns, { type FiveSignals, type GovernanceStateSnapshot } from '@/components/InstitutionalVitalSigns'
+import ReflectiveInsightFeed, { type ReflectiveInsight } from '@/components/ReflectiveInsightFeed'
+import InstitutionalMap from '@/components/InstitutionalMap'
+import AssumptionsPanel from '@/components/AssumptionsPanel'
+import ExpertFeedbackForm from '@/components/ExpertFeedbackForm'
+
+// InstitutionalMap eventLog prop type (inline, not exported from component)
+type MapEventEntry = { event_type: string; timestamp: number; payload: Record<string, unknown> }
 import {
   SESSION_KEY, CAPACITY_KEY,
   type SimulationReport, type PatientProfile, type CapacityConfig,
 } from '@/lib/types'
 
+// ── Scenario run extension types (mirrors route.ts response shape) ─────────────
+
+interface ScenarioRunBlock {
+  scenario: { id: string; name: string; packId: string; durationTicks: number; stressorCount?: number }
+  run_id: string
+  seed: number
+  timestamp: string
+  base_event_count: number
+  injected_event_count: number
+  governance_state: {
+    trust: unknown
+    hidden_strain: unknown
+    ethical_debt: unknown
+    governance_drift: unknown
+    automation_drift: unknown
+    human_state: GovernanceStateSnapshot['human_state']
+  }
+  five_signals: {
+    PSS: { value: number; delta: number; explanation: string }
+    PES: { value: number; delta: number; explanation: string }
+    SSS: { value: number; delta: number; explanation: string }
+    EIC: { value: number; delta: number; explanation: string }
+    STI: { value: number; delta: number; explanation: string }
+  }
+  governance_timeline: unknown[]
+  reflective_insights: ReflectiveInsight[]
+}
+
+type SimulationReportV2 = SimulationReport & { scenario_run?: ScenarioRunBlock }
+
 export default function ResultsScreen() {
   const router = useRouter()
-  const [report, setReport]               = useState<SimulationReport | null>(null)
+  const [report, setReport]               = useState<SimulationReportV2 | null>(null)
   const [patientProfiles, setPatientProfiles] = useState<Record<string, PatientProfile> | undefined>(undefined)
   const [capacity, setCapacity]           = useState<CapacityConfig | null>(null)
 
@@ -83,21 +121,100 @@ export default function ResultsScreen() {
   const sy  = report.synthesis
   const glp = report.glp_optimal
   const cap = capacity ?? report.capacity
+  const sr  = report.scenario_run  // null for custom runs
+
+  // Adapt FiveSignalMetrics (uppercase) → FiveSignals (lowercase numbers)
+  const fiveSignals: FiveSignals | null = sr?.five_signals
+    ? {
+        pss: sr.five_signals.PSS.value,
+        pes: sr.five_signals.PES.value,
+        sss: sr.five_signals.SSS.value,
+        eic: sr.five_signals.EIC.value,
+        sti: sr.five_signals.STI.value,
+      }
+    : null
+
+  const govState: GovernanceStateSnapshot | null = sr?.governance_state?.human_state
+    ? { human_state: sr.governance_state.human_state }
+    : null
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-14">
       {/* ── Header ────────────────────────────────────────────────── */}
       <header className="mb-10">
-        <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
-          {report.institutional_profile} · seed {report.seed} · {report.timestamp.slice(0, 10)}
-        </p>
-        <h1 className="text-5xl font-light text-slate-50 tracking-tight mb-4">
-          What did this cost us?
-        </h1>
-        <p className="text-slate-400 text-sm max-w-2xl leading-relaxed">
-          {ps.interpretation}
-        </p>
+        {sr ? (
+          <>
+            <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
+              Governance scenario · {sr.scenario.packId} · seed {sr.seed} · {sr.timestamp.slice(0, 10)}
+            </p>
+            <h1 className="text-5xl font-light text-slate-50 tracking-tight mb-4">
+              {sr.scenario.name}
+            </h1>
+            <div className="flex items-center gap-4 text-xs text-slate-500">
+              <span>{sr.base_event_count} organic events</span>
+              <span>+</span>
+              <span className="text-slate-400">{sr.injected_event_count} injected stressors</span>
+              <span>·</span>
+              <span>run {sr.run_id.slice(0, 8)}</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
+              {report.institutional_profile} · seed {report.seed} · {report.timestamp.slice(0, 10)}
+            </p>
+            <h1 className="text-5xl font-light text-slate-50 tracking-tight mb-4">
+              What did this cost us?
+            </h1>
+            <p className="text-slate-400 text-sm max-w-2xl leading-relaxed">
+              {ps.interpretation}
+            </p>
+          </>
+        )}
       </header>
+
+      {/* ── Command Center — scenario runs only ───────────────────── */}
+      {sr && fiveSignals && (
+        <div className="mb-14 space-y-10">
+          {/* Ontological disclaimer — hard gate invariant */}
+          <div className="border border-slate-800/60 rounded p-3 bg-slate-950/60">
+            <p className="text-[10px] font-mono text-slate-600 text-center tracking-wider">
+              This is a scenario-based governance simulation. It does not predict reality.
+            </p>
+          </div>
+
+          <InstitutionalVitalSigns
+            signals={fiveSignals}
+            governanceState={govState ?? undefined}
+            scenarioName={sr.scenario.name}
+            runId={sr.run_id}
+          />
+
+          <InstitutionalMap
+            eventLog={report.event_log as MapEventEntry[] | undefined}
+            trustLevel={fiveSignals.sti}
+            ethicalDebtTotal={100 - fiveSignals.eic}
+            hiddenStrain={100 - fiveSignals.sss}
+          />
+
+          <ReflectiveInsightFeed
+            insights={sr.reflective_insights}
+            scenarioName={sr.scenario.name}
+          />
+
+          {/* ── Governance timeline (sparkline) ──────────────────── */}
+          {Array.isArray(sr.governance_timeline) && sr.governance_timeline.length > 1 && (
+            <GovernanceTimeline timeline={sr.governance_timeline as GovernanceTimelinePoint[]} />
+          )}
+
+          {/* Divider before v1 content */}
+          <div className="border-t border-slate-800 pt-6">
+            <p className="text-xs font-mono text-slate-600 tracking-widest uppercase">
+              Patient flow detail — v1 analysis
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── Patient Flow Replay — CENTERPIECE ────────────────────── */}
       <section className="mb-14">
@@ -122,6 +239,9 @@ export default function ResultsScreen() {
           patientsPerHour={cap?.patients_per_hour}
         />
       </section>
+
+      {/* ── Reflective State: Phase 1 Substrate ─────────────────── */}
+      <ReflectiveStatePanel report={report} />
 
       {/* ── Cost Accounting ───────────────────────────────────────── */}
       <section className="border border-amber-900/60 bg-amber-950/20 rounded-lg p-6 mb-10">
@@ -390,9 +510,17 @@ export default function ResultsScreen() {
 
       {/* ── Navigation ───────────────────────────────────────────── */}
       <div className="flex gap-3 mb-12 flex-wrap">
+        {sr && (
+          <button
+            onClick={() => router.push('/governance')}
+            className="flex-1 bg-slate-50 text-slate-950 font-medium py-3 rounded-lg hover:bg-white transition-colors text-sm"
+          >
+            Governance Console →
+          </button>
+        )}
         <button
           onClick={() => router.push('/report')}
-          className="flex-1 bg-slate-50 text-slate-950 font-medium py-3 rounded-lg hover:bg-white transition-colors text-sm"
+          className={`flex-1 ${sr ? 'border border-slate-700 text-slate-200 hover:bg-slate-800' : 'bg-slate-50 text-slate-950 hover:bg-white'} font-medium py-3 rounded-lg transition-colors text-sm`}
         >
           Role-specific report →
         </button>
@@ -403,11 +531,30 @@ export default function ResultsScreen() {
           Decision Inspector →
         </button>
         <button
+          onClick={() => router.push('/export')}
+          className="border border-slate-700 text-slate-300 px-5 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+        >
+          Export →
+        </button>
+        <button
           onClick={() => router.replace('/')}
           className="border border-slate-800 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
         >
           New simulation
         </button>
+      </div>
+
+      {/* ── Expert feedback ──────────────────────────────────────── */}
+      <div className="mb-6">
+        <ExpertFeedbackForm
+          scenarioId={sr?.scenario?.id}
+          runId={sr?.run_id ?? report.run_id}
+        />
+      </div>
+
+      {/* ── Model assumptions ────────────────────────────────────── */}
+      <div className="mb-8">
+        <AssumptionsPanel />
       </div>
 
       <Disclaimer />
@@ -434,6 +581,173 @@ function CostItem({ label, value, unit }: { label: string; value: string; unit?:
       <p className="text-xs text-slate-500 mt-0.5">{label}</p>
     </div>
   )
+}
+
+function ReflectiveStatePanel({ report }: { report: SimulationReport }) {
+  const rs = report.reflective_state
+  if (!rs || rs.status === 'unavailable') {
+    return null
+  }
+
+  const trust = rs.trust_state
+  const strain = rs.hidden_strain_state
+  const gov = rs.governance_state
+  const operational = rs.operational_state
+
+  if (!trust || !strain || !gov || !operational) {
+    return null
+  }
+
+  const observations = (rs.observations ?? []).slice(0, 3)
+
+  return (
+    <section className="mb-10 border border-blue-900/50 bg-blue-950/10 rounded-lg p-6">
+      <div className="flex items-start justify-between gap-4 mb-5">
+        <div>
+          <p className="text-xs font-mono text-blue-400 tracking-widest uppercase mb-2">
+            Institutional state
+          </p>
+          <h2 className="text-2xl font-light text-slate-100 tracking-tight">
+            Trust, strain, and governance under pressure.
+          </h2>
+        </div>
+        <span className="text-xs font-mono text-slate-600 shrink-0">
+          tick {rs.tick ?? operational.current_tick}
+        </span>
+      </div>
+
+      <p className="text-xs text-slate-500 mb-5 max-w-3xl leading-relaxed">
+        This is the Phase 1 reflective substrate: a read-only interpretation of the same event log.
+        It does not change the simulation result. It shows whether the institution remained reliable,
+        whether invisible pressure accumulated, and whether governance pathways held up.
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        <StateVital
+          label="Operational Trust"
+          value={trust.institutional_trust}
+          detail={`${Math.round(trust.escalation_willingness * 100)}% escalation willingness`}
+          goodHigh
+        />
+        <StateVital
+          label="Hidden Strain"
+          value={strain.delayed_failure_risk}
+          detail={`${Math.round(strain.silent_overload * 100)}% silent overload`}
+        />
+        <StateVital
+          label="Governance Drift"
+          value={gov.governance_drift}
+          detail={`${operational.escalation_queue_depth} unresolved escalations`}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <StateDetail
+          title="Trust effects"
+          rows={[
+            ['Compliance probability', trust.compliance_probability],
+            ['Abandonment risk', trust.patient_abandonment_risk],
+            ['Workflow bypass risk', trust.workflow_bypass_probability],
+          ]}
+        />
+        <StateDetail
+          title="Hidden strain"
+          rows={[
+            ['Latent stress', strain.latent_stress],
+            ['Normalized dysfunction', strain.normalized_dysfunction],
+            ['Fatigue memory', strain.fatigue_memory],
+          ]}
+        />
+        <StateDetail
+          title="Governance"
+          rows={[
+            ['Policy adherence', gov.policy_adherence],
+            ['Escalation congestion', gov.escalation_congestion],
+            ['Trace completeness', gov.accountability_trace_completeness],
+          ]}
+          goodHighRows={['Policy adherence', 'Trace completeness']}
+        />
+      </div>
+
+      {observations.length > 0 && (
+        <div className="mt-5 border-t border-blue-900/40 pt-4 space-y-3">
+          {observations.map((obs, i) => (
+            <div key={`${obs.type}-${i}`} className="flex items-start gap-3">
+              <SeverityBadge severity={normalizeSeverity(obs.severity)} />
+              <div>
+                <p className="text-sm text-slate-300 leading-relaxed">{obs.message}</p>
+                {obs.governance_implication && (
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    {obs.governance_implication}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function StateVital({
+  label, value, detail, goodHigh = false,
+}: {
+  label: string
+  value: number
+  detail: string
+  goodHigh?: boolean
+}) {
+  const pct = Math.round(value * 100)
+  const color = goodHigh
+    ? pct >= 70 ? 'text-emerald-400' : pct >= 45 ? 'text-amber-400' : 'text-red-400'
+    : pct >= 65 ? 'text-red-400' : pct >= 35 ? 'text-amber-400' : 'text-emerald-400'
+  return (
+    <div className="bg-slate-950/60 border border-slate-800 rounded-lg p-4">
+      <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">{label}</p>
+      <p className={`text-4xl font-light tabular-nums ${color}`}>{pct}%</p>
+      <p className="text-xs text-slate-500 mt-2">{detail}</p>
+      <div className="h-1.5 bg-slate-800 rounded-full mt-3 overflow-hidden">
+        <div className={`h-full ${color.replace('text-', 'bg-')}`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function StateDetail({
+  title, rows, goodHighRows = [],
+}: {
+  title: string
+  rows: Array<[string, number]>
+  goodHighRows?: string[]
+}) {
+  return (
+    <div className="bg-slate-950/40 border border-slate-800 rounded-lg p-4">
+      <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">{title}</p>
+      <div className="space-y-2">
+        {rows.map(([label, value]) => {
+          const pct = Math.round(value * 100)
+          const goodHigh = goodHighRows.includes(label)
+          const color = goodHigh
+            ? pct >= 70 ? 'text-emerald-400' : pct >= 45 ? 'text-amber-400' : 'text-red-400'
+            : pct >= 65 ? 'text-red-400' : pct >= 35 ? 'text-amber-400' : 'text-slate-400'
+          return (
+            <div key={label} className="flex items-center justify-between gap-3">
+              <span className="text-slate-500">{label}</span>
+              <span className={`tabular-nums ${color}`}>{pct}%</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function normalizeSeverity(severity: string | undefined): 'INFO' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  if (severity === 'CRITICAL') return 'CRITICAL'
+  if (severity === 'HIGH') return 'HIGH'
+  if (severity === 'MEDIUM') return 'MEDIUM'
+  return 'INFO'
 }
 
 function NamedList({ title, items, accent }: { title: string; items: string[]; accent?: 'amber' | 'red' }) {
@@ -502,6 +816,107 @@ function GlpPanel({ glp }: { glp: NonNullable<SimulationReport['glp_optimal']> }
       {glp.eic_note && (
         <p className="text-xs text-slate-500 border-t border-slate-800 pt-3">{glp.eic_note}</p>
       )}
+    </div>
+  )
+}
+
+// ── Governance Timeline ───────────────────────────────────────────────────────
+
+interface GovernanceTimelinePoint {
+  tick: number
+  trust: number
+  hiddenStrain: number
+  ethicalDebt: number
+  reviewCapacity: number
+  escalationWillingness: number
+}
+
+function GovernanceTimeline({ timeline }: { timeline: GovernanceTimelinePoint[] }) {
+  const ticks = timeline.map(p => p.tick)
+  const maxTick = Math.max(...ticks)
+
+  // Normalize a series to 0–100
+  const maxDebt = Math.max(...timeline.map(p => p.ethicalDebt), 1)
+
+  const series: Array<{
+    key: keyof GovernanceTimelinePoint
+    label: string
+    color: string
+    normalize?: (v: number) => number
+    invert?: boolean
+  }> = [
+    { key: 'trust',                label: 'Trust',               color: '#64748b' },
+    { key: 'reviewCapacity',       label: 'Review capacity',     color: '#475569' },
+    { key: 'hiddenStrain',         label: 'Hidden strain',       color: '#d97706', invert: true },
+    {
+      key: 'ethicalDebt',
+      label: 'Ethical debt',
+      color: '#dc2626',
+      normalize: (v) => Math.min(100, (v / maxDebt) * 100),
+    },
+  ]
+
+  const W = 600
+  const H = 80
+  const pad = { left: 4, right: 4, top: 4, bottom: 4 }
+  const innerW = W - pad.left - pad.right
+  const innerH = H - pad.top - pad.bottom
+
+  function toX(tick: number) {
+    return pad.left + (tick / maxTick) * innerW
+  }
+
+  function toY(value: number) {
+    return pad.top + (1 - value / 100) * innerH
+  }
+
+  function buildPath(s: typeof series[0]) {
+    const points = timeline.map(p => {
+      let v = p[s.key] as number
+      if (s.normalize) v = s.normalize(v)
+      if (s.invert) v = 100 - v
+      return `${toX(p.tick).toFixed(1)},${toY(v).toFixed(1)}`
+    })
+    return `M ${points.join(' L ')}`
+  }
+
+  return (
+    <div>
+      <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-3">
+        Governance timeline — {timeline.length} snapshots
+      </p>
+      <div className="border border-slate-800 rounded-lg p-4 bg-slate-950/60 overflow-x-auto">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" style={{ minWidth: 240 }}>
+          {/* Zero line at y=50% */}
+          <line
+            x1={pad.left} y1={pad.top + innerH / 2}
+            x2={W - pad.right} y2={pad.top + innerH / 2}
+            stroke="#1e293b" strokeWidth="1"
+          />
+          {series.map(s => (
+            <path
+              key={s.key}
+              d={buildPath(s)}
+              fill="none"
+              stroke={s.color}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              opacity={0.85}
+            />
+          ))}
+        </svg>
+        {/* Legend */}
+        <div className="flex flex-wrap gap-4 mt-2">
+          {series.map(s => (
+            <div key={s.key} className="flex items-center gap-1.5">
+              <span className="inline-block w-3 h-0.5 rounded" style={{ backgroundColor: s.color }} />
+              <span className="text-[10px] font-mono text-slate-600">{s.label}</span>
+            </div>
+          ))}
+          <span className="text-[10px] text-slate-700 ml-auto">tick 0 → {maxTick}</span>
+        </div>
+      </div>
     </div>
   )
 }

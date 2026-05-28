@@ -11,6 +11,7 @@ export interface SimulationReport {
   synthesis: Synthesis
   event_log: SimEvent[]
   glp_optimal: GlpOptimal
+  reflective_state?: ReflectiveState
   // Enriched patient data (populated client-side via /api/patient-profiles)
   patient_profiles?: Record<string, PatientProfile>
   // Capacity metadata echoed back from simulation call
@@ -115,6 +116,70 @@ export interface SynthesisInsight {
   severity: Severity
   message: string
   data?: Record<string, unknown>
+}
+
+export interface ReflectiveState {
+  status?: 'unavailable'
+  reason?: string
+  tick?: number
+  operational_state?: {
+    current_tick: number
+    active_patients: number
+    patient_locations: Record<string, string>
+    queue_lengths: Record<string, number>
+    room_occupancy: Record<string, number>
+    waiting_times: Record<string, number>
+    active_bottlenecks: string[]
+    throughput_rate: number
+    escalation_queue_depth: number
+    overload_level: number
+  }
+  human_state?: Record<string, number>
+  governance_state?: {
+    policy_adherence: number
+    override_count: number
+    explained_override_ratio: number
+    escalation_success_rate: number
+    escalation_failure_rate: number
+    escalation_congestion: number
+    fairness_interventions: number
+    governance_stability: number
+    governance_drift: number
+    accountability_trace_completeness: number
+  }
+  trust_state?: {
+    patient_trust: number
+    staff_trust: number
+    institutional_trust: number
+    trust_fragmentation: number
+    trust_recovery_rate: number
+    trust_degradation_rate: number
+    compliance_probability: number
+    escalation_willingness: number
+    patient_abandonment_risk: number
+    institutional_fragility: number
+    workflow_bypass_probability: number
+    evidence: Record<string, number>
+  }
+  hidden_strain_state?: {
+    latent_stress: number
+    silent_overload: number
+    normalized_dysfunction: number
+    fatigue_memory: number
+    delayed_failure_risk: number
+    invisible_suffering: number
+    unresolved_pressure: number
+    strain_hotspots: Record<string, number>
+    evidence: Record<string, number>
+  }
+  observations?: Array<{
+    type: string
+    severity: Severity | string
+    message: string
+    evidence?: Record<string, unknown>
+    governance_implication?: string
+    tick?: number
+  }>
 }
 
 // Simulation event log (for Decision Inspector)

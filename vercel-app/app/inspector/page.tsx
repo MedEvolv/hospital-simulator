@@ -4,7 +4,10 @@ import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import SeverityBadge from '@/components/SeverityBadge'
 import Disclaimer from '@/components/Disclaimer'
+import CausalReplay from '@/components/CausalReplay'
 import { SESSION_KEY, type SimulationReport, type SimEvent, type Severity } from '@/lib/types'
+
+type InspectorTab = 'event_log' | 'causal_replay'
 
 type SeverityFilter = Severity | 'ALL'
 const SEVERITY_ORDER: Severity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'INFO']
@@ -276,6 +279,7 @@ export default function InspectorScreen() {
   const [ethicalOnly, setEthicalOnly] = useState(false)
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
   const [plainEnglish, setPlainEnglish] = useState(true)
+  const [activeTab, setActiveTab] = useState<InspectorTab>('event_log')
 
   useEffect(() => {
     const raw = sessionStorage.getItem(SESSION_KEY)
@@ -353,6 +357,43 @@ export default function InspectorScreen() {
           events to reduce alert fatigue. Adjust filters to explore the full run.
         </p>
       </header>
+
+      {/* ── Tab switcher ──────────────────────────────────────────── */}
+      <div className="flex gap-1 mb-6 bg-slate-900/60 border border-slate-800 rounded-lg p-1 w-fit">
+        <button
+          type="button"
+          onClick={() => setActiveTab('event_log')}
+          className={`px-4 py-2 text-xs rounded-md transition-colors ${
+            activeTab === 'event_log'
+              ? 'bg-slate-800 text-slate-100 border border-slate-700'
+              : 'text-slate-500 hover:text-slate-300'
+          }`}
+        >
+          Event log
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('causal_replay')}
+          className={`px-4 py-2 text-xs rounded-md transition-colors ${
+            activeTab === 'causal_replay'
+              ? 'bg-slate-800 text-slate-100 border border-slate-700'
+              : 'text-slate-500 hover:text-slate-300'
+          }`}
+        >
+          Causal Replay ✦
+        </button>
+      </div>
+
+      {/* ── Causal Replay tab ─────────────────────────────────────── */}
+      {activeTab === 'causal_replay' && (
+        <CausalReplay
+          events={report.event_log}
+          scenarioName={(report as unknown as { scenario_run?: { scenario?: { name: string } } }).scenario_run?.scenario?.name}
+        />
+      )}
+
+      {/* ── Event log tab ─────────────────────────────────────────── */}
+      {activeTab === 'event_log' && (<>
 
       {/* ── Plain English / Technical toggle ──────────────────────── */}
       <div className="flex items-center gap-3 mb-6 p-3 border border-slate-800 rounded-lg bg-slate-900/40 w-fit">
@@ -453,6 +494,8 @@ export default function InspectorScreen() {
           ))}
         </div>
       )}
+
+      </>)}
 
       {/* ── Navigation ───────────────────────────────────────────── */}
       <div className="flex gap-4 mt-10 mb-12">
