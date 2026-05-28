@@ -22,6 +22,13 @@ from typing import List, Dict, Optional, Any
 from enum import Enum
 from datetime import datetime
 
+# Governance side-car (imported lazily to avoid circular issues)
+try:
+    from governance_engine import GovernanceEngine
+    _GOVERNANCE_AVAILABLE = True
+except ImportError:
+    _GOVERNANCE_AVAILABLE = False
+
 # ============================================================================
 # 1. EVENT SCHEMA (CANONICAL)
 # ============================================================================
@@ -407,6 +414,9 @@ class EventSourcedSimulationEngine:
             "institutional_profile": institutional_profile,
             "parameters": self.run.parameters.to_dict()
         })
+
+        # Governance side-car
+        self.governance = GovernanceEngine(self.run) if _GOVERNANCE_AVAILABLE else None
     
     def get_current_state(self) -> SimulationState:
         """Derive current state from event log."""
@@ -428,27 +438,30 @@ class EventSourcedSimulationEngine:
         # Advance authoritative clock BEFORE emitting any events this tick.
         # All events in tick N are stamped with N*5 (seconds).
         self.run.current_sim_time = self.current_tick * 5
-        
+
+        # Record sequence watermark so we can identify events added this tick
+        seq_watermark = self.run.sequence_counter
+
         # Get current state (derived from events)
         state = self.get_current_state()
-        
+
         # 1. PERCEIVE - patient arrivals
         self._perceive(state)
-        
+
         # 2. CLASSIFY - triage
         self._classify(state)
-        
+
         # 3. ORDER - queue management
         self._order(state)
-        
+
         # 4. CHECK - governance
         self._check_governance(state)
-        
+
         # 5. SURFACE - handled via events
-        
+
         # 6. Admissions
         self._process_admissions(state)
-        
+
         # Room discharge cycle
         if self.current_tick % 30 == 0:
             for room in state.rooms:
@@ -457,6 +470,18 @@ class EventSourcedSimulationEngine:
                         "room_type": room.room_type,
                         "room_name": room.name
                     })
+
+        # Governance side-car: observe all non-governance events added this tick,
+        # then advance the governance clock (emits GOVERNANCE_METRIC_UPDATE every 30 ticks).
+        if self.governance:
+            tick_events = [
+                e for e in self.run.event_log
+                if e.sequence >= seq_watermark
+                and not e.payload.get("governance_signal", False)
+            ]
+            for event in tick_events:
+                self.governance.observe(event)
+            self.governance.tick(self.current_tick)
     
     def _perceive(self, state: SimulationState):
         """PERCEIVE: Detect new patient arrivals."""
@@ -671,11 +696,15 @@ class EventSourcedSimulationEngine:
         """Run complete simulation."""
         while self.current_tick < self.max_ticks:
             self.tick()
-        
+
+        # Emit governance final snapshot before final metrics
+        if self.governance:
+            self.governance.final_snapshot(self.current_tick)
+
         # Emit final metrics
         state = self.get_current_state()
         self._emit_final_metrics(state)
-        
+
         return self.run
     
     def _emit_final_metrics(self, state: SimulationState):
