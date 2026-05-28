@@ -21,6 +21,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getScenarioById } from '@/lib/scenarios/registry'
 import { runScenario } from '@/lib/scenarios/runner'
+import { persistRun, appendGovernanceEvents } from '@/lib/supabase'
 import type { SimulationReport } from '@/lib/types'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -137,6 +138,52 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // ── Persist to Supabase (best-effort, never blocks response) ────────────────
+  let persistedRunId: string | null = null
+  try {
+    persistedRunId = await persistRun({
+      user_id:          null,   // auth will be added in Phase 8 full auth
+      scenario_id:      scenarioResult.scenario.id,
+      run_data:         { events: scenarioResult.events.slice(0, 200) },  // trim for JSONB size
+      governance_state: {
+        trust:            scenarioResult.governanceState.trust,
+        hidden_strain:    scenarioResult.governanceState.hiddenStrain,
+        ethical_debt:     scenarioResult.governanceState.ethicalDebt,
+        governance_drift: scenarioResult.governanceState.governanceDrift,
+      },
+      five_signals: scenarioResult.fiveSignals as unknown as object,
+      run_metadata: {
+        runId:           scenarioResult.runId,
+        seed:            scenarioResult.seed,
+        timestamp:       scenarioResult.timestamp,
+        scenarioName:    scenarioResult.scenario.name,
+        durationTicks:   scenarioResult.scenario.durationTicks,
+        baseEventCount:  scenarioResult.baseEventCount,
+        injectedCount:   scenarioResult.injectedEventCount,
+      },
+    })
+
+    // Append a summary governance event for the immutable audit log
+    if (persistedRunId) {
+      await appendGovernanceEvents(persistedRunId, [
+        {
+          event_type:      'SCENARIO_RUN_COMPLETED',
+          sequence_number: 0,
+          payload: {
+            scenario_id:   scenarioResult.scenario.id,
+            run_id:        scenarioResult.runId,
+            seed:          scenarioResult.seed,
+            event_count:   scenarioResult.events.length,
+            injected_count: scenarioResult.injectedEventCount,
+          },
+        },
+      ])
+    }
+  } catch (persistErr) {
+    // Persistence failure must never break the response
+    console.error('[run-scenario] Supabase persistence error:', persistErr)
+  }
+
   // ── Compose response ───────────────────────────────────────────────────────
   // Backward-compatible: existing results page reads top-level fields.
   // v2 Command Center reads scenario_run.
@@ -172,6 +219,9 @@ export async function POST(req: NextRequest) {
       governance_timeline: scenarioResult.governanceTimeline,
       reflective_insights: scenarioResult.reflectiveInsights,
     },
+
+    // Persistence metadata
+    _db_run_id: persistedRunId,
 
     // Ontological disclaimer — invariant: present on every run result
     _disclaimer: 'This is a scenario-based governance simulation. It does not predict reality.',
