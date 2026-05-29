@@ -211,7 +211,12 @@ export default function ReportPage() {
   useEffect(() => {
     const raw = sessionStorage.getItem(SESSION_KEY)
     if (!raw) { router.replace('/'); return }
-    setReport(JSON.parse(raw))
+    try {
+      setReport(JSON.parse(raw))
+    } catch {
+      router.replace('/')
+      return
+    }
     const surveyRaw = sessionStorage.getItem(SURVEY_KEY)
     if (surveyRaw) {
       try { setSurvey(JSON.parse(surveyRaw)) } catch { /* ignore */ }

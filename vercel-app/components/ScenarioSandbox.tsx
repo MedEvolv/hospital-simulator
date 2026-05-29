@@ -11,7 +11,7 @@
  * Comparison panel surfaces after both slots complete.
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -64,46 +64,7 @@ const PACK_LABELS: Record<string, string> = {
   'security-stress-test':'Security stress test',
 }
 
-// ── Scenario catalogue (kept in sync with ScenarioSelector) ──────────────────
-
-const SCENARIOS: ScenarioMeta[] = [
-  {
-    id: 'hallucinated-discharge-summary',
-    name: 'The Hallucinated Discharge',
-    description: 'AI-generated discharge summary contains a fabricated drug interaction. Six governance failures make the outcome possible.',
-    packId: 'automation-failure',
-    simulationProfile: 'Government Hospital',
-    durationTicks: 180,
-    stressorCount: 6,
-  },
-  {
-    id: 'ai-triage-drift-er-overload',
-    name: 'The Drifting Triage',
-    description: 'ER triage AI gradually increases autonomy during a surge as alert fatigue suppresses override signals.',
-    packId: 'institutional-strain',
-    simulationProfile: 'Government Hospital',
-    durationTicks: 200,
-    stressorCount: 8,
-  },
-  {
-    id: 'chronic-patient-scheduling-delay',
-    name: 'The Invisible Queue',
-    description: 'Scheduling AI maximises throughput by deprioritising multi-morbidity patients. Metrics look excellent; harm is invisible.',
-    packId: 'equity-participation',
-    simulationProfile: 'Private Hospital',
-    durationTicks: 240,
-    stressorCount: 9,
-  },
-  {
-    id: 'security-stress-test',
-    name: 'The Credential Cascade',
-    description: 'Phishing campaign during a patient surge. One click. Nine steps. A governance failure before a technical one.',
-    packId: 'security-stress-test',
-    simulationProfile: 'Private Hospital',
-    durationTicks: 260,
-    stressorCount: 12,
-  },
-]
+// ── Scenarios fetched from registry API — no hardcoded list ──────────────────
 
 // ── Signal definitions ────────────────────────────────────────────────────────
 
@@ -271,6 +232,9 @@ function ComparisonRow({
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function ScenarioSandbox() {
+  const [scenarios, setScenarios] = useState<ScenarioMeta[]>([])
+  const [loadingScenarios, setLoadingScenarios] = useState(true)
+
   const [configs, setConfigs] = useState<Record<SlotId, SlotConfig>>({
     A: { scenarioId: null, staffingLevel: 60, patientLoad: 60, autonomyLevel: 50, governanceMaturity: 50 },
     B: { scenarioId: null, staffingLevel: 60, patientLoad: 60, autonomyLevel: 50, governanceMaturity: 50 },
@@ -279,6 +243,15 @@ export default function ScenarioSandbox() {
   const [loading, setLoading] = useState<Partial<Record<SlotId, boolean>>>({})
   const [errors, setErrors] = useState<Partial<Record<SlotId, string>>>({})
   const [expandedConfig, setExpandedConfig] = useState<SlotId | null>(null)
+
+  // Fetch scenario registry on mount
+  useEffect(() => {
+    fetch('/api/run-scenario')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then((data: { scenarios: ScenarioMeta[] }) => setScenarios(data.scenarios ?? []))
+      .catch(() => setScenarios([]))
+      .finally(() => setLoadingScenarios(false))
+  }, [])
 
   function updateConfig(slot: SlotId, patch: Partial<SlotConfig>) {
     setConfigs(c => ({ ...c, [slot]: { ...c[slot], ...patch } }))
@@ -331,7 +304,7 @@ export default function ScenarioSandbox() {
         criticalInsightCount: insights.filter(i => i.severity === 'critical').length,
         eventCount:           (report.event_log ?? []).length,
         runId:                report.run_id ?? sr.runId ?? 'unknown',
-        scenarioName:         SCENARIOS.find(s => s.id === config.scenarioId)?.name ?? config.scenarioId ?? '—',
+        scenarioName:         scenarios.find(s => s.id === config.scenarioId)?.name ?? config.scenarioId ?? '—',
       }
 
       setRuns(r => ({ ...r, [slot]: runResult }))
@@ -356,7 +329,7 @@ export default function ScenarioSandbox() {
     const isLoading = loading[slot]
     const error = errors[slot]
     const styles = SLOT_STYLES[slot]
-    const selected = SCENARIOS.find(s => s.id === config.scenarioId)
+    const selected = scenarios.find(s => s.id === config.scenarioId)
     const isConfigExpanded = expandedConfig === slot
 
     return (
@@ -387,7 +360,10 @@ export default function ScenarioSandbox() {
               Select scenario
             </p>
             <div className="space-y-1.5">
-              {SCENARIOS.map(s => {
+              {loadingScenarios && [1, 2, 3, 4].map(i => (
+                <div key={i} className="h-9 bg-slate-800/40 rounded-lg animate-pulse" />
+              ))}
+              {!loadingScenarios && scenarios.map(s => {
                 const isSelected = config.scenarioId === s.id
                 const packBadge = PACK_BADGE[s.packId] ?? ''
                 return (

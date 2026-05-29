@@ -1,60 +1,58 @@
 /**
  * Ethical Debt Engine — unit tests
- *
- * Ethical debt accumulates through institutional compromise.
- * State field: `totalDebt` (not currentDebt).
+ * State field: totalDebt (not currentDebt). Engine takes 2 args.
  */
 
 import { updateEthicalDebt } from '@/lib/engines/ethicalDebt'
 import { DEFAULT_ETHICAL_DEBT } from '@/lib/types/governance'
 import type { SimEvent } from '@/lib/types'
 
-function makeEvent(event_type: string, overrides: Partial<SimEvent> = {}): SimEvent {
+function makeEvent(event_type: string): SimEvent {
   return {
+    run_id: 'test-run',
     event_id: `test-${Math.random().toString(36).slice(2)}`,
     event_type,
     timestamp: 100,
-    actor: 'test',
+    sequence: 0,
     payload: {},
-    ...overrides,
   }
 }
 
+const CLEAN_STATE = () => ({
+  ...DEFAULT_ETHICAL_DEBT,
+  sources: [] as typeof DEFAULT_ETHICAL_DEBT.sources,
+  affectedGroups: [] as string[],
+  unresolvedEvents: [] as string[],
+})
+
 describe('Ethical Debt Engine', () => {
   test('missed AI hallucination increases ethical debt', () => {
-    const initial = { ...DEFAULT_ETHICAL_DEBT, sources: [], affectedGroups: [], unresolvedEvents: [], strainTimeline: [] }
-    const result = updateEthicalDebt(initial, makeEvent('AI_HALLUCINATION_MISSED'), {} as never)
+    const initial = CLEAN_STATE()
+    const result = updateEthicalDebt(initial, makeEvent('AI_HALLUCINATION_MISSED'))
     expect(result.state.totalDebt).toBeGreaterThan(initial.totalDebt)
     expect(result.delta).toBeGreaterThan(0)
   })
 
   test('queue displacement increases ethical debt', () => {
-    const initial = { ...DEFAULT_ETHICAL_DEBT, sources: [], affectedGroups: [], unresolvedEvents: [] }
-    const before = initial.totalDebt
-    const result = updateEthicalDebt(initial, makeEvent('QUEUE_DISPLACEMENT'), {} as never)
-    // QUEUE_DISPLACEMENT should accrue debt (defined in ethicalDebt engine as 12)
-    expect(result.state.totalDebt).toBeGreaterThanOrEqual(before)
+    const initial = CLEAN_STATE()
+    const result = updateEthicalDebt(initial, makeEvent('QUEUE_DISPLACEMENT'))
+    expect(result.state.totalDebt).toBeGreaterThanOrEqual(initial.totalDebt)
   })
 
-  test('documented human override does not increase ethical debt', () => {
-    const inflated = { ...DEFAULT_ETHICAL_DEBT, totalDebt: 40, sources: [], affectedGroups: [], unresolvedEvents: [] }
-    const result = updateEthicalDebt(inflated, makeEvent('HUMAN_OVERRIDE_DOCUMENTED'), {} as never)
-    // Override documentation should not add more debt; may reduce or hold
+  test('documented human override does not add more debt', () => {
+    const inflated = { ...CLEAN_STATE(), totalDebt: 40 }
+    const result = updateEthicalDebt(inflated, makeEvent('HUMAN_OVERRIDE_DOCUMENTED'))
     expect(result.state.totalDebt).toBeLessThanOrEqual(inflated.totalDebt + 1)
   })
 
-  test('governance intervention reduces or holds ethical debt', () => {
-    const inflated = { ...DEFAULT_ETHICAL_DEBT, totalDebt: 50, sources: [], affectedGroups: [], unresolvedEvents: [] }
-    const result = updateEthicalDebt(inflated, makeEvent('GOVERNANCE_INTERVENTION'), {} as never)
+  test('governance intervention holds or reduces ethical debt', () => {
+    const inflated = { ...CLEAN_STATE(), totalDebt: 50 }
+    const result = updateEthicalDebt(inflated, makeEvent('GOVERNANCE_INTERVENTION'))
     expect(result.state.totalDebt).toBeLessThanOrEqual(inflated.totalDebt)
   })
 
-  test('explanation is a short, readable sentence', () => {
-    const result = updateEthicalDebt(
-      { ...DEFAULT_ETHICAL_DEBT, sources: [], affectedGroups: [], unresolvedEvents: [] },
-      makeEvent('AI_HALLUCINATION_MISSED'),
-      {} as never,
-    )
+  test('explanation is a short readable sentence', () => {
+    const result = updateEthicalDebt(CLEAN_STATE(), makeEvent('AI_HALLUCINATION_MISSED'))
     expect(typeof result.explanation).toBe('string')
     expect(result.explanation.length).toBeGreaterThan(5)
     expect(result.explanation.length).toBeLessThan(300)

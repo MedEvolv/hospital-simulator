@@ -48,7 +48,7 @@ export interface RunRecord {
  * This is best-effort — callers should not fail if this returns null.
  */
 export async function persistRun(record: RunRecord): Promise<string | null> {
-  if (!supabaseUrl) return null
+  if (!supabaseUrl || !supabaseAnon) return null
 
   try {
     const { data, error } = await supabase
@@ -85,7 +85,7 @@ export async function appendGovernanceEvents(
   runId: string,
   events: Array<{ event_type: string; payload: object; sequence_number: number }>
 ): Promise<void> {
-  if (!supabaseUrl || !runId || events.length === 0) return
+  if (!supabaseUrl || !supabaseAnon || !runId || events.length === 0) return
 
   try {
     const rows = events.map(ev => ({
@@ -112,7 +112,7 @@ export async function appendGovernanceEvents(
  * Returns empty array if unauthenticated or persistence disabled.
  */
 export async function fetchUserRuns(limit = 20): Promise<RunRecord[]> {
-  if (!supabaseUrl) return []
+  if (!supabaseUrl || !supabaseAnon) return []
 
   try {
     const { data, error } = await supabase
@@ -138,7 +138,7 @@ export async function fetchUserRuns(limit = 20): Promise<RunRecord[]> {
  * Fetch a single run by id (only if owned by current user).
  */
 export async function fetchRun(runId: string): Promise<RunRecord | null> {
-  if (!supabaseUrl) return null
+  if (!supabaseUrl || !supabaseAnon) return null
 
   try {
     const { data, error } = await supabase
@@ -165,13 +165,25 @@ export async function fetchRun(runId: string): Promise<RunRecord | null> {
  * Hard delete is prohibited by architecture.
  */
 export async function softDeleteRun(runId: string): Promise<boolean> {
-  if (!supabaseUrl) return false
+  if (!supabaseUrl || !supabaseAnon) return false
 
   try {
-    const { error } = await supabase
+    // Defence-in-depth: always scope the update to the current user's own rows.
+    // RLS enforces this at the database level too, but this prevents accidental
+    // cross-user deletes if policy gaps exist during development.
+    const { data: { user } } = await supabase.auth.getUser()
+    const userId = user?.id
+
+    let query = supabase
       .from('simulation_runs')
       .update({ is_deleted: true })
       .eq('id', runId)
+
+    if (userId) {
+      query = query.eq('user_id', userId)
+    }
+
+    const { error } = await query
 
     if (error) {
       console.error('[supabase] softDeleteRun error:', error.message)
