@@ -1,0 +1,121 @@
+id,arrival_time,chief_complaint,age,history
+1,0,severe chest pain radiating to left arm,62,hypertension; hyperlipidemia
+2,5,routine blood pressure check,45,hypertension
+3,10,tooth pain cannot sleep at night,34,
+4,15,bleeding gums wants cleaning,29,
+5,20,difficulty breathing and chest tightness,58,diabetes
+6,25,follow up visit for diabetes review,51,diabetes
+7,30,fever for 2 days no other symptoms,22,
+8,35,fell down bike accident tooth came out,18,
+9,40,routine dental scaling appointment,41,
+10,45,sudden severe abdominal pain right side,27,
+11,50,persistent cough for 2 weeks,39,
+12,55,routine pregnancy checkup,28,
+13,60,severe headache and blurred vision,47,hypertension
+14,65,follow up for asthma management,12,asthma
+15,70,painful urination for 3 days,31,
+16,75,routine pediatric immunization,1,
+17,80,crushing chest pain sweating,65,cardiac disease
+18,85,back pain after lifting heavy box,44,
+19,90,sore throat and difficulty swallowing,19,
+20,95,routine blood sugar monitoring,55,diabetes
+21,100,itchy skin rash on arms,33,
+22,105,sharp pain in lower back,50,
+23,110,dental cleaning and checkup,24,
+24,115,dizziness and lightheadedness,70,hypertension
+25,120,follow up for thyroid medication,38,hypothyroidism
+26,125,severe earache since last night,8,
+27,130,shortness of breath on exertion,63,cardiac disease
+28,135,routine eye examination,42,
+29,140,pain in knee after jogging,35,
+30,145,flu-like symptoms body ache,26,
+31,150,chronic fatigue for a month,48,
+32,155,dental filling came out,29,
+33,160,abdominal bloating and discomfort,52,
+34,165,minor burn on hand while cooking,31,
+35,170,routine physical for sports,15,
+36,175,severe menstrual cramps,23,
+37,180,chest discomfort when lying down,59,cardiac disease
+38,185,dry eyes and irritation,46,
+39,190,swelling in ankles and feet,67,hypertension
+40,195,follow up for skin allergy,25,
+41,200,persistent nausea and vomiting,32,
+42,205,wisdom tooth extraction follow up,21,
+43,210,sharp pain in the chest when breathing,60,asthma
+44,215,routine childhood growth monitoring,4,
+45,220,burning sensation in stomach,43,
+46,225,allergic reaction to peanuts,10,asthma
+47,230,pain in wrist after a fall,29,
+48,235,routine dental exam,36,
+49,240,heart racing and anxiety,28,
+50,245,difficulty sleeping for weeks,45,
+51,250,sudden loss of vision in one eye,72,cardiac disease
+52,255,painful lump in armpit,39,
+53,260,follow up for hypertension,54,hypertension
+54,265,coughing up blood,61,asthma
+55,270,bleeding after tooth extraction,33,
+56,275,routine wellness check,30,
+57,280,numbness in right leg,58,diabetes
+58,285,severe tooth sensitivity,27,
+59,290,persistent diarrhea for 3 days,35,
+60,295,follow up for depression,41,
+61,300,chest pain radiating to back,64,hypertension; cardiac disease
+62,305,routine hearing test,52,
+63,310,pain in shoulder joint,49,
+64,315,fever and cough in toddler,3,
+65,320,dental pain after cold drinks,26,
+66,325,follow up for diabetes,56,diabetes
+67,330,shortness of breath at night,69,cardiac disease
+68,335,unexplained weight loss,44,
+69,340,routine cervical smear test,35,
+70,345,migraine with aura,29,
+71,350,swelling in the neck,38,
+72,355,routine prostate check,62,
+73,360,blood in stool,51,
+74,365,chipped front tooth,22,
+75,370,follow up for asthma,11,asthma
+76,375,chest tightness and wheezing,57,asthma
+77,380,severe itchiness all over,40,
+78,385,routine dental cleaning,31,
+79,390,pain in the hip joint,74,
+80,395,follow up for high cholesterol,53,hyperlipidemia
+81,400,sudden confusion and weakness,78,hypertension; cardiac disease
+82,405,sore gums and bad breath,46,
+83,410,routine infant checkup,0.5,
+84,415,pain in the ear after swimming,9,
+85,420,persistent heartburn,48,
+86,425,follow up for anemia,34,
+87,430,shortness of breath and fever,65,asthma
+88,435,pain in the jaw,50,hypertension
+89,440,routine dental check,25,
+90,445,severe abdominal cramps,21,
+91,450,follow up for kidney stones,47,
+92,455,swelling in the knee,54,
+93,460,chest pain on exertion,61,cardiac disease
+94,465,routine vision screen,7,
+95,470,follow up for diabetes,59,diabetes
+96,475,toothache and facial swelling,33,
+97,480,persistent sneezing and runny nose,24,
+98,485,pain in the heel when walking,43,
+99,490,routine blood work,37,
+100,495,shortness of breath and fatigue,70,cardiac disease
+101,500,severe chest pain radiating to left arm,62,hypertension; hyperlipidemia
+102,505,routine blood pressure check,45,hypertension
+103,510,tooth pain cannot sleep at night,34,
+104,515,bleeding gums wants cleaning,29,
+105,520,difficulty breathing and chest tightness,58,diabetes
+106,525,follow up visit for diabetes review,51,diabetes
+107,530,fever for 2 days no other symptoms,22,
+108,535,fell down bike accident tooth came out,18,
+109,540,routine dental scaling appointment,41,
+110,545,routine dental scaling,26,
+111,550,chest pain sweating nausea,61,cardiac disease
+112,555,routine BP follow up,46,hypertension
+113,560,persistent fever chills,42,
+114,565,routine antenatal counseling,30,
+115,570,shortness of breath resting,68,cardiac disease
+116,575,tooth pain swelling,37,
+117,580,routine diabetes review,54,diabetes
+118,585,severe headache sudden onset,49,hypertension
+119,590,routine pediatric check,5,
+120,595,crushing chest pain,66,cardiac disease

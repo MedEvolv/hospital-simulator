@@ -15,39 +15,38 @@ interface ZoneState {
   id: string
   label: string
   shortLabel: string
+  icon: string
   description: string
-  // 0–100 computed from event log
   queuePressure: number
-  trustLevel: number      // 100 = fully trusted
-  ethicalDebt: number     // 0 = clean, 100 = maximal
+  trustLevel: number
+  ethicalDebt: number
   aiEventCount: number
   patientCount: number
-  staffLoad: number       // 0–100
+  staffLoad: number
   escalationCount: number
   governanceStatus: 'nominal' | 'strained' | 'failing'
 }
 
 interface InstitutionalMapProps {
-  /** Augmented event log from scenario run */
   eventLog?: Array<{
     event_type: string
     timestamp: number
     payload: Record<string, unknown>
   }>
-  /** Governance state snapshot */
   trustLevel?: number
   ethicalDebtTotal?: number
   hiddenStrain?: number
 }
 
-// ── Zone layout constants ─────────────────────────────────────────────────────
+// ── Zone definitions ──────────────────────────────────────────────────────────
 
 const ZONE_DEFS: Array<{
   id: string
   label: string
   shortLabel: string
+  icon: string
   description: string
-  col: number  // CSS grid column
+  col: number
   row: number
   colSpan?: number
 }> = [
@@ -55,6 +54,7 @@ const ZONE_DEFS: Array<{
     id: 'triage',
     label: 'Triage',
     shortLabel: 'TRIAGE',
+    icon: '🔺',
     description: 'Initial patient assessment. ESI level assigned. AI triage assist active.',
     col: 1, row: 1,
   },
@@ -62,20 +62,23 @@ const ZONE_DEFS: Array<{
     id: 'er',
     label: 'Emergency Room',
     shortLabel: 'ER',
+    icon: '🚨',
     description: 'ESI 1–2 patients. High acuity. Highest ethical load per decision.',
     col: 2, row: 1,
   },
   {
     id: 'opd',
-    label: 'OPD',
+    label: 'Outpatient (OPD)',
     shortLabel: 'OPD',
+    icon: '🏥',
     description: 'Outpatient. Scheduling algorithm active. Chronic patient displacement risk.',
     col: 3, row: 1,
   },
   {
     id: 'waiting',
-    label: 'Waiting',
-    shortLabel: 'WAIT',
+    label: 'Waiting Area',
+    shortLabel: 'WAITING',
+    icon: '⏳',
     description: 'Queue holding area. Invisible harm accumulates here. High ethical debt zone.',
     col: 1, row: 2, colSpan: 2,
   },
@@ -83,6 +86,7 @@ const ZONE_DEFS: Array<{
     id: 'discharge',
     label: 'Discharge',
     shortLabel: 'DISCH',
+    icon: '📋',
     description: 'AI discharge summary generation. Hallucination risk. Accountability chain ends here.',
     col: 3, row: 2,
   },
@@ -93,7 +97,6 @@ const ZONE_DEFS: Array<{
 function attributeEventToZone(eventType: string, payload: Record<string, unknown>): string | null {
   const t = eventType.toUpperCase()
 
-  // Explicit zone in payload
   if (typeof payload.zone === 'string') return payload.zone.toLowerCase()
   if (typeof payload.room_type === 'string') {
     const rt = (payload.room_type as string).toLowerCase()
@@ -101,7 +104,6 @@ function attributeEventToZone(eventType: string, payload: Record<string, unknown
     if (rt.includes('opd') || rt.includes('outpatient')) return 'opd'
   }
 
-  // Infer from event type
   if (t === 'TRIAGE_STAGE_1_ASSIGNED' || t === 'TRIAGE_STAGE_2_ASSIGNED' || t === 'ESI_LEVEL_ASSIGNED') return 'triage'
   if (t === 'PATIENT_ARRIVAL') return 'triage'
   if (t === 'QUEUE_ASSIGNMENT' || t === 'QUEUE_REORDER' || t === 'ROOM_OVERLOAD') return 'waiting'
@@ -119,7 +121,7 @@ function attributeEventToZone(eventType: string, payload: Record<string, unknown
   return null
 }
 
-// ── Compute zone states from event log ────────────────────────────────────────
+// ── Compute zone states ────────────────────────────────────────────────────────
 
 function computeZoneStates(
   eventLog: InstitutionalMapProps['eventLog'],
@@ -134,9 +136,10 @@ function computeZoneStates(
       id: def.id,
       label: def.label,
       shortLabel: def.shortLabel,
+      icon: def.icon,
       description: def.description,
       queuePressure: 0,
-      trustLevel: trustLevel,
+      trustLevel,
       ethicalDebt: 0,
       aiEventCount: 0,
       patientCount: 0,
@@ -148,16 +151,9 @@ function computeZoneStates(
 
   if (!eventLog) return zones
 
-  // Count events per zone
   const zoneCounts: Record<string, Record<string, number>> = {}
   for (const def of ZONE_DEFS) {
-    zoneCounts[def.id] = {
-      arrivals: 0,
-      queue: 0,
-      ai: 0,
-      harm: 0,
-      escalation: 0,
-    }
+    zoneCounts[def.id] = { arrivals: 0, queue: 0, ai: 0, harm: 0, escalation: 0 }
   }
 
   for (const ev of eventLog) {
@@ -175,12 +171,11 @@ function computeZoneStates(
 
   const totalEvents = eventLog.length || 1
 
-  // Distribute global metrics across zones with zone-specific weights
   const ZONE_WEIGHTS: Record<string, { strain: number; debt: number; trust: number }> = {
     triage:    { strain: 0.25, debt: 0.10, trust: 0.85 },
     er:        { strain: 0.35, debt: 0.20, trust: 0.80 },
     opd:       { strain: 0.15, debt: 0.25, trust: 0.90 },
-    waiting:   { strain: 0.20, debt: 0.35, trust: 0.75 },  // waiting is always ethically costly
+    waiting:   { strain: 0.20, debt: 0.35, trust: 0.75 },
     discharge: { strain: 0.05, debt: 0.10, trust: 0.88 },
   }
 
@@ -189,35 +184,15 @@ function computeZoneStates(
     const weights = ZONE_WEIGHTS[def.id]
     const zone = zones[def.id]
 
-    // Queue pressure: based on queue events + global hidden strain
     const zoneEventRatio = (counts.arrivals + counts.queue) / totalEvents
-    zone.queuePressure = Math.min(100, Math.round(
-      zoneEventRatio * 300 + hiddenStrain * weights.strain
-    ))
-
-    // Trust: global trust modified by zone weight and escalation failures
-    zone.trustLevel = Math.min(100, Math.max(0, Math.round(
-      trustLevel * weights.trust - (counts.escalation > 3 ? 15 : 0)
-    )))
-
-    // Ethical debt: global debt weighted by zone + harm events
-    zone.ethicalDebt = Math.min(100, Math.round(
-      ethicalDebtTotal * weights.debt + counts.harm * 2
-    ))
-
-    // AI event count
+    zone.queuePressure = Math.min(100, Math.round(zoneEventRatio * 300 + hiddenStrain * weights.strain))
+    zone.trustLevel = Math.min(100, Math.max(0, Math.round(trustLevel * weights.trust - (counts.escalation > 3 ? 15 : 0))))
+    zone.ethicalDebt = Math.min(100, Math.round(ethicalDebtTotal * weights.debt + counts.harm * 2))
     zone.aiEventCount = counts.ai
-
-    // Patient count approximation
     zone.patientCount = counts.arrivals
-
-    // Staff load
     zone.staffLoad = Math.min(100, Math.round(zone.queuePressure * 0.7 + hiddenStrain * 0.3))
-
-    // Escalation count
     zone.escalationCount = counts.escalation
 
-    // Governance status
     if (zone.trustLevel < 40 || zone.ethicalDebt > 70 || zone.queuePressure > 80) {
       zone.governanceStatus = 'failing'
     } else if (zone.trustLevel < 65 || zone.ethicalDebt > 40 || zone.queuePressure > 55) {
@@ -230,61 +205,66 @@ function computeZoneStates(
   return zones
 }
 
-// ── Overlay colour functions ──────────────────────────────────────────────────
+// ── Overlay colour helpers ────────────────────────────────────────────────────
 
 function getOverlayStyle(zone: ZoneState, overlay: OverlayMode): {
   bg: string
   border: string
   intensity: number
+  label?: string
 } {
   if (overlay === 'none') {
     return {
       bg: zone.governanceStatus === 'failing'
-        ? 'bg-red-950/30'
+        ? 'bg-red-950/40'
         : zone.governanceStatus === 'strained'
-        ? 'bg-amber-950/20'
-        : 'bg-slate-900/40',
+        ? 'bg-amber-950/30'
+        : 'bg-slate-900/50',
       border: zone.governanceStatus === 'failing'
-        ? 'border-red-800/50'
+        ? 'border-red-700/60'
         : zone.governanceStatus === 'strained'
-        ? 'border-amber-800/40'
-        : 'border-slate-800',
+        ? 'border-amber-700/50'
+        : 'border-slate-700/60',
       intensity: 0,
     }
   }
   if (overlay === 'queue_density') {
     const v = zone.queuePressure
     return {
-      bg: v > 70 ? 'bg-orange-950/50' : v > 40 ? 'bg-amber-950/30' : 'bg-slate-900/40',
-      border: v > 70 ? 'border-orange-700/50' : v > 40 ? 'border-amber-700/40' : 'border-slate-800',
+      bg: v > 70 ? 'bg-orange-950/55' : v > 40 ? 'bg-amber-950/35' : 'bg-slate-900/50',
+      border: v > 70 ? 'border-orange-600/60' : v > 40 ? 'border-amber-600/50' : 'border-slate-700/60',
       intensity: v,
+      label: `${Math.round(v)}`,
     }
   }
   if (overlay === 'trust_degradation') {
-    const v = 100 - zone.trustLevel  // invert: high = bad
+    const v = 100 - zone.trustLevel
     return {
-      bg: v > 60 ? 'bg-red-950/50' : v > 30 ? 'bg-amber-950/30' : 'bg-slate-900/40',
-      border: v > 60 ? 'border-red-700/50' : v > 30 ? 'border-amber-700/40' : 'border-slate-800',
+      bg: v > 60 ? 'bg-red-950/55' : v > 30 ? 'bg-amber-950/35' : 'bg-slate-900/50',
+      border: v > 60 ? 'border-red-600/60' : v > 30 ? 'border-amber-600/50' : 'border-slate-700/60',
       intensity: v,
+      label: `${Math.round(v)}%`,
     }
   }
   if (overlay === 'ethical_debt') {
     const v = zone.ethicalDebt
     return {
-      bg: v > 60 ? 'bg-rose-950/50' : v > 30 ? 'bg-rose-950/25' : 'bg-slate-900/40',
-      border: v > 60 ? 'border-rose-700/50' : v > 30 ? 'border-rose-800/40' : 'border-slate-800',
+      bg: v > 60 ? 'bg-rose-950/55' : v > 30 ? 'bg-rose-950/30' : 'bg-slate-900/50',
+      border: v > 60 ? 'border-rose-600/60' : v > 30 ? 'border-rose-700/50' : 'border-slate-700/60',
       intensity: v,
+      label: `${Math.round(v)}`,
     }
   }
   if (overlay === 'ai_interventions') {
     const v = Math.min(100, zone.aiEventCount * 5)
     return {
-      bg: v > 60 ? 'bg-sky-950/40' : v > 20 ? 'bg-sky-950/20' : 'bg-slate-900/40',
-      border: v > 60 ? 'border-sky-700/50' : v > 20 ? 'border-sky-800/40' : 'border-slate-800',
+      bg: v > 60 ? 'bg-sky-950/45' : v > 20 ? 'bg-sky-950/25' : 'bg-slate-900/50',
+      border: v > 60 ? 'border-sky-600/60' : v > 20 ? 'border-sky-700/50' : 'border-slate-700/60',
       intensity: v,
+      label: `${zone.aiEventCount}`,
     }
   }
-  return { bg: 'bg-slate-900/40', border: 'border-slate-800', intensity: 0 }
+  return { bg: 'bg-slate-900/50', border: 'border-slate-700/60', intensity: 0 }
 }
 
 // ── Zone tile ─────────────────────────────────────────────────────────────────
@@ -300,43 +280,79 @@ function ZoneTile({
   selected: boolean
   onSelect: (id: string | null) => void
 }) {
-  const { bg, border, intensity } = getOverlayStyle(zone, overlay)
+  const { bg, border, label: overlayLabel } = getOverlayStyle(zone, overlay)
 
-  const statusDot = zone.governanceStatus === 'failing'
-    ? 'bg-red-500'
-    : zone.governanceStatus === 'strained'
-    ? 'bg-amber-500'
-    : 'bg-slate-600'
+  const statusConfig = {
+    failing:  { dot: 'bg-red-500',    badge: 'text-red-400 bg-red-950/60 border-red-800/60',    label: 'Failing' },
+    strained: { dot: 'bg-amber-400',  badge: 'text-amber-400 bg-amber-950/60 border-amber-800/60', label: 'Strained' },
+    nominal:  { dot: 'bg-emerald-500', badge: 'text-slate-500 bg-slate-800/60 border-slate-700/60', label: 'Nominal' },
+  }[zone.governanceStatus]
 
   return (
     <button
       type="button"
       onClick={() => onSelect(selected ? null : zone.id)}
-      className={`text-left border rounded-lg p-4 transition-all h-full min-h-[100px] ${bg} ${border} ${
-        selected ? 'ring-1 ring-slate-400 ring-offset-1 ring-offset-slate-950' : 'hover:border-slate-600'
+      className={`text-left border-2 rounded-xl p-5 transition-all h-full min-h-[140px] w-full ${bg} ${border} ${
+        selected
+          ? 'ring-2 ring-slate-400 ring-offset-2 ring-offset-slate-950'
+          : 'hover:border-slate-500/80'
       }`}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          <span className={`w-1.5 h-1.5 rounded-full ${statusDot} mt-0.5 shrink-0`} />
-          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-            {zone.shortLabel}
-          </p>
+      {/* Header row */}
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2.5">
+          <span className="text-xl leading-none">{zone.icon}</span>
+          <div>
+            <p className="text-base font-semibold text-slate-100 leading-tight">{zone.label}</p>
+            <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mt-0.5">{zone.shortLabel}</p>
+          </div>
         </div>
-        {overlay !== 'none' && (
-          <span className="text-[10px] font-mono text-slate-600 tabular-nums">
-            {Math.round(intensity)}
+        <div className="flex flex-col items-end gap-1 shrink-0">
+          <span className={`text-[11px] font-mono border px-2 py-0.5 rounded-full uppercase tracking-wide ${statusConfig.badge}`}>
+            {statusConfig.label}
+          </span>
+          {overlayLabel && (
+            <span className="text-sm font-mono font-bold text-slate-300 tabular-nums">
+              {overlayLabel}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Status dot + mini bars */}
+      <div className="flex items-center gap-2 mb-3">
+        <span className={`w-2.5 h-2.5 rounded-full ${statusConfig.dot} shrink-0`} />
+        {/* Inline queue pressure bar */}
+        <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all ${
+              zone.queuePressure > 70 ? 'bg-orange-500' : zone.queuePressure > 40 ? 'bg-amber-500' : 'bg-slate-600'
+            }`}
+            style={{ width: `${zone.queuePressure}%` }}
+          />
+        </div>
+        <span className="text-xs font-mono text-slate-500 tabular-nums w-8 text-right shrink-0">
+          {zone.queuePressure}%
+        </span>
+      </div>
+
+      {/* Stat chips */}
+      <div className="flex flex-wrap gap-1.5 text-xs font-mono">
+        {zone.patientCount > 0 && (
+          <span className="bg-slate-800/80 text-slate-400 px-2 py-0.5 rounded-md">
+            {zone.patientCount} pts
           </span>
         )}
-      </div>
-      <p className="text-sm text-slate-200 font-medium leading-snug">{zone.label}</p>
-
-      {/* Mini stats */}
-      <div className="mt-2 flex flex-wrap gap-2 text-[10px] font-mono text-slate-600">
-        {zone.patientCount > 0 && <span>{zone.patientCount} pts</span>}
-        {zone.escalationCount > 0 && <span className="text-amber-700">{zone.escalationCount} esc</span>}
-        {zone.aiEventCount > 0 && <span className="text-sky-800">{zone.aiEventCount} AI</span>}
+        {zone.escalationCount > 0 && (
+          <span className="bg-amber-950/60 text-amber-400 border border-amber-800/40 px-2 py-0.5 rounded-md">
+            {zone.escalationCount} escalation{zone.escalationCount !== 1 ? 's' : ''}
+          </span>
+        )}
+        {zone.aiEventCount > 0 && (
+          <span className="bg-sky-950/60 text-sky-400 border border-sky-800/40 px-2 py-0.5 rounded-md">
+            {zone.aiEventCount} AI events
+          </span>
+        )}
       </div>
     </button>
   )
@@ -346,87 +362,110 @@ function ZoneTile({
 
 function ZoneDetailPanel({ zone, onClose }: { zone: ZoneState; onClose: () => void }) {
   const rows = [
-    { label: 'Queue pressure',        value: zone.queuePressure,         highMeansGood: false },
-    { label: 'Trust level',           value: zone.trustLevel,            highMeansGood: true },
-    { label: 'Ethical debt',          value: zone.ethicalDebt,           highMeansGood: false },
-    { label: 'Staff load',            value: zone.staffLoad,             highMeansGood: false },
+    { label: 'Queue pressure', value: zone.queuePressure, highMeansGood: false,
+      note: zone.queuePressure > 70 ? 'Critical — patients accumulating faster than throughput' : undefined },
+    { label: 'Trust level',    value: zone.trustLevel,    highMeansGood: true,
+      note: zone.trustLevel < 50 ? 'Degraded — staff and patients doubting system decisions' : undefined },
+    { label: 'Ethical debt',   value: zone.ethicalDebt,   highMeansGood: false,
+      note: zone.ethicalDebt > 50 ? 'Elevated — unreviewed decisions or displaced vulnerable patients' : undefined },
+    { label: 'Staff load',     value: zone.staffLoad,     highMeansGood: false,
+      note: zone.staffLoad > 70 ? 'High — cognitive overload risk, security incidents likely' : undefined },
   ]
 
+  const statusConfig = {
+    failing:  { label: 'Failing',  classes: 'text-red-400 bg-red-950/50 border-red-800/60' },
+    strained: { label: 'Strained', classes: 'text-amber-400 bg-amber-950/50 border-amber-800/60' },
+    nominal:  { label: 'Nominal',  classes: 'text-slate-400 bg-slate-800/50 border-slate-700/60' },
+  }[zone.governanceStatus]
+
   return (
-    <div className="border border-slate-700 rounded-lg p-5 bg-slate-900">
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">
-            Zone detail
-          </p>
-          <h3 className="text-base font-medium text-slate-100">{zone.label}</h3>
-          <span className={`text-[10px] font-mono border px-1.5 py-0.5 rounded uppercase tracking-wider mt-1 inline-block ${
-            zone.governanceStatus === 'failing'
-              ? 'text-red-400 border-red-900'
-              : zone.governanceStatus === 'strained'
-              ? 'text-amber-400 border-amber-900'
-              : 'text-slate-500 border-slate-700'
-          }`}>
-            {zone.governanceStatus}
-          </span>
+    <div className="border border-slate-600 rounded-xl p-6 bg-slate-900/80 backdrop-blur-sm">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">{zone.icon}</span>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-100">{zone.label}</h3>
+            <span className={`text-xs font-mono border px-2.5 py-0.5 rounded-full mt-1 inline-block ${statusConfig.classes}`}>
+              {statusConfig.label}
+            </span>
+          </div>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="text-slate-600 hover:text-slate-400 text-xs font-mono transition-colors"
+          className="text-slate-500 hover:text-slate-200 text-sm font-mono border border-slate-700 hover:border-slate-500 px-2.5 py-1 rounded-lg transition-colors"
         >
           ✕ close
         </button>
       </div>
 
-      <p className="text-xs text-slate-500 leading-relaxed mb-4">
+      <p className="text-sm text-slate-400 leading-relaxed mb-5 bg-slate-800/40 rounded-lg px-4 py-3">
         {zone.description}
       </p>
 
-      <div className="space-y-2.5">
-        {rows.map(({ label, value, highMeansGood }) => {
-          const color = highMeansGood
-            ? value >= 70 ? 'text-slate-400' : value >= 45 ? 'text-amber-400' : 'text-red-400'
-            : value <= 30 ? 'text-slate-400' : value <= 55 ? 'text-amber-400' : 'text-red-400'
-          const barColor = highMeansGood
-            ? value >= 70 ? 'bg-slate-600' : value >= 45 ? 'bg-amber-600' : 'bg-red-700'
-            : value <= 30 ? 'bg-slate-600' : value <= 55 ? 'bg-amber-600' : 'bg-red-700'
+      <div className="space-y-4">
+        {rows.map(({ label, value, highMeansGood, note }) => {
+          const isGood = highMeansGood ? value >= 70 : value <= 30
+          const isWarn = highMeansGood ? value >= 45 : value <= 55
+          const numColor = isGood ? 'text-slate-300' : isWarn ? 'text-amber-400' : 'text-red-400'
+          const barColor = isGood ? 'bg-slate-500' : isWarn ? 'bg-amber-500' : 'bg-red-500'
+
           return (
             <div key={label}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-slate-500">{label}</span>
-                <span className={`text-xs font-mono tabular-nums ${color}`}>{Math.round(value)}</span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-sm text-slate-300 font-medium">{label}</span>
+                <span className={`text-sm font-mono font-bold tabular-nums ${numColor}`}>
+                  {Math.round(value)}
+                  <span className="text-xs font-normal text-slate-600 ml-0.5">/ 100</span>
+                </span>
               </div>
-              <div className="h-0.5 bg-slate-800 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${barColor}`} style={{ width: `${value}%` }} />
+              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${barColor}`}
+                  style={{ width: `${value}%` }}
+                />
               </div>
+              {note && (
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">{note}</p>
+              )}
             </div>
           )
         })}
       </div>
 
-      {zone.aiEventCount > 0 && (
-        <p className="text-xs text-sky-600 mt-4">
-          {zone.aiEventCount} AI interventions logged in this zone.
-        </p>
-      )}
-      {zone.escalationCount > 0 && (
-        <p className="text-xs text-amber-600 mt-2">
-          {zone.escalationCount} escalation events — check event log for unresolved chains.
-        </p>
+      {(zone.aiEventCount > 0 || zone.escalationCount > 0) && (
+        <div className="mt-5 pt-4 border-t border-slate-800 flex flex-col gap-2">
+          {zone.aiEventCount > 0 && (
+            <div className="flex items-center gap-2 text-sm text-sky-400">
+              <span className="bg-sky-950/50 border border-sky-800/40 px-2.5 py-0.5 rounded-md font-mono font-bold">
+                {zone.aiEventCount}
+              </span>
+              <span className="text-slate-400">AI interventions logged in this zone</span>
+            </div>
+          )}
+          {zone.escalationCount > 0 && (
+            <div className="flex items-center gap-2 text-sm text-amber-400">
+              <span className="bg-amber-950/50 border border-amber-800/40 px-2.5 py-0.5 rounded-md font-mono font-bold">
+                {zone.escalationCount}
+              </span>
+              <span className="text-slate-400">escalation events — check event log for unresolved chains</span>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )
 }
 
-// ── Overlay legend ────────────────────────────────────────────────────────────
+// ── Overlay definitions ────────────────────────────────────────────────────────
 
 const OVERLAY_META: Array<{ value: OverlayMode; label: string; description: string }> = [
-  { value: 'none',             label: 'Governance status', description: 'Zone health derived from trust + strain + debt combined' },
-  { value: 'queue_density',    label: 'Queue density',     description: 'Queue pressure per zone — higher = more invisible waiting harm' },
-  { value: 'trust_degradation',label: 'Trust decay',       description: 'Where operational trust has degraded most' },
-  { value: 'ethical_debt',     label: 'Ethical debt',      description: 'Accumulated ethical cost weighted by zone activity' },
-  { value: 'ai_interventions', label: 'AI activity',       description: 'Zones with highest AI event density' },
+  { value: 'none',              label: 'Governance',    description: 'Zone health derived from trust + strain + ethical debt combined' },
+  { value: 'queue_density',     label: 'Queue density', description: 'Queue pressure per zone — higher means patients waiting longer, invisible harm accumulating' },
+  { value: 'trust_degradation', label: 'Trust decay',   description: 'Where operational trust has degraded most — affects override willingness' },
+  { value: 'ethical_debt',      label: 'Ethical debt',  description: 'Accumulated ethical cost weighted by zone activity and vulnerable cohort impact' },
+  { value: 'ai_interventions',  label: 'AI activity',   description: 'Zones with highest AI event density — review for automation drift' },
 ]
 
 // ── Main export ───────────────────────────────────────────────────────────────
@@ -449,45 +488,45 @@ export default function InstitutionalMap({
 
   return (
     <section>
-      {/* ── Header ────────────────────────────────────────────────── */}
-      <div className="mb-5">
+      {/* ── Header ─────────────────────────────────────────────────── */}
+      <div className="mb-6">
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-1">
           Institutional map
         </p>
-        <h2 className="text-2xl font-light text-slate-100 tracking-tight mb-1">
-          Where the pressure accumulated.
+        <h2 className="text-2xl font-light text-slate-100 tracking-tight mb-2">
+          Where the pressure accumulated
         </h2>
-        <p className="text-xs text-slate-500 leading-relaxed">
-          Each zone shows how governance conditions evolved during the scenario.
-          Click a zone for detail. Toggle the overlay to see different pressure signals.
+        <p className="text-sm text-slate-400 leading-relaxed">
+          Click any zone to see its full governance breakdown.
+          Toggle the overlay to switch signal layers.
         </p>
       </div>
 
-      {/* ── Overlay selector ──────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      {/* ── Overlay selector ───────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-2 mb-3">
         {OVERLAY_META.map(o => (
           <button
             key={o.value}
             type="button"
             onClick={() => setOverlay(o.value)}
-            className={`text-[10px] font-mono border px-2 py-1 rounded uppercase tracking-widest transition-colors ${
+            className={`text-xs font-medium border px-3 py-1.5 rounded-lg uppercase tracking-wide transition-colors ${
               overlay === o.value
-                ? 'text-slate-200 border-slate-500 bg-slate-800'
-                : 'text-slate-600 border-slate-800 hover:border-slate-700 hover:text-slate-400'
+                ? 'text-slate-100 border-slate-400 bg-slate-700'
+                : 'text-slate-500 border-slate-700 hover:border-slate-500 hover:text-slate-300'
             }`}
           >
             {o.label}
           </button>
         ))}
       </div>
-      <p className="text-[10px] text-slate-600 mb-4 leading-relaxed">
+      <p className="text-xs text-slate-500 mb-5 leading-relaxed bg-slate-900/40 border border-slate-800 rounded-lg px-3 py-2">
         {activeOverlayMeta.description}
       </p>
 
-      {/* ── Zone grid ─────────────────────────────────────────────── */}
+      {/* ── Zone grid ──────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3 mb-4">
-        {/* Row 1: Triage | ER | OPD */}
-        {['triage', 'er', 'opd'].map(id => (
+        {/* Row 1 */}
+        {(['triage', 'er', 'opd'] as const).map(id => (
           <ZoneTile
             key={id}
             zone={zoneStates[id]}
@@ -496,7 +535,7 @@ export default function InstitutionalMap({
             onSelect={setSelectedZone}
           />
         ))}
-        {/* Row 2: Waiting (spans 2) | Discharge */}
+        {/* Row 2 */}
         <div className="col-span-2">
           <ZoneTile
             zone={zoneStates['waiting']}
@@ -513,7 +552,7 @@ export default function InstitutionalMap({
         />
       </div>
 
-      {/* ── Zone detail panel ─────────────────────────────────────── */}
+      {/* ── Detail panel ───────────────────────────────────────────── */}
       {selectedZone && zoneStates[selectedZone] && (
         <ZoneDetailPanel
           zone={zoneStates[selectedZone]}
@@ -521,22 +560,22 @@ export default function InstitutionalMap({
         />
       )}
 
-      {/* ── Legend ────────────────────────────────────────────────── */}
-      <div className="mt-4 flex flex-wrap items-center gap-4 text-[10px] font-mono text-slate-700">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-          <span>nominal</span>
+      {/* ── Legend ─────────────────────────────────────────────────── */}
+      <div className="mt-5 flex flex-wrap items-center gap-5 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-emerald-500 shrink-0" />
+          <span className="text-slate-500">Nominal</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-          <span>strained</span>
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-amber-400 shrink-0" />
+          <span className="text-slate-500">Strained</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-          <span>failing</span>
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
+          <span className="text-slate-500">Failing</span>
         </div>
-        <span className="ml-auto text-slate-800">
-          click a zone for detail
+        <span className="ml-auto text-xs text-slate-700 italic">
+          bar shows queue pressure · click for full detail
         </span>
       </div>
     </section>

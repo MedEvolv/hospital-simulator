@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"console.log\\(require\\('./node_modules/next/package.json'\\).version\\)\")",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3099/)",
+      "Bash(kill %1)",
+      "Bash(python tests/stress_test.py)",
+      "Bash(python ../tests/stress_test.py)",
+      "Bash(PYTHONPATH=\"C:/HospitalSimulator/engine\" python tests/stress_test.py)",
+      "Bash(python3 -c \"import sys,json; lines=sys.stdin.read\\(\\).strip\\(\\).split\\('\\\\n'\\); [print\\(json.loads\\(l\\).get\\('message',{}\\).get\\('content',''\\)[:500] if isinstance\\(json.loads\\(l\\).get\\('message',{}\\).get\\('content',''\\),str\\) else str\\(json.loads\\(l\\).get\\('message',{}\\).get\\('content',''\\)\\)[:500]\\) for l in lines[-5:] if l]\")",
+      "Read(//mnt/c/Users/ishaa/.claude/**)",
+      "Read(//c/Users/ishaa/.claude/projects/**)",
+      "Bash(npx tsc *)",
+      "Bash(vercel deploy *)",
+      "Bash(npx vercel *)",
+      "mcp__13ba087d-fb41-4182-8a4d-914d7c48e885__deploy_to_vercel",
+      "Bash(node -e \"require\\('ai'\\); console.log\\('ai installed'\\)\")",
+      "Bash(npm install *)",
+      "Bash(node -e \"const ai = require\\('ai'\\); console.log\\('ai version:', require\\('./node_modules/ai/package.json'\\).version\\)\")",
+      "Bash(node -e \"require\\('@ai-sdk/openai'\\); console.log\\('ok'\\)\")",
+      "Bash(node -e \"require\\('ai/react'\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('exports',{}\\).keys\\(\\)\\)[:20]\\)\")",
+      "Bash(python3 -c \"import sys,json; lines=sys.stdin.read\\(\\).strip\\(\\).split\\('\\\\n'\\); [print\\(json.loads\\(l\\).get\\('type',''\\), json.loads\\(l\\).get\\('message',{}\\).get\\('role',''\\), str\\(json.loads\\(l\\).get\\('message',{}\\).get\\('content',''\\)\\)[:300]\\) for l in lines[-20:] if l.strip\\(\\)]\")"
+    ]
+  }
+}
