@@ -106,12 +106,6 @@ export default function ConfigureScreen() {
             >
               Sandbox →
             </Link>
-            <button
-              onClick={() => router.push('/survey')}
-              className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
-            >
-              Context survey →
-            </button>
           </div>
         </div>
         <h1 className="text-5xl font-light text-slate-50 tracking-tight mb-4">
