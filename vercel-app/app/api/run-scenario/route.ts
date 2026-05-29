@@ -28,12 +28,21 @@ import type { SimulationReport } from '@/lib/types'
 
 /**
  * Resolve the base URL for internal API calls.
- * Vercel sets VERCEL_URL automatically (without protocol).
- * For local dev, fall back to localhost:3000.
+ *
+ * Priority:
+ *   1. NEXT_PUBLIC_BASE_URL — explicit override (useful for custom domains)
+ *   2. VERCEL_PROJECT_PRODUCTION_URL — stable production domain set by Vercel
+ *      (e.g. sandbox-v2.archlife.in). Unlike VERCEL_URL, this is the public
+ *      custom domain and is NOT behind Vercel deployment-protection auth.
+ *   3. VERCEL_URL — deployment-scoped subdomain (may be auth-gated on preview)
+ *   4. localhost:3000 — local dev fallback
  */
 function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_BASE_URL) {
     return process.env.NEXT_PUBLIC_BASE_URL.replace(/\/$/, '')
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`
