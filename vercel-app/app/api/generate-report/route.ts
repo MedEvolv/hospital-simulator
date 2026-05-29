@@ -687,7 +687,7 @@ export async function POST(req: Request) {
 
   try {
     const completion = await deepseek.chat.completions.create({
-      model:       'deepseek-v4-flash',
+      model:       'deepseek-chat',
       messages,
       max_tokens:  maxTokens,
       temperature: 0.7,
