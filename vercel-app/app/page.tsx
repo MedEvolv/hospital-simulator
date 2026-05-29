@@ -114,6 +114,12 @@ export default function ConfigureScreen() {
           </p>
           <div className="flex items-center gap-2">
             <Link
+              href="/sahi"
+              className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
+            >
+              SAHI alignment
+            </Link>
+            <Link
               href="/history"
               className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
             >
