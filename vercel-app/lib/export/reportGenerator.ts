@@ -10,37 +10,20 @@
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+// Import canonical types — do NOT redeclare locally; local copies silently
+// diverge from upstream whenever fields are added or renamed.
+import type { SignalMetric } from '@/lib/types/simulation'
+import type {
+  ReflectiveInsight,
+  GovernanceSnapshot as GovernanceTimelinePoint,
+} from '@/lib/scenarios/schema'
+
 export type ReportType =
   | 'governance_stress_test'   // Full scenario analysis
   | 'ethical_debt'             // Ethical debt breakdown
   | 'accountability_trace'     // Responsibility map per event
   | 'committee_briefing'       // Short executive summary
   | 'raw_json'                 // Complete run record
-
-interface SignalMetric {
-  value: number
-  delta: number
-  explanation: string
-}
-
-interface ReflectiveInsight {
-  type: string
-  severity: string
-  title: string
-  explanation: string
-  governanceImplication: string
-  affectedConcepts: string[]
-  suggestedIntervention?: string
-}
-
-interface GovernanceTimelinePoint {
-  tick: number
-  trust: number
-  hiddenStrain: number
-  ethicalDebt: number
-  reviewCapacity: number
-  escalationWillingness: number
-}
 
 interface ScenarioRunSnapshot {
   scenario: {

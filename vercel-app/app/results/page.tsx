@@ -59,14 +59,23 @@ export default function ResultsScreen() {
   useEffect(() => {
     const raw = sessionStorage.getItem(SESSION_KEY)
     if (!raw) { router.replace('/'); return }
-    const parsed: SimulationReport = JSON.parse(raw)
+    let parsed: SimulationReport
+    try {
+      parsed = JSON.parse(raw)
+    } catch {
+      router.replace('/')
+      return
+    }
     setReport(parsed)
 
     // Capacity — prefer value stored by page.tsx (user-set), fall back to report echo
     const capRaw = sessionStorage.getItem(CAPACITY_KEY)
-    const cap: CapacityConfig = capRaw
-      ? JSON.parse(capRaw)
-      : (parsed.capacity ?? { patients_per_hour: 6, er_capacity: 2, opd_capacity: 4 })
+    let cap: CapacityConfig
+    try {
+      cap = capRaw ? JSON.parse(capRaw) : (parsed.capacity ?? { patients_per_hour: 6, er_capacity: 2, opd_capacity: 4 })
+    } catch {
+      cap = parsed.capacity ?? { patients_per_hour: 6, er_capacity: 2, opd_capacity: 4 }
+    }
     setCapacity(cap)
 
     // ── Fetch enriched patient profiles via DeepSeek ───────────────────

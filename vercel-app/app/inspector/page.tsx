@@ -285,7 +285,12 @@ export default function InspectorScreen() {
   useEffect(() => {
     const raw = sessionStorage.getItem(SESSION_KEY)
     if (!raw) { router.replace('/'); return }
-    setReport(JSON.parse(raw))
+    try {
+      setReport(JSON.parse(raw))
+    } catch {
+      router.replace('/')
+      return
+    }
 
     // Read role from survey for role-specific notes
     try {

@@ -10,6 +10,8 @@ import {
 import Disclaimer from '@/components/Disclaimer'
 import AssumptionsPanel from '@/components/AssumptionsPanel'
 import { SESSION_KEY } from '@/lib/types'
+import type { SignalMetric } from '@/lib/types/simulation'
+import type { ReflectiveInsight, GovernanceSnapshot } from '@/lib/scenarios/schema'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -31,29 +33,14 @@ interface ScenarioRunBlock {
   base_event_count: number
   injected_event_count: number
   five_signals: {
-    PSS: { value: number; delta: number; explanation: string }
-    PES: { value: number; delta: number; explanation: string }
-    SSS: { value: number; delta: number; explanation: string }
-    EIC: { value: number; delta: number; explanation: string }
-    STI: { value: number; delta: number; explanation: string }
+    PSS: SignalMetric
+    PES: SignalMetric
+    SSS: SignalMetric
+    EIC: SignalMetric
+    STI: SignalMetric
   }
-  governance_timeline: Array<{
-    tick: number
-    trust: number
-    hiddenStrain: number
-    ethicalDebt: number
-    reviewCapacity: number
-    escalationWillingness: number
-  }>
-  reflective_insights: Array<{
-    type: string
-    severity: string
-    title: string
-    explanation: string
-    governanceImplication: string
-    affectedConcepts: string[]
-    suggestedIntervention?: string
-  }>
+  governance_timeline: GovernanceSnapshot[]
+  reflective_insights: ReflectiveInsight[]
   governance_state?: {
     human_state?: {
       averageFatigue?: number
