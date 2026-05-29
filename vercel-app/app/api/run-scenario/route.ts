@@ -56,11 +56,20 @@ async function callPythonSimulation(
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), 25_000)
 
+  // Pass the Vercel protection-bypass secret so server-to-server calls
+  // aren't blocked when Deployment Protection is enabled on the project.
+  const bypassHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+  if (process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
+    bypassHeaders['x-vercel-protection-bypass'] = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+  }
+
   let res: Response
   try {
     res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: bypassHeaders,
       body: JSON.stringify({
         profile: simulationProfile,
         duration_ticks: durationTicks,
