@@ -47,7 +47,7 @@ interface ScenarioRunBlock {
   reflective_insights: ReflectiveInsight[]
 }
 
-type SimulationReportV2 = SimulationReport & { scenario_run?: ScenarioRunBlock }
+type SimulationReportV2 = SimulationReport & { scenario_run?: ScenarioRunBlock; _sample?: boolean }
 
 export default function ResultsScreen() {
   const router = useRouter()
@@ -149,6 +149,25 @@ export default function ResultsScreen() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-14">
+      {/* ── Sample banner ─────────────────────────────────────────── */}
+      {report._sample && (
+        <div className="mb-6 border border-sky-800/60 bg-sky-950/30 rounded-lg px-4 py-3 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-mono text-sky-400 uppercase tracking-widest mb-0.5">Sample report</p>
+            <p className="text-sm text-slate-300">
+              This is a pre-computed example run, shown so you can read the output before running your own.
+              Every number below comes from a real deterministic scenario.
+            </p>
+          </div>
+          <button
+            onClick={() => router.push('/')}
+            className="shrink-0 text-xs font-medium text-sky-300 border border-sky-700 hover:bg-sky-900/40 px-3 py-1.5 rounded transition-colors"
+          >
+            Run your own →
+          </button>
+        </div>
+      )}
+
       {/* ── Header ────────────────────────────────────────────────── */}
       <header className="mb-10">
         {sr ? (

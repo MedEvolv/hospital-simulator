@@ -44,7 +44,26 @@ export default function ConfigureScreen() {
   const [opdCapacity, setOpdCapacity] = useState<number>(4)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [loadingSample, setLoadingSample] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Load a pre-computed example run so first-time users can read a real
+  // report before committing to running their own scenario.
+  async function viewSampleReport() {
+    setLoadingSample(true)
+    setError(null)
+    try {
+      const res = await fetch('/sample-run.json')
+      if (!res.ok) throw new Error('Could not load sample report')
+      const report = await res.json()
+      report._sample = true
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(report))
+      router.push('/results')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not load sample')
+      setLoadingSample(false)
+    }
+  }
 
   async function runCustomSimulation() {
     setLoading(true)
@@ -129,6 +148,21 @@ export default function ConfigureScreen() {
           vulnerabilities. <span className="text-slate-200">Custom runs</span> let you vary
           parameters freely.
         </p>
+
+        {/* First-time orientation: open a real example report without running anything */}
+        <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between gap-4">
+          <p className="text-xs text-slate-500 leading-relaxed">
+            New here? See what the output looks like before you run anything.
+          </p>
+          <button
+            type="button"
+            onClick={viewSampleReport}
+            disabled={loadingSample}
+            className="shrink-0 text-xs font-medium text-slate-200 border border-slate-600 hover:border-slate-400 hover:bg-slate-800 px-3 py-1.5 rounded transition-colors disabled:opacity-50"
+          >
+            {loadingSample ? 'Loading…' : 'See a sample report →'}
+          </button>
+        </div>
       </section>
 
       {/* ── Mode tabs ───────────────────────────────────────────────── */}
