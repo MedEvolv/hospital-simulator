@@ -62,6 +62,18 @@ interface ScenarioRunSnapshot {
       reviewCapacity?: number
     }
   }
+  expert_feedback?: {
+    scenarioRealism?: number
+    variableAccuracy?: number
+    insightUsefulness?: number
+    escalationRealism?: number
+    missingFactors?: string
+    strongestInsight?: string
+    wouldUseForTraining?: string
+    professionalRole?: string
+    additionalNotes?: string
+    submittedAt?: string
+  }
 }
 
 // ── Formatting helpers ────────────────────────────────────────────────────────
@@ -283,6 +295,43 @@ export function generateGovernanceStressTestReport(run: ScenarioRunSnapshot): st
     lines.push(``)
     lines.push(`_Human state is not a performance verdict. It is the institutional cost of operating_`)
     lines.push(`_under the conditions this scenario created._`)
+    lines.push(``)
+  }
+
+  // ── Expert feedback (if captured) ───────────────────────────
+  const fb = run.expert_feedback
+  if (fb && (fb.scenarioRealism || fb.missingFactors || fb.strongestInsight)) {
+    lines.push(`## Expert feedback`)
+    lines.push(``)
+    if (fb.professionalRole) {
+      lines.push(`**Reviewer:** ${fb.professionalRole}`)
+      lines.push(``)
+    }
+    const stars = (n?: number) => n ? '★'.repeat(n) + '☆'.repeat(5 - n) : '—'
+    lines.push(`| Dimension | Rating |`)
+    lines.push(`|-----------|--------|`)
+    lines.push(`| Scenario realism       | ${stars(fb.scenarioRealism)} |`)
+    lines.push(`| Variable accuracy      | ${stars(fb.variableAccuracy)} |`)
+    lines.push(`| Insight usefulness     | ${stars(fb.insightUsefulness)} |`)
+    lines.push(`| Escalation realism     | ${stars(fb.escalationRealism)} |`)
+    lines.push(``)
+    if (fb.wouldUseForTraining) {
+      lines.push(`**Would use for training:** ${fb.wouldUseForTraining}`)
+      lines.push(``)
+    }
+    if (fb.strongestInsight) {
+      lines.push(`**Strongest insight:** ${fb.strongestInsight}`)
+      lines.push(``)
+    }
+    if (fb.missingFactors) {
+      lines.push(`**Missing factors:** ${fb.missingFactors}`)
+      lines.push(``)
+    }
+    if (fb.additionalNotes) {
+      lines.push(`**Additional notes:** ${fb.additionalNotes}`)
+      lines.push(``)
+    }
+    lines.push(`---`)
     lines.push(``)
   }
 

@@ -10,7 +10,7 @@
  * Storage key: 'im_expert_feedback'
  */
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -76,8 +76,8 @@ function RatingRow({
       </div>
       {(lowLabel || highLabel) && (
         <div className="flex items-center justify-between mt-1">
-          <span className="text-[9px] text-slate-700">{lowLabel}</span>
-          <span className="text-[9px] text-slate-700">{highLabel}</span>
+          <span className="text-[11px] text-slate-600">{lowLabel}</span>
+          <span className="text-[11px] text-slate-600">{highLabel}</span>
         </div>
       )}
     </div>
@@ -115,7 +115,7 @@ export default function ExpertFeedbackForm({
 
   const isReadyToSubmit = scenarioRealism > 0 && insightUsefulness > 0
 
-  function handleSubmit() {
+  const handleSubmit = useCallback(async () => {
     const feedback: ExpertFeedback = {
       scenarioRealism,
       variableAccuracy,
@@ -131,28 +131,39 @@ export default function ExpertFeedbackForm({
       runId,
     }
 
-    // Persist to sessionStorage
+    // 1. Persist to sessionStorage (always — works offline)
     try {
       sessionStorage.setItem(existingKey, JSON.stringify(feedback))
-      // Also keep a list of all feedback for export
       const allKey = FEEDBACK_KEY + '_all'
       const existing = JSON.parse(sessionStorage.getItem(allKey) ?? '[]') as ExpertFeedback[]
       existing.push(feedback)
       sessionStorage.setItem(allKey, JSON.stringify(existing))
     } catch {
-      // sessionStorage may be full or unavailable — silently continue
+      // sessionStorage may be full or unavailable
+    }
+
+    // 2. Persist to Supabase via API route (best-effort — don't block UI)
+    if (runId) {
+      fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ runId, feedback }),
+      }).catch(() => { /* silently ignore — local copy already saved */ })
     }
 
     onSubmit?.(feedback)
     setSubmitted(true)
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scenarioRealism, variableAccuracy, insightUsefulness, escalationRealism,
+      missingFactors, strongestInsight, wouldUseForTraining, professionalRole,
+      additionalNotes, scenarioId, runId, existingKey, onSubmit])
 
   if (submitted) {
     return (
       <div className="border border-slate-800 rounded-lg px-5 py-6 bg-slate-900/30 text-center">
-        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">Feedback received</p>
-        <p className="text-sm text-slate-300 mb-1">Thank you.</p>
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">Feedback received</p>
+        <p className="text-base text-slate-200 font-medium mb-1">Thank you.</p>
+        <p className="text-sm text-slate-400 leading-relaxed">
           Your expert feedback has been saved and will be included in the exported governance report.
         </p>
       </div>
@@ -169,7 +180,7 @@ export default function ExpertFeedbackForm({
       >
         <div>
           <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">Expert feedback</p>
-          <p className="text-[11px] text-slate-600 mt-0.5">Help improve simulation validity · Optional</p>
+          <p className="text-xs text-slate-500 mt-0.5">Help improve simulation validity · Optional</p>
         </div>
         <span className="text-slate-600 text-xs">{expanded ? '▲ Collapse' : '▼ Expand'}</span>
       </button>
@@ -179,7 +190,7 @@ export default function ExpertFeedbackForm({
         <div className="border-t border-slate-800 px-5 py-6 space-y-6">
           {/* Context banner */}
           <div className="bg-slate-800/30 rounded p-3">
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 leading-relaxed">
               This feedback is used to improve the simulation&apos;s realism and calibration.
               Questions are designed for clinicians, governance professionals, and AI researchers.
               All fields are optional except scenario realism and insight usefulness.

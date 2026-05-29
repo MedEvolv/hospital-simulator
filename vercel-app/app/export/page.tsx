@@ -126,7 +126,17 @@ export default function ExportPage() {
       try {
         const report = JSON.parse(raw)
         if (report?.scenario_run) {
-          setScenarioRun(report.scenario_run)
+          const sr = report.scenario_run
+          // Merge in expert feedback from sessionStorage if not already on the run
+          if (!sr.expert_feedback) {
+            const runId = sr.run_id
+            const fbKey = `im_expert_feedback${runId ? `_${runId}` : ''}`
+            try {
+              const fbRaw = sessionStorage.getItem(fbKey)
+              if (fbRaw) sr.expert_feedback = JSON.parse(fbRaw)
+            } catch { /* ignore */ }
+          }
+          setScenarioRun(sr)
         }
       } catch { /* ignore */ }
     }
