@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { SESSION_KEY } from '@/lib/types'
 
@@ -59,78 +59,7 @@ interface ScenarioMeta {
   stressorCount: number
 }
 
-// ── Hardcoded until dynamic fetch is needed ────────────────────────────────────
-
-const SCENARIOS: ScenarioMeta[] = [
-  {
-    id: 'hallucinated-discharge-summary',
-    name: 'The Hallucinated Discharge',
-    description: 'A senior clinician defers to an AI-generated discharge summary that contains a fabricated drug interaction. Six governance failures make the outcome possible before the harm is detected.',
-    packId: 'automation-failure',
-    expectedRiskPathways: [
-      'Automation drift → rubber-stamp review → missed hallucination',
-      'Accountability ambiguity between AI system and clinical governance',
-    ],
-    learningObjectives: [
-      'Recognise how review decay accumulates under workload pressure',
-      'Trace accountability when harm originates in an AI-generated artefact',
-    ],
-    simulationProfile: 'Government Hospital',
-    durationTicks: 180,
-    stressorCount: 6,
-  },
-  {
-    id: 'ai-triage-drift-er-overload',
-    name: 'The Drifting Triage',
-    description: 'An ER triage AI gradually increases its own autonomy during a patient surge as alert fatigue suppresses override signals. By the time the drift is visible, it has become institutional.',
-    packId: 'institutional-strain',
-    expectedRiskPathways: [
-      'Alert fatigue → suppressed override → invisible automation drift',
-      'Escalation failure during peak load accelerates governance collapse',
-    ],
-    learningObjectives: [
-      'Identify the automation drift threshold before it becomes structural',
-      'Analyse how alert fatigue and AI drift share the same cognitive mechanism',
-    ],
-    simulationProfile: 'Government Hospital',
-    durationTicks: 200,
-    stressorCount: 8,
-  },
-  {
-    id: 'chronic-patient-scheduling-delay',
-    name: 'The Invisible Queue',
-    description: 'A private OPD scheduling algorithm maximises throughput by deprioritising multi-morbidity patients. Metrics look excellent. Harm is invisible until a doctor begins tracking it manually.',
-    packId: 'equity-participation',
-    expectedRiskPathways: [
-      'Efficiency-optimised AI systematically disadvantages chronically ill patients',
-      'Accountability diffusion between algorithm, operator, and vendor prevents early action',
-    ],
-    learningObjectives: [
-      'Identify how throughput metrics can mask systematic equity erosion',
-      'Evaluate the role of documented human overrides as governance evidence',
-    ],
-    simulationProfile: 'Private Hospital',
-    durationTicks: 240,
-    stressorCount: 9,
-  },
-  {
-    id: 'security-stress-test',
-    name: 'The Credential Cascade',
-    description: 'A phishing campaign hits clinical staff during a patient surge. One click. Nine steps. The ransomware outcome was a governance failure before it was a technical one.',
-    packId: 'security-stress-test',
-    expectedRiskPathways: [
-      'Clinical alert fatigue and security alert fatigue — same institutional failure',
-      'Credential sharing under workload pressure → identity accountability collapses',
-    ],
-    learningObjectives: [
-      'Recognise that cybersecurity failures are not separate from clinical governance',
-      'Design an escalation pathway that remains operable when the primary contact is unavailable',
-    ],
-    simulationProfile: 'Private Hospital',
-    durationTicks: 260,
-    stressorCount: 12,
-  },
-]
+// ── No hardcoded list — scenarios are fetched from the registry API ──────────
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -146,9 +75,23 @@ export default function ScenarioSelector({
   onError,
 }: ScenarioSelectorProps) {
   const router = useRouter()
+  const [scenarios, setScenarios] = useState<ScenarioMeta[]>([])
+  const [loadingScenarios, setLoadingScenarios] = useState(true)
   const [selected, setSelected] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Fetch scenario registry from the API on mount — eliminates hardcoded list
+  useEffect(() => {
+    fetch('/api/run-scenario')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then((data: { scenarios: ScenarioMeta[] }) => setScenarios(data.scenarios ?? []))
+      .catch(() => {
+        // Fallback: show an error state; the component remains functional without scenarios
+        setError('Could not load scenarios — check that the API is reachable.')
+      })
+      .finally(() => setLoadingScenarios(false))
+  }, [])
 
   async function runScenario() {
     if (!selected) return
@@ -195,7 +138,14 @@ export default function ScenarioSelector({
 
       {/* ── Cards grid ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 gap-3 mb-6">
-        {SCENARIOS.map(scenario => {
+        {loadingScenarios && [1, 2, 3, 4].map(i => (
+          <div key={i} className="border border-slate-800 rounded-lg p-5 animate-pulse">
+            <div className="h-3 bg-slate-800 rounded w-48 mb-2" />
+            <div className="h-2 bg-slate-800/60 rounded w-full mb-1" />
+            <div className="h-2 bg-slate-800/40 rounded w-3/4" />
+          </div>
+        ))}
+        {!loadingScenarios && scenarios.map(scenario => {
           const pack = PACK_STYLES[scenario.packId] ?? PACK_STYLES['automation-failure']
           const isSelected = selected === scenario.id
 
@@ -268,7 +218,7 @@ export default function ScenarioSelector({
         {running
           ? 'Running scenario…'
           : selected
-          ? `Run: ${SCENARIOS.find(s => s.id === selected)?.name}`
+          ? `Run: ${scenarios.find(s => s.id === selected)?.name}`
           : 'Select a scenario to run'
         }
       </button>

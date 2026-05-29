@@ -795,6 +795,19 @@ class handler(BaseHTTPRequestHandler):
             event_log = [e.to_dict() for e in system.current_run.event_log]
             report["event_log"] = event_log
 
+            # Phase 1 reflective substrate: read-only derived state from the
+            # same event log. This is additive and does not alter the core
+            # simulation, scoring, or moral reckoning engines.
+            try:
+                from reflective_state import generate_reflective_state
+                report["reflective_state"] = generate_reflective_state(system.current_run.event_log)
+            except Exception as reflective_exc:
+                print(f"REFLECTIVE STATE ERROR: {reflective_exc}")
+                report["reflective_state"] = {
+                    "status": "unavailable",
+                    "reason": str(reflective_exc),
+                }
+
             # Attach GLP optimal allocation panel
             report["glp_optimal"] = _compute_glp_optimal(
                 params=system.current_run.parameters,
