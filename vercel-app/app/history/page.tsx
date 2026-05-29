@@ -74,9 +74,10 @@ function SignalDots({ signals }: { signals: Record<string, { value: number }> | 
 interface RunCardProps {
   run: RunRecord
   onReopen: (run: RunRecord) => void
+  isReopening?: boolean
 }
 
-function RunCard({ run, onReopen }: RunCardProps) {
+function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
   const meta = run.run_metadata as {
     scenarioName?: string
     durationTicks?: number
@@ -165,10 +166,10 @@ function RunCard({ run, onReopen }: RunCardProps) {
         <button
           type="button"
           onClick={() => onReopen(run)}
-          disabled={!run.run_data}
+          disabled={isReopening}
           className="flex-1 text-xs border border-slate-700 text-slate-300 py-2 rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-40"
         >
-          Re-open results →
+          {isReopening ? 'Loading…' : 'Re-open results →'}
         </button>
       </div>
     </div>
@@ -181,6 +182,7 @@ export default function HistoryPage() {
   const router = useRouter()
   const [runs, setRuns] = useState<RunRecord[]>([])
   const [loading, setLoading] = useState(true)
+  const [reopening, setReopening] = useState<string | null>(null)   // run id being fetched
   const [error, setError] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -191,11 +193,12 @@ export default function HistoryPage() {
         const { data: { session } } = await supabase.auth.getSession()
         setIsAuthenticated(!!session)
 
-        // Load recent runs — RLS will filter to current user's runs
-        // Anonymous runs (user_id = null) won't appear for authenticated users
+        // Load recent runs — intentionally omits run_data (potentially large JSONB).
+        // run_data is fetched lazily on "Re-open" to avoid loading 200-event blobs
+        // for 20 rows simultaneously.
         const { data, error: dbError } = await supabase
           .from('simulation_runs')
-          .select('id, scenario_id, five_signals, run_metadata, run_data, created_at')
+          .select('id, scenario_id, five_signals, run_metadata, created_at')
           .eq('is_deleted', false)
           .order('created_at', { ascending: false })
           .limit(20)
@@ -213,19 +216,36 @@ export default function HistoryPage() {
     load()
   }, [])
 
-  function reopenRun(run: RunRecord) {
-    if (!run.run_data) return
-    // Re-hydrate sessionStorage and navigate to results
-    // run_data may be a partial snapshot — the full report was too large to store
-    // We store enough for the results page to display signal metrics
-    const storedData = run.run_data as { events?: unknown[]; [key: string]: unknown }
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-      ...storedData,
-      run_id: run.id,
-      _from_history: true,
-      _disclaimer: 'This is a scenario-based governance simulation. It does not predict reality.',
-    }))
-    router.push('/results')
+  async function reopenRun(run: RunRecord) {
+    // Lazy-fetch run_data only when the user clicks "Re-open" — avoids loading
+    // 200-event blobs for every visible row on mount.
+    setReopening(run.id ?? null)
+    try {
+      const { data, error: dbError } = await supabase
+        .from('simulation_runs')
+        .select('run_data')
+        .eq('id', run.id)
+        .eq('is_deleted', false)
+        .single()
+
+      if (dbError || !data?.run_data) {
+        setError('Could not load run data. The run may have been archived.')
+        return
+      }
+
+      const storedData = data.run_data as { events?: unknown[]; [key: string]: unknown }
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+        ...storedData,
+        run_id: run.id,
+        _from_history: true,
+        _disclaimer: 'This is a scenario-based governance simulation. It does not predict reality.',
+      }))
+      router.push('/results')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load run data')
+    } finally {
+      setReopening(null)
+    }
   }
 
   return (
@@ -340,6 +360,7 @@ export default function HistoryPage() {
                 key={run.id}
                 run={run}
                 onReopen={reopenRun}
+                isReopening={reopening === run.id}
               />
             ))}
           </div>

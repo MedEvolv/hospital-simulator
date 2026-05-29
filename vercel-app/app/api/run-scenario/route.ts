@@ -53,18 +53,32 @@ async function callPythonSimulation(
   const baseUrl = getBaseUrl()
   const url = `${baseUrl}/api/run_simulation`
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      profile: simulationProfile,
-      duration_ticks: durationTicks,
-      seed,
-      patients_per_hour: 8,
-      er_capacity: 2,
-      opd_capacity: 4,
-    }),
-  })
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 25_000)
+
+  let res: Response
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        profile: simulationProfile,
+        duration_ticks: durationTicks,
+        seed,
+        patients_per_hour: 8,
+        er_capacity: 2,
+        opd_capacity: 4,
+      }),
+      signal: controller.signal,
+    })
+  } catch (e) {
+    const msg = (e instanceof Error && e.name === 'AbortError')
+      ? 'Python simulation timed out after 25 s'
+      : `Python simulation unreachable: ${e instanceof Error ? e.message : String(e)}`
+    throw new Error(msg)
+  } finally {
+    clearTimeout(timer)
+  }
 
   if (!res.ok) {
     const text = await res.text()
@@ -99,10 +113,11 @@ export async function POST(req: NextRequest) {
   // ── Validate scenario ──────────────────────────────────────────────────────
   const scenario = getScenarioById(scenarioId)
   if (!scenario) {
+    const { getAllScenarios: list } = await import('@/lib/scenarios/registry')
     return NextResponse.json(
       {
         error: `Scenario '${scenarioId}' not found`,
-        available: ['hallucinated-discharge-summary', 'ai-triage-drift-er-overload', 'chronic-patient-scheduling-delay'],
+        available: list().map(s => s.id),
       },
       { status: 404 },
     )
