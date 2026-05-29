@@ -531,12 +531,12 @@ function renderFloor({
     const sx = 14 + i * 120
     const sy = statsY + STATS_H / 2
     els.push(
-      <text key={`si-lbl-${i}`} x={sx} y={sy - 6}
-        style={{ fontSize: 9, fill: '#475569', fontFamily: 'monospace', letterSpacing: 1 }}>
+      <text key={`si-lbl-${i}`} x={sx} y={sy - 7}
+        style={{ fontSize: 11, fill: '#64748b', fontFamily: 'monospace', letterSpacing: 1 }}>
         {item.label.toUpperCase()}
       </text>,
-      <text key={`si-val-${i}`} x={sx} y={sy + 9}
-        style={{ fontSize: 13, fill: item.color, fontFamily: 'monospace', fontWeight: 700 }}>
+      <text key={`si-val-${i}`} x={sx} y={sy + 10}
+        style={{ fontSize: 15, fill: item.color, fontFamily: 'monospace', fontWeight: 700 }}>
         {item.val}
       </text>,
     )
@@ -553,12 +553,12 @@ function renderFloor({
       <rect key={`room-${i}`}
         x={rect.x} y={rect.y} width={rect.w} height={rect.h}
         fill={fill} stroke={stroke} strokeWidth={1.5} rx={3} />,
-      <text key={`rl-${i}`} x={rect.x + 8} y={rect.y + 15}
-        style={{ fontSize: 10, fill: '#94a3b8', fontFamily: 'monospace', letterSpacing: 1 }}>
+      <text key={`rl-${i}`} x={rect.x + 8} y={rect.y + 17}
+        style={{ fontSize: 12, fill: '#94a3b8', fontFamily: 'monospace', letterSpacing: 1, fontWeight: 600 }}>
         {room.label}
       </text>,
-      <text key={`rc-${i}`} x={rect.x + rect.w - 8} y={rect.y + 15}
-        style={{ fontSize: 10, fill: stroke, fontFamily: 'monospace', textAnchor: 'end' as const }}>
+      <text key={`rc-${i}`} x={rect.x + rect.w - 8} y={rect.y + 17}
+        style={{ fontSize: 12, fill: stroke, fontFamily: 'monospace', textAnchor: 'end' as const, fontWeight: 700 }}>
         {load}/{room.maxOccupancy}
       </text>,
     )
@@ -580,7 +580,7 @@ function renderFloor({
         if (age < 1) {
           const op = age < 0.65 ? 1 : 1 - (age - 0.65) / 0.35
           const text = bub.kind === 'triage' && patientProfiles?.[pat.id]
-            ? trunc(patientProfiles[pat.id].chief_complaint, 22)
+            ? trunc(patientProfiles[pat.id].chief_complaint, 30)
             : bub.text
           els.push(renderChatBubble(`bub-rp-${pat.id}`, px, py, text, bub.kind, op))
         }
@@ -603,7 +603,7 @@ function renderFloor({
       if (age < 1) {
         const op = age < 0.65 ? 1 : 1 - (age - 0.65) / 0.35
         const text = bub.kind === 'triage' && patientProfiles?.[pat.id]
-          ? trunc(patientProfiles[pat.id].chief_complaint, 22)
+          ? trunc(patientProfiles[pat.id].chief_complaint, 30)
           : bub.text
         els.push(renderChatBubble(`bub-tp-${pat.id}`, x, y, text, bub.kind, op))
       }
@@ -612,7 +612,7 @@ function renderFloor({
   if (triagePatients.length > 9) {
     els.push(
       <text key="t-overflow" x={TRIAGE_X + TRIAGE_W / 2} y={H - 12}
-        style={{ fontSize: 10, fill: LABEL_CLR, fontFamily: 'monospace', textAnchor: 'middle' as const }}>
+        style={{ fontSize: 12, fill: LABEL_CLR, fontFamily: 'monospace', textAnchor: 'middle' as const }}>
         +{triagePatients.length - 9} more
       </text>
     )
@@ -633,7 +633,7 @@ function renderFloor({
       if (age < 1) {
         const op = age < 0.65 ? 1 : 1 - (age - 0.65) / 0.35
         const text = bub.kind === 'triage' && patientProfiles?.[pat.id]
-          ? trunc(patientProfiles[pat.id].chief_complaint, 22)
+          ? trunc(patientProfiles[pat.id].chief_complaint, 30)
           : bub.text
         els.push(renderChatBubble(`bub-wp-${pat.id}`, x, y, text, bub.kind, op))
       }
@@ -642,14 +642,14 @@ function renderFloor({
   if (waitingPatients.length > 16) {
     els.push(
       <text key="w-overflow" x={WAITING_X + WAITING_W / 2} y={H - 12}
-        style={{ fontSize: 10, fill: LABEL_CLR, fontFamily: 'monospace', textAnchor: 'middle' as const }}>
+        style={{ fontSize: 12, fill: LABEL_CLR, fontFamily: 'monospace', textAnchor: 'middle' as const }}>
         +{waitingPatients.length - 16} more
       </text>
     )
   }
 
   // ── Zone counts
-  const cntStyle = { fontSize: 11, fill: '#475569', fontFamily: 'monospace', textAnchor: 'middle' as const }
+  const cntStyle = { fontSize: 13, fill: '#64748b', fontFamily: 'monospace', textAnchor: 'middle' as const }
   els.push(
     <text key="cnt-t" x={TRIAGE_X  + TRIAGE_W  / 2} y={H - 6} style={cntStyle}>{triagePatients.length} in triage</text>,
     <text key="cnt-w" x={WAITING_X + WAITING_W / 2} y={H - 6} style={cntStyle}>{waitingPatients.length} waiting</text>,
@@ -776,76 +776,80 @@ function PatientTooltip({
   if (!profile) {
     // Basic tooltip — profiles still loading
     return (
-      <div className="space-y-1">
+      <div className="space-y-2 min-w-[200px]">
         <div className="flex items-center justify-between gap-3">
           <p className="font-mono text-slate-100 font-semibold text-sm">Patient {patient.id}</p>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded"
-            style={{ color: triageColor, border: `1px solid ${triageColor}40` }}>
+          <span className="text-xs font-mono px-2 py-0.5 rounded font-bold"
+            style={{ color: triageColor, border: `1px solid ${triageColor}50`, background: `${triageColor}15` }}>
             {patient.triage}
           </span>
         </div>
-        <p className="text-slate-400 text-xs">Zone: <span className="text-slate-200">{patient.zone}</span></p>
+        <p className="text-sm text-slate-400">Zone: <span className="text-slate-200 font-medium">{patient.zone}</span></p>
         {patient.roomName && (
-          <p className="text-slate-400 text-xs">Room: <span className="text-slate-200">{patient.roomName}</span></p>
+          <p className="text-sm text-slate-400">Room: <span className="text-slate-200 font-medium">{patient.roomName}</span></p>
         )}
-        <p className="text-slate-600 text-[10px] italic mt-1">Loading profile…</p>
+        <p className="text-xs text-slate-600 italic mt-1">Loading profile…</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-2.5 min-w-[240px] max-w-[280px]">
+    <div className="space-y-3 min-w-[280px] max-w-[320px]">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-mono text-slate-100 font-semibold text-sm leading-tight">
+          <p className="font-mono text-slate-100 font-bold text-sm leading-tight">
             Patient {patient.id}
           </p>
-          <p className="text-[11px] text-slate-400 mt-0.5">
-            {profile.age}y {profile.gender === 'M' ? '♂' : '♀'}
+          <p className="text-xs text-slate-400 mt-1">
+            <span className="text-slate-200 font-semibold">{profile.age}y</span>
+            {' '}
+            {profile.gender === 'M' ? '♂ Male' : '♀ Female'}
             {' · '}
             <span className="text-slate-300">{profile.arrival_gate ? 'Walk-in' : 'Ambulance / referred'}</span>
           </p>
         </div>
         <span
-          className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
-          style={{ color: triageColor, border: `1px solid ${triageColor}40`, background: `${triageColor}15` }}
+          className="text-xs font-mono font-bold px-2 py-0.5 rounded-md shrink-0"
+          style={{ color: triageColor, border: `1px solid ${triageColor}50`, background: `${triageColor}15` }}
         >
           {patient.triage}
         </span>
       </div>
 
       {/* Chief complaint */}
-      <div className="border-t border-slate-700 pt-2">
-        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">Chief complaint</p>
-        <p className="text-xs text-slate-200 leading-relaxed">{profile.chief_complaint}</p>
+      <div className="border-t border-slate-700 pt-2.5">
+        <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-1.5">Chief complaint</p>
+        <p className="text-sm text-slate-100 leading-relaxed font-medium">{profile.chief_complaint}</p>
       </div>
 
       {/* Vitals */}
       {profile.vitals && (
-        <div className="border-t border-slate-700 pt-2">
-          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1.5">Vitals</p>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
+        <div className="border-t border-slate-700 pt-2.5">
+          <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">Vitals</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
             {profile.vitals.bp && (
-              <p className="text-[11px] text-slate-300">
-                <span className="text-slate-500">BP </span>{profile.vitals.bp}
+              <p className="text-sm text-slate-200">
+                <span className="text-slate-500 text-xs">BP </span>
+                <span className="font-mono font-semibold">{profile.vitals.bp}</span>
               </p>
             )}
             {profile.vitals.spo2 != null && (
-              <p className="text-[11px]"
-                style={{ color: profile.vitals.spo2 < 92 ? '#ef4444' : profile.vitals.spo2 < 95 ? '#f59e0b' : '#4ade80' }}>
-                <span className="text-slate-500">SpO₂ </span>{profile.vitals.spo2}%
+              <p className="text-sm font-mono font-semibold"
+                style={{ color: profile.vitals.spo2 < 92 ? '#f87171' : profile.vitals.spo2 < 95 ? '#fbbf24' : '#4ade80' }}>
+                <span className="text-slate-500 font-normal text-xs">SpO₂ </span>{profile.vitals.spo2}%
               </p>
             )}
             {profile.vitals.pulse != null && (
-              <p className="text-[11px] text-slate-300">
-                <span className="text-slate-500">PR </span>{profile.vitals.pulse}
+              <p className="text-sm text-slate-200">
+                <span className="text-slate-500 text-xs">PR </span>
+                <span className="font-mono font-semibold">{profile.vitals.pulse}</span>
               </p>
             )}
             {profile.vitals.temp != null && (
-              <p className="text-[11px]"
-                style={{ color: profile.vitals.temp > 101 ? '#f59e0b' : '#94a3b8' }}>
-                <span className="text-slate-500">Temp </span>{profile.vitals.temp.toFixed(1)}°F
+              <p className="text-sm font-mono font-semibold"
+                style={{ color: profile.vitals.temp > 101 ? '#fbbf24' : '#94a3b8' }}>
+                <span className="text-slate-500 font-normal text-xs">Temp </span>{profile.vitals.temp.toFixed(1)}°F
               </p>
             )}
           </div>
@@ -854,12 +858,13 @@ function PatientTooltip({
 
       {/* History */}
       {profile.history.length > 0 && (
-        <div className="border-t border-slate-700 pt-2">
-          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">History</p>
-          <ul className="space-y-0.5">
+        <div className="border-t border-slate-700 pt-2.5">
+          <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-1.5">Past history</p>
+          <ul className="space-y-1">
             {profile.history.map((h, i) => (
-              <li key={i} className="text-[11px] text-slate-400 before:content-['·'] before:mr-1.5 before:text-slate-600">
-                {h}
+              <li key={i} className="text-xs text-slate-300 flex items-start gap-1.5">
+                <span className="text-slate-600 shrink-0 mt-0.5">·</span>
+                <span>{h}</span>
               </li>
             ))}
           </ul>
@@ -868,21 +873,21 @@ function PatientTooltip({
 
       {/* Clinical notes */}
       {profile.clinical_notes && (
-        <div className="border-t border-slate-700 pt-2">
-          <p className="text-[11px] text-slate-400 italic leading-relaxed">
+        <div className="border-t border-slate-700 pt-2.5">
+          <p className="text-xs text-slate-400 italic leading-relaxed">
             &ldquo;{profile.clinical_notes}&rdquo;
           </p>
         </div>
       )}
 
       {/* Zone + room */}
-      <div className="border-t border-slate-700 pt-1.5 flex items-center gap-3">
-        <p className="text-[10px] text-slate-500">
-          Zone: <span className="text-slate-300">{patient.zone}</span>
+      <div className="border-t border-slate-700 pt-2 flex items-center gap-4">
+        <p className="text-xs text-slate-500">
+          Zone: <span className="text-slate-200 font-medium">{patient.zone}</span>
         </p>
         {patient.roomName && (
-          <p className="text-[10px] text-slate-500">
-            Room: <span className="text-slate-300">{patient.roomName}</span>
+          <p className="text-xs text-slate-500">
+            Room: <span className="text-slate-200 font-medium">{patient.roomName}</span>
           </p>
         )}
       </div>
@@ -1137,8 +1142,8 @@ export default function HospitalFloor({
         </div>
 
         {/* Event log sidebar */}
-        <div className="w-52 border-l border-slate-800 bg-slate-900/50 flex flex-col shrink-0">
-          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest px-3 py-2 border-b border-slate-800">
+        <div className="w-56 border-l border-slate-800 bg-slate-900/50 flex flex-col shrink-0">
+          <p className="text-xs font-mono text-slate-400 uppercase tracking-widest px-3 py-2.5 border-b border-slate-800 font-semibold">
             Event log
           </p>
           <div className="overflow-y-auto flex-1" style={{ maxHeight: H }}>
@@ -1152,10 +1157,10 @@ export default function HospitalFloor({
                 return (
                   <button key={ev.event_id + i} onClick={() => jumpToEvent(ev)}
                     className={`w-full text-left px-3 py-2 border-b ${border} hover:bg-slate-800/60 transition-colors`}>
-                    <p className={`text-[10px] font-mono ${color} mb-0.5`}>
+                    <p className={`text-xs font-mono ${color} mb-0.5 font-semibold`}>
                       T:{Math.round(ev.timestamp / 5).toString().padStart(3, '0')} · {sev}
                     </p>
-                    <p className="text-[11px] text-slate-300 leading-snug line-clamp-2">
+                    <p className="text-xs text-slate-300 leading-snug line-clamp-2">
                       {sidebarLabel(ev)}
                     </p>
                   </button>
