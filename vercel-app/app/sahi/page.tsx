@@ -94,6 +94,38 @@ const GAP_POINTS = [
   },
 ]
 
+// ── The wider governance stack: SAHI · NABH · DPDP ──────────────────────────────
+// Static class strings (not interpolated) so Tailwind keeps them in the build.
+const STACK = [
+  {
+    name: 'SAHI',
+    tag: 'Direction',
+    nature: 'National strategy · MoHFW, Feb 2026',
+    nameClass: 'text-sky-300',
+    tagClass: 'bg-sky-900/40 text-sky-300 border-sky-800/60',
+    gives: 'The direction — five pillars, seven guiding principles, and priority actions for trustworthy AI in healthcare.',
+    lacks: 'A way to test whether your institution actually lives those principles under stress.',
+  },
+  {
+    name: 'NABH Digital Health Standards',
+    tag: 'Bar',
+    nature: 'Accreditation standard · 2nd Ed, Sep 2025',
+    nameClass: 'text-emerald-300',
+    tagClass: 'bg-emerald-900/30 text-emerald-300 border-emerald-800/60',
+    gives: 'The bar — eight chapters and 182 objective elements defining a digital-maturity baseline, including CDSS adoption and information management.',
+    lacks: 'Failure-mode rehearsal; it assumes the digital tools, once deployed, behave.',
+  },
+  {
+    name: 'DPDP',
+    tag: 'Floor',
+    nature: 'Data-protection law · Govt. of India',
+    nameClass: 'text-slate-200',
+    tagClass: 'bg-slate-800 text-slate-400 border-slate-700',
+    gives: 'The floor — the legal baseline for consent, personal-data handling, and the rights of the Data Principal.',
+    lacks: 'Anything about clinical-AI safety, trust, or oversight quality.',
+  },
+]
+
 export default function SahiPage() {
   return (
     <main className="max-w-3xl mx-auto px-6 py-14">
@@ -215,12 +247,100 @@ export default function SahiPage() {
         </div>
       </section>
 
+      {/* ── The wider governance stack (SAHI · NABH · DPDP) ──────────── */}
+      <section className="mb-10">
+        <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
+          The wider governance stack
+        </h2>
+        <p className="text-sm text-slate-400 leading-relaxed mb-3">
+          SAHI does not stand alone. A hospital governing AI in 2026 answers to three instruments at
+          once &mdash; and the same gap runs through all of them.
+        </p>
+        <p className="text-sm text-slate-300 leading-relaxed mb-6">
+          <span className="text-sky-300">SAHI is the direction.</span>{' '}
+          <span className="text-emerald-300">NABH Digital Health Standards is the bar.</span>{' '}
+          <span className="text-slate-200">DPDP is the floor.</span>{' '}
+          Each tells institutions to adopt, comply, and be trustworthy. None of them lets the
+          institution rehearse what happens when its AI governance actually fails.
+        </p>
+
+        {/* explainer graphic — three instruments, what each gives vs. withholds */}
+        <div className="space-y-3">
+          {STACK.map(s => (
+            <div key={s.name} className="border border-slate-800 rounded-lg p-5 bg-slate-900/30">
+              <div className="flex flex-wrap items-center gap-3 mb-3">
+                <span className={`text-sm font-medium ${s.nameClass}`}>{s.name}</span>
+                <span className={`text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border ${s.tagClass}`}>
+                  {s.tag}
+                </span>
+                <span className="text-[10px] font-mono text-slate-600 uppercase tracking-wider">{s.nature}</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1">What it gives</p>
+                  <p className="text-sm text-slate-300 leading-relaxed">{s.gives}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1">What it does not</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{s.lacks}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* NABH anchor — secondary, honestly framed */}
+        <div className="mt-6 border border-emerald-900/40 rounded-lg p-6 bg-emerald-950/10">
+          <h3 className="text-sm font-medium text-slate-200 mb-3">Complementing the NABH digital-maturity bar</h3>
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            NABH Digital Health Standards is a digital-<span className="text-slate-200">maturity</span> standard,
+            not an AI-governance framework. It tells a hospital to <span className="text-slate-200">adopt</span>{' '}
+            clinical decision support and stand up digital operations &mdash; anchored most directly in
+            Chapter 5 (Digital Operations Management) and Chapter 8 (Information Management System / CDSS).
+          </p>
+          <p className="text-sm text-slate-400 leading-relaxed">
+            Institutional Mirror rehearses what an accreditation checklist cannot: what happens when reliance
+            on those systems drifts, when overrides quietly stop, when throughput is bought with care
+            shortcuts. It <span className="text-slate-200">complements</span> the maturity NABH certifies. It
+            does not certify NABH conformance and is not an accreditation tool.
+          </p>
+        </div>
+
+        {/* synthesis — drop-in §6 framing */}
+        <div className="mt-6 border-l-2 border-sky-700 pl-4 py-1">
+          <p className="text-sm text-slate-300 leading-relaxed">
+            India now has the strategy (SAHI, 2026), the accreditation bar (NABH Digital Health Standards,
+            2025), and the data-protection floor (DPDP). Together they tell hospitals to adopt clinical AI,
+            mature their digital operations, and protect patient data. What none of them provides is a way to
+            rehearse governance failure &mdash; to watch trust erode, ethical debt accumulate, and staff strain
+            build under a deterministic, repeatable stress test, before any of it happens to real patients.
+            Institutional Mirror is that rehearsal layer: it operationalises SAHI&rsquo;s oversight and
+            accountability principles at the level of a single institution, and stress-tests the digital
+            maturity NABH certifies.
+          </p>
+        </div>
+        <p className="text-xs text-slate-500 leading-relaxed mt-3">
+          A scenario-based governance simulation on synthetic data. It does not predict reality, make clinical
+          decisions, or evaluate real patients &mdash; itself an expression of the safety and data-protection
+          principles the stack is built on.
+        </p>
+      </section>
+
       {/* ── Citation ────────────────────────────────────────────────── */}
       <section className="border-t border-slate-800 pt-6">
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
           Ministry of Health and Family Welfare, Government of India. <span className="italic">Strategy
           for Artificial Intelligence in Healthcare for India (SAHI).</span> Launched at the
           India AI Impact Summit, February 17, 2026.
+        </p>
+        <p className="text-xs text-slate-600 leading-relaxed mb-2">
+          National Accreditation Board for Hospitals &amp; Healthcare Providers (NABH). <span className="italic">Digital
+          Health Standards for Hospitals, 2nd Edition.</span> September 2025. Referenced as digital-maturity
+          context only; this work claims no NABH accreditation, conformance, or endorsement.
+        </p>
+        <p className="text-xs text-slate-600 leading-relaxed mb-2">
+          Government of India. <span className="italic">Digital Personal Data Protection (DPDP) Rules.</span>{' '}
+          Referenced as the data-protection floor.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed">
           This alignment record covers the recommendations Institutional Mirror most directly
