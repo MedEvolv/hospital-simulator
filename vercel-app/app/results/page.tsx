@@ -54,6 +54,29 @@ export default function ResultsScreen() {
   const [report, setReport]               = useState<SimulationReportV2 | null>(null)
   const [patientProfiles, setPatientProfiles] = useState<Record<string, PatientProfile> | undefined>(undefined)
   const [capacity, setCapacity]           = useState<CapacityConfig | null>(null)
+  const [contextLabel, setContextLabel]   = useState<string | null>(null)
+
+  // ── Read optional governance context (set on home page) ───────────────
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('im_survey')
+      if (!raw) return
+      const c = JSON.parse(raw) as { role?: string; institutionType?: string }
+      const ROLE: Record<string, string> = {
+        ethics: 'Ethics & Governance Lead', qi: 'Quality & Patient Safety',
+        cmo: 'Clinical Leadership', ceo: 'Administration / Leadership',
+        frontline: 'Frontline Clinician', other: 'Reviewer',
+      }
+      const INST: Record<string, string> = {
+        government_tertiary: 'Government tertiary hospital',
+        private_multispecialty: 'Private multi-specialty',
+        district_hospital: 'District / secondary hospital',
+        nursing_home: 'Nursing home', clinic: 'Clinic / day-care', other: '',
+      }
+      const parts = [c.role ? ROLE[c.role] : null, c.institutionType ? INST[c.institutionType] : null].filter(Boolean)
+      if (parts.length) setContextLabel(parts.join(' · '))
+    } catch { /* optional */ }
+  }, [])
 
   // ── Load report + capacity from sessionStorage ────────────────────────
   useEffect(() => {
@@ -170,6 +193,12 @@ export default function ResultsScreen() {
 
       {/* ── Header ────────────────────────────────────────────────── */}
       <header className="mb-10">
+        {contextLabel && (
+          <p className="text-xs text-slate-400 mb-3 inline-flex items-center gap-2 border border-slate-800 bg-slate-900/40 rounded px-3 py-1.5">
+            <span className="font-mono text-slate-600 uppercase tracking-widest">Reviewing as</span>
+            {contextLabel}
+          </p>
+        )}
         {sr ? (
           <>
             <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">

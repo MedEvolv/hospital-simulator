@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Disclaimer from '@/components/Disclaimer'
 import ScenarioSelector from '@/components/ScenarioSelector'
+import ContextSurvey from '@/components/ContextSurvey'
 import { HospitalFloorLoading } from '@/components/HospitalFloor'
 import { SESSION_KEY, CAPACITY_KEY, type SimulationParams } from '@/lib/types'
 
@@ -170,6 +171,9 @@ export default function ConfigureScreen() {
           </button>
         </div>
       </section>
+
+      {/* ── Context survey (optional pre-scenario step) ─────────────── */}
+      <ContextSurvey />
 
       {/* ── Mode tabs ───────────────────────────────────────────────── */}
       <div className="flex gap-1 mb-8 bg-slate-900/60 border border-slate-800 rounded-lg p-1">
