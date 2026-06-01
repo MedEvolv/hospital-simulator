@@ -51,7 +51,7 @@ function SimpleMarkdown({ text }: { text: string }) {
             <thead>
               <tr>
                 {header.map((cell, j) => (
-                  <th key={j} className="text-left border-b border-slate-700 py-2 px-3 text-[10px] font-mono text-slate-400 uppercase tracking-wide whitespace-nowrap">
+                  <th key={j} className="text-left border-b border-slate-300 py-2 px-3 text-[10px] font-mono text-slate-600 uppercase tracking-wide whitespace-nowrap">
                     {cell}
                   </th>
                 ))}
@@ -59,9 +59,9 @@ function SimpleMarkdown({ text }: { text: string }) {
             </thead>
             <tbody>
               {body.map((row, ri) => (
-                <tr key={ri} className="border-b border-slate-800/60 last:border-0 hover:bg-slate-800/20 transition-colors">
+                <tr key={ri} className="border-b border-slate-200/60 last:border-0 hover:bg-slate-100/20 transition-colors">
                   {row.map((cell, ci) => (
-                    <td key={ci} className="py-2 px-3 text-slate-300 align-top leading-relaxed">
+                    <td key={ci} className="py-2 px-3 text-slate-700 align-top leading-relaxed">
                       {cell || <span className="text-slate-700 italic text-[10px]">for committee</span>}
                     </td>
                   ))}
@@ -87,7 +87,7 @@ function SimpleMarkdown({ text }: { text: string }) {
     // - bullet
     if (line.startsWith('- ')) {
       nodes.push(
-        <div key={i} className="flex gap-3 text-sm text-slate-300 leading-relaxed">
+        <div key={i} className="flex gap-3 text-sm text-slate-700 leading-relaxed">
           <span className="text-slate-600 shrink-0 mt-0.5">—</span>
           <span>{line.slice(2)}</span>
         </div>
@@ -103,7 +103,7 @@ function SimpleMarkdown({ text }: { text: string }) {
 
     // regular paragraph
     nodes.push(
-      <p key={i} className="text-sm text-slate-300 leading-relaxed">{line}</p>
+      <p key={i} className="text-sm text-slate-700 leading-relaxed">{line}</p>
     )
     i++
   }
@@ -139,9 +139,9 @@ function GlossaryEntry({
   sahi?: string
 }) {
   return (
-    <div className="border-b border-slate-800 last:border-0 pb-4 last:pb-0">
-      <p className="text-xs font-mono text-slate-300 mb-1">{term}</p>
-      <p className="text-xs text-slate-400 leading-relaxed mb-1">{definition}</p>
+    <div className="border-b border-slate-200 last:border-0 pb-4 last:pb-0">
+      <p className="text-xs font-mono text-slate-700 mb-1">{term}</p>
+      <p className="text-xs text-slate-600 leading-relaxed mb-1">{definition}</p>
       {standard && (
         <p className="text-[10px] text-slate-600 leading-relaxed italic">
           {standard}
@@ -164,7 +164,7 @@ function MetricsSnapshot({ report }: { report: SimulationReport }) {
   const sy = report.synthesis
 
   return (
-    <div className="border border-slate-800 rounded-lg p-5 bg-slate-900/40 mb-6">
+    <div className="border border-slate-200 rounded-lg p-5 bg-white/40 mb-6">
       <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">
         Simulation metrics — {report.institutional_profile} · seed {report.seed}
       </p>
@@ -180,7 +180,7 @@ function MetricsSnapshot({ report }: { report: SimulationReport }) {
         <Metric label="Forced Harms"      value={String(mr.harm_classifications.summary.forced_count)} />
         <Metric label="Avoidable Harms"   value={String(mr.harm_classifications.summary.avoidable_count)} warn />
       </div>
-      <p className="text-xs text-slate-500 mt-4 border-t border-slate-800 pt-3 italic">
+      <p className="text-xs text-slate-500 mt-4 border-t border-slate-200 pt-3 italic">
         &ldquo;{sy.critical_question}&rdquo;
       </p>
     </div>
@@ -190,7 +190,7 @@ function MetricsSnapshot({ report }: { report: SimulationReport }) {
 function Metric({ label, value, warn }: { label: string; value: string; warn?: boolean }) {
   return (
     <div>
-      <p className={`text-base font-light tabular-nums ${warn ? 'text-amber-400' : 'text-slate-100'}`}>{value}</p>
+      <p className={`text-base font-light tabular-nums ${warn ? 'text-amber-400' : 'text-slate-900'}`}>{value}</p>
       <p className="text-slate-500 mt-0.5">{label}</p>
     </div>
   )
@@ -284,10 +284,10 @@ export default function ReportPage() {
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
           Role-specific report
         </p>
-        <h1 className="text-4xl font-light text-slate-50 tracking-tight mb-3">
+        <h1 className="text-4xl font-light text-slate-900 tracking-tight mb-3">
           Who is reading this?
         </h1>
-        <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
+        <p className="text-sm text-slate-600 max-w-xl leading-relaxed">
           The same simulation findings read differently depending on your role.
           Select who you are — the system generates a narrative and recommended next steps
           framed specifically for your authority and concerns.
@@ -311,12 +311,12 @@ export default function ReportPage() {
               disabled={isLoading && selectedRole === role.key}
               className={`text-left border rounded-lg p-3 transition-colors ${
                 selectedRole === role.key
-                  ? 'border-slate-400 bg-slate-800'
-                  : 'border-slate-800 bg-slate-900 hover:border-slate-700'
+                  ? 'border-slate-400 bg-slate-100'
+                  : 'border-slate-200 bg-white hover:border-slate-300'
               }`}
             >
               <span className="text-base mr-2">{role.icon}</span>
-              <span className="text-sm text-slate-200">{role.label}</span>
+              <span className="text-sm text-slate-800">{role.label}</span>
               {generatedCache[role.key] && (
                 <span className="ml-1.5 text-[10px] text-slate-500">✓</span>
               )}
@@ -332,8 +332,8 @@ export default function ReportPage() {
             disabled={isLoading && selectedRole === role.key}
             className={`w-full text-left border rounded-lg px-4 py-3 transition-colors ${
               selectedRole === role.key
-                ? 'border-sky-600 bg-sky-950/50'
-                : 'border-sky-900/60 bg-sky-950/20 hover:border-sky-700/60 hover:bg-sky-950/30'
+                ? 'border-sky-600 bg-sky-50/50'
+                : 'border-sky-900/60 bg-sky-50/20 hover:border-sky-700/60 hover:bg-sky-50/30'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -341,7 +341,7 @@ export default function ReportPage() {
                 <span className="text-lg">{role.icon}</span>
                 <div>
                   <p className="text-sm text-sky-200 font-medium">{role.label}</p>
-                  <p className="text-[10px] text-sky-400/70 mt-0.5">
+                  <p className="text-[10px] text-sky-600/70 mt-0.5">
                     Chapter-mapped · Action log · SAHI alignment · DPDP note
                   </p>
                 </div>
@@ -350,7 +350,7 @@ export default function ReportPage() {
                 {generatedCache[role.key] && (
                   <span className="text-[10px] text-sky-500">✓</span>
                 )}
-                <span className="text-[10px] font-mono text-sky-600 border border-sky-800 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-mono text-sky-600 border border-sky-200 px-1.5 py-0.5 rounded">
                   NABH
                 </span>
               </div>
@@ -365,12 +365,12 @@ export default function ReportPage() {
           ref={narrativeRef}
           className={`border rounded-lg overflow-hidden mb-8 ${
             selectedRole === 'nabh'
-              ? 'border-sky-800/60 bg-sky-950/20'
-              : 'border-slate-800 bg-slate-900/40'
+              ? 'border-sky-200/60 bg-sky-50/20'
+              : 'border-slate-200 bg-white/40'
           }`}
         >
           <div className={`px-5 py-3 border-b flex items-center justify-between ${
-            selectedRole === 'nabh' ? 'border-sky-800/60' : 'border-slate-800'
+            selectedRole === 'nabh' ? 'border-sky-200/60' : 'border-slate-200'
           }`}>
             <div>
               <p className={`text-[10px] font-mono uppercase tracking-widest ${
@@ -379,7 +379,7 @@ export default function ReportPage() {
                 {selectedRole === 'nabh' ? 'NABH preparation report' : 'Narrative for'}
               </p>
               <p className={`text-sm font-medium mt-0.5 ${
-                selectedRole === 'nabh' ? 'text-sky-200' : 'text-slate-200'
+                selectedRole === 'nabh' ? 'text-sky-200' : 'text-slate-800'
               }`}>
                 {selectedRoleMeta?.icon} {selectedRoleMeta?.label}
               </p>
@@ -389,8 +389,8 @@ export default function ReportPage() {
                 onClick={() => handleRoleSelect(selectedRole)}
                 className={`text-xs border px-2 py-1 rounded transition-colors ${
                   selectedRole === 'nabh'
-                    ? 'text-sky-500 hover:text-sky-300 border-sky-800'
-                    : 'text-slate-500 hover:text-slate-300 border-slate-800'
+                    ? 'text-sky-500 hover:text-sky-700 border-sky-200'
+                    : 'text-slate-500 hover:text-slate-700 border-slate-200'
                 }`}
               >
                 ↺ Regenerate
@@ -408,8 +408,8 @@ export default function ReportPage() {
 
           <div className={`px-5 py-3 border-t ${
             selectedRole === 'nabh'
-              ? 'border-sky-800/60 bg-sky-950/30'
-              : 'border-slate-800 bg-slate-900/60'
+              ? 'border-sky-200/60 bg-sky-50/30'
+              : 'border-slate-200 bg-white/60'
           }`}>
             {selectedRole === 'nabh' ? (
               <p className="text-[10px] text-sky-700/80 leading-relaxed">
@@ -440,29 +440,29 @@ export default function ReportPage() {
             }
             window.print()
           }}
-          className="border border-slate-800 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
+          className="border border-slate-200 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-700 hover:border-slate-300 transition-colors text-sm"
         >
           Export / Print
         </button>
         <button
           onClick={() => router.back()}
-          className="border border-slate-700 text-slate-300 px-5 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+          className="border border-slate-300 text-slate-700 px-5 py-3 rounded-lg hover:bg-slate-100 transition-colors text-sm"
         >
           ← Back to results
         </button>
         <button
           onClick={() => router.replace('/')}
-          className="border border-slate-800 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
+          className="border border-slate-200 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-700 hover:border-slate-300 transition-colors text-sm"
         >
           New simulation
         </button>
       </div>
 
       {/* ── Glossary ─────────────────────────────────────────────── */}
-      <section className="border border-slate-800 rounded-lg bg-slate-900/30 overflow-hidden mb-12">
+      <section className="border border-slate-200 rounded-lg bg-white/30 overflow-hidden mb-12">
         <button
           onClick={() => setGlossaryOpen(v => !v)}
-          className="w-full text-left px-5 py-3 flex items-center justify-between hover:bg-slate-800/40 transition-colors"
+          className="w-full text-left px-5 py-3 flex items-center justify-between hover:bg-slate-100/40 transition-colors"
         >
           <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
             Terminology glossary
@@ -470,7 +470,7 @@ export default function ReportPage() {
           <span className="text-slate-600 text-xs">{glossaryOpen ? '▲' : '▼'}</span>
         </button>
         {glossaryOpen && (
-          <div className="px-5 pb-5 border-t border-slate-800 space-y-5 pt-4">
+          <div className="px-5 pb-5 border-t border-slate-200 space-y-5 pt-4">
             <GlossaryEntry
               term="Value drift"
               definition="Value drift measures the gap between the values an institution declares and the values its decisions reveal under pressure. It is a structural signal — it reflects resourcing and protocol, not individuals."
@@ -545,13 +545,13 @@ export default function ReportPage() {
         </button>
         <button
           onClick={() => router.push('/inspector')}
-          className="flex-1 border border-slate-700 text-slate-200 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+          className="flex-1 border border-slate-300 text-slate-800 py-3 rounded-lg hover:bg-slate-100 transition-colors text-sm"
         >
           Decision Inspector →
         </button>
         <button
           onClick={() => router.replace('/')}
-          className="border border-slate-800 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
+          className="border border-slate-200 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-700 hover:border-slate-300 transition-colors text-sm"
         >
           New simulation
         </button>

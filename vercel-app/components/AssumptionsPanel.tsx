@@ -98,12 +98,12 @@ const CATEGORY_CONFIG: Record<Assumption['category'], {
 }> = {
   simplification: {
     label: 'Simplification',
-    labelClass: 'text-amber-400 border-amber-800/60 bg-amber-950/30',
+    labelClass: 'text-amber-400 border-amber-800/60 bg-amber-50/30',
     dot: 'bg-amber-500',
   },
   not_modelled: {
     label: 'Not modelled',
-    labelClass: 'text-slate-400 border-slate-700 bg-slate-800/40',
+    labelClass: 'text-slate-600 border-slate-300 bg-slate-100/40',
     dot: 'bg-slate-600',
   },
   known_gap: {
@@ -153,18 +153,18 @@ export default function AssumptionsPanel({
     }, {})
 
   return (
-    <div className="border border-slate-800/80 rounded-lg overflow-hidden">
+    <div className="border border-slate-200/80 rounded-lg overflow-hidden">
       {/* ── Toggle header ──────────────────────────────────────────────────── */}
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-900/40 hover:bg-slate-900/60 transition-colors text-left"
+        className="w-full flex items-center justify-between px-4 py-3 bg-white/40 hover:bg-white/60 transition-colors text-left" aria-label="Model assumptions and known limitations — expand to review"
       >
         <div className="flex items-center gap-2.5">
           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
             Model assumptions
           </span>
-          <span className="text-[9px] font-mono text-slate-600 border border-slate-800 px-1.5 py-0.5 rounded">
+          <span className="text-[9px] font-mono text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">
             {filtered.length}
           </span>
         </div>
@@ -174,13 +174,12 @@ export default function AssumptionsPanel({
               {counts.known_gap > 0 && (
                 <span className="flex items-center gap-1 text-[9px] font-mono text-orange-500">
                   <span className="w-1 h-1 rounded-full bg-orange-500" />
-                  {counts.known_gap} gaps
+                  {counts.known_gap} known gap{counts.known_gap !== 1 ? 's' : ''}
                 </span>
               )}
               {counts.validation > 0 && (
-                <span className="flex items-center gap-1 text-[9px] font-mono text-rose-500">
-                  <span className="w-1 h-1 rounded-full bg-rose-500" />
-                  unvalidated
+                <span className="text-[9px] font-mono text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">
+                  validation pending
                 </span>
               )}
             </div>
@@ -191,7 +190,7 @@ export default function AssumptionsPanel({
 
       {/* ── Expanded body ──────────────────────────────────────────────────── */}
       {expanded && (
-        <div className="border-t border-slate-800/80">
+        <div className="border-t border-slate-200/80">
           {/* Disclaimer banner */}
           <div className="px-4 py-3 bg-rose-950/20 border-b border-rose-900/30">
             <p className="text-[11px] text-rose-300/80 leading-relaxed">
@@ -203,14 +202,14 @@ export default function AssumptionsPanel({
 
           {/* Category filter chips */}
           {!compact && (
-            <div className="flex flex-wrap gap-1.5 px-4 py-3 border-b border-slate-800/60">
+            <div className="flex flex-wrap gap-1.5 px-4 py-3 border-b border-slate-200/60">
               <button
                 type="button"
                 onClick={() => setActiveCategory('all')}
                 className={`text-[9px] font-mono px-2 py-1 rounded border transition-colors ${
                   activeCategory === 'all'
-                    ? 'border-slate-600 text-slate-300 bg-slate-800/60'
-                    : 'border-slate-800 text-slate-600 hover:text-slate-400'
+                    ? 'border-slate-600 text-slate-700 bg-slate-100/60'
+                    : 'border-slate-200 text-slate-600 hover:text-slate-600'
                 }`}
               >
                 All ({filtered.length})
@@ -224,7 +223,7 @@ export default function AssumptionsPanel({
                     type="button"
                     onClick={() => setActiveCategory(cat)}
                     className={`text-[9px] font-mono border px-2 py-1 rounded transition-colors ${
-                      activeCategory === cat ? cfg.labelClass : 'border-slate-800 text-slate-600 hover:text-slate-400'
+                      activeCategory === cat ? cfg.labelClass : 'border-slate-200 text-slate-600 hover:text-slate-600'
                     }`}
                   >
                     {cfg.label} ({counts[cat]})
@@ -243,13 +242,13 @@ export default function AssumptionsPanel({
                   <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot} mt-1.5 shrink-0`} />
                   <div className="flex-1 min-w-0">
                     {compact ? (
-                      <p className="text-[11px] text-slate-400 leading-relaxed">{assumption.text}</p>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">{assumption.text}</p>
                     ) : (
                       <>
                         <span className={`text-[9px] font-mono border px-1.5 py-0.5 rounded mr-2 ${cfg.labelClass}`}>
                           {cfg.label}
                         </span>
-                        <span className="text-[11px] text-slate-400 leading-relaxed">{assumption.text}</span>
+                        <span className="text-[11px] text-slate-600 leading-relaxed">{assumption.text}</span>
                       </>
                     )}
                   </div>
@@ -259,7 +258,7 @@ export default function AssumptionsPanel({
           </ul>
 
           {/* Footer */}
-          <div className="px-4 py-2.5 bg-slate-900/40 border-t border-slate-800/60">
+          <div className="px-4 py-2.5 bg-white/40 border-t border-slate-200/60">
             <p className="text-[10px] text-slate-600">
               For expert feedback on simulation validity, use the feedback form at the bottom of the results page.
             </p>

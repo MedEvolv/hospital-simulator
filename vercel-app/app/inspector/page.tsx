@@ -168,23 +168,23 @@ function EventCard({
   )
 
   return (
-    <div className="border border-slate-800 rounded-lg bg-slate-900 overflow-hidden">
+    <div className="border border-slate-200 rounded-lg bg-white overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full text-left px-4 py-3 flex items-start gap-3 hover:bg-slate-800/50 transition-colors"
+        className="w-full text-left px-4 py-3 flex items-start gap-3 hover:bg-slate-100/50 transition-colors"
       >
         <span className="text-xs font-mono text-slate-600 tabular-nums mt-0.5 shrink-0 w-14">
           t{event.timestamp.toFixed(0)}
         </span>
-        <span className="text-xs font-mono text-slate-400 shrink-0 mt-0.5 w-36 truncate">
+        <span className="text-xs font-mono text-slate-600 shrink-0 mt-0.5 w-36 truncate">
           {event.event_type.replace(/_/g, ' ')}
         </span>
-        <span className="flex-1 text-sm text-slate-300 leading-relaxed">
+        <span className="flex-1 text-sm text-slate-700 leading-relaxed">
           {layers.what}
         </span>
         <div className="flex items-center gap-2 shrink-0">
           {flagged && (
-            <span className="text-xs text-amber-500 border border-amber-900 px-1.5 py-0.5 rounded">
+            <span className="text-xs text-amber-500 border border-amber-200 px-1.5 py-0.5 rounded">
               ethical
             </span>
           )}
@@ -194,7 +194,7 @@ function EventCard({
       </button>
 
       {expanded && (
-        <div className="border-t border-slate-800 bg-slate-950/50">
+        <div className="border-t border-slate-200 bg-slate-50/50">
           {plainEnglish ? (
             // ── Plain English: three layers ────────────────────────────────
             <div className="px-4 py-4 space-y-4">
@@ -202,25 +202,25 @@ function EventCard({
                 <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                   What happened
                 </p>
-                <p className="text-sm text-slate-300 leading-relaxed">{layers.what}</p>
+                <p className="text-sm text-slate-700 leading-relaxed">{layers.what}</p>
               </div>
 
-              <div className="space-y-1 border-l-2 border-slate-700 pl-3">
+              <div className="space-y-1 border-l-2 border-slate-300 pl-3">
                 <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                   What this means
                 </p>
-                <p className="text-sm text-slate-400 leading-relaxed">{layers.means}</p>
+                <p className="text-sm text-slate-600 leading-relaxed">{layers.means}</p>
               </div>
 
-              <div className="space-y-1 border-l-2 border-blue-900 pl-3">
+              <div className="space-y-1 border-l-2 border-blue-200 pl-3">
                 <p className="text-[10px] font-mono text-blue-600 uppercase tracking-widest">
                   Why it matters for governance
                 </p>
-                <p className="text-sm text-slate-400 leading-relaxed">{layers.governs}</p>
+                <p className="text-sm text-slate-600 leading-relaxed">{layers.governs}</p>
               </div>
 
               {layers.roleNote && (
-                <div className="space-y-1 border border-amber-900/40 bg-amber-950/20 rounded-lg px-3 py-2.5">
+                <div className="space-y-1 border border-amber-200/40 bg-amber-50/20 rounded-lg px-3 py-2.5">
                   <p className="text-[10px] font-mono text-amber-600/70 uppercase tracking-widest">
                     Role-specific note
                   </p>
@@ -229,7 +229,7 @@ function EventCard({
               )}
 
               <details className="group">
-                <summary className="text-xs text-slate-600 hover:text-slate-400 cursor-pointer list-none flex items-center gap-1">
+                <summary className="text-xs text-slate-600 hover:text-slate-600 cursor-pointer list-none flex items-center gap-1">
                   <span className="group-open:rotate-90 transition-transform inline-block">▶</span>
                   Technical payload
                 </summary>
@@ -240,7 +240,7 @@ function EventCard({
                     <MetaRow label="Tick" value={event.timestamp.toFixed(1)} />
                     <MetaRow label="Type" value={event.event_type} />
                   </div>
-                  <pre className="text-xs text-slate-400 bg-slate-900 rounded p-3 overflow-x-auto whitespace-pre-wrap break-words">
+                  <pre className="text-xs text-slate-600 bg-white rounded p-3 overflow-x-auto whitespace-pre-wrap break-words">
                     {JSON.stringify(event.payload, null, 2)}
                   </pre>
                 </div>
@@ -257,7 +257,7 @@ function EventCard({
               </div>
               <div>
                 <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">Payload</p>
-                <pre className="text-xs text-slate-400 bg-slate-900 rounded p-3 overflow-x-auto whitespace-pre-wrap break-words">
+                <pre className="text-xs text-slate-600 bg-white rounded p-3 overflow-x-auto whitespace-pre-wrap break-words">
                   {JSON.stringify(event.payload, null, 2)}
                 </pre>
               </div>
@@ -355,24 +355,24 @@ export default function InspectorScreen() {
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
           Decision Inspector · {report.institutional_profile} · seed {report.seed}
         </p>
-        <h1 className="text-4xl font-light text-slate-50 tracking-tight mb-3">
+        <h1 className="text-4xl font-light text-slate-900 tracking-tight mb-3">
           What decisions were made, and why?
         </h1>
-        <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+        <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
           A tick-by-tick record of simulation decisions. Default view shows only HIGH and CRITICAL
           events to reduce alert fatigue. Adjust filters to explore the full run.
         </p>
       </header>
 
       {/* ── Tab switcher ──────────────────────────────────────────── */}
-      <div className="flex gap-1 mb-6 bg-slate-900/60 border border-slate-800 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-white/60 border border-slate-200 rounded-lg p-1 w-fit">
         <button
           type="button"
           onClick={() => setActiveTab('event_log')}
           className={`px-4 py-2 text-xs rounded-md transition-colors ${
             activeTab === 'event_log'
-              ? 'bg-slate-800 text-slate-100 border border-slate-700'
-              : 'text-slate-500 hover:text-slate-300'
+              ? 'bg-slate-100 text-slate-900 border border-slate-300'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           Event log
@@ -382,8 +382,8 @@ export default function InspectorScreen() {
           onClick={() => setActiveTab('causal_replay')}
           className={`px-4 py-2 text-xs rounded-md transition-colors ${
             activeTab === 'causal_replay'
-              ? 'bg-slate-800 text-slate-100 border border-slate-700'
-              : 'text-slate-500 hover:text-slate-300'
+              ? 'bg-slate-100 text-slate-900 border border-slate-300'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           Causal Replay ✦
@@ -402,14 +402,14 @@ export default function InspectorScreen() {
       {activeTab === 'event_log' && (<>
 
       {/* ── Plain English / Technical toggle ──────────────────────── */}
-      <div className="flex items-center gap-3 mb-6 p-3 border border-slate-800 rounded-lg bg-slate-900/40 w-fit">
+      <div className="flex items-center gap-3 mb-6 p-3 border border-slate-200 rounded-lg bg-white/40 w-fit">
         <span className="text-xs text-slate-500">View mode:</span>
         <button
           onClick={() => setPlainEnglish(true)}
           className={`text-xs px-3 py-1.5 rounded transition-colors ${
             plainEnglish
-              ? 'bg-slate-700 text-slate-100'
-              : 'text-slate-500 hover:text-slate-300'
+              ? 'bg-slate-700 text-slate-900'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           Plain English
@@ -418,14 +418,14 @@ export default function InspectorScreen() {
           onClick={() => setPlainEnglish(false)}
           className={`text-xs px-3 py-1.5 rounded transition-colors ${
             !plainEnglish
-              ? 'bg-slate-700 text-slate-100'
-              : 'text-slate-500 hover:text-slate-300'
+              ? 'bg-slate-700 text-slate-900'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           Technical
         </button>
         {plainEnglish && (
-          <span className="text-[10px] text-slate-600 border-l border-slate-800 pl-3">
+          <span className="text-[10px] text-slate-600 border-l border-slate-200 pl-3">
             Three-layer view: what happened · what it means · why it matters
             {surveyRole && ` · role notes: ${surveyRole}`}
           </span>
@@ -439,7 +439,7 @@ export default function InspectorScreen() {
           <select
             value={severityFilter}
             onChange={e => setSeverityFilter(e.target.value as SeverityFilter)}
-            className="bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-slate-600"
+            className="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-800 focus:outline-none focus:border-slate-600"
           >
             <option value="HIGH">HIGH + CRITICAL (default)</option>
             <option value="MEDIUM">MEDIUM and above</option>
@@ -452,7 +452,7 @@ export default function InspectorScreen() {
           <select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-slate-600"
+            className="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-800 focus:outline-none focus:border-slate-600"
           >
             <option value="ALL">All types</option>
             {eventTypes.map(t => (
@@ -467,7 +467,7 @@ export default function InspectorScreen() {
             onChange={e => setEthicalOnly(e.target.checked)}
             className="accent-amber-500"
           />
-          <span className="text-xs text-slate-400">Ethical flags only</span>
+          <span className="text-xs text-slate-600">Ethical flags only</span>
         </label>
         <span className="ml-auto text-xs text-slate-500 tabular-nums">
           {filteredEvents.length} / {report.event_log.length} events
@@ -476,11 +476,11 @@ export default function InspectorScreen() {
 
       {/* ── Event log ─────────────────────────────────────────────── */}
       {filteredEvents.length === 0 ? (
-        <div className="border border-slate-800 rounded-lg p-8 text-center text-sm text-slate-500">
+        <div className="border border-slate-200 rounded-lg p-8 text-center text-sm text-slate-500">
           No events match the current filters.{' '}
           <button
             onClick={() => { setSeverityFilter('ALL'); setTypeFilter('ALL'); setEthicalOnly(false) }}
-            className="text-slate-400 underline hover:text-slate-200"
+            className="text-slate-600 underline hover:text-slate-800"
           >
             Clear filters
           </button>
@@ -507,13 +507,13 @@ export default function InspectorScreen() {
       <div className="flex gap-4 mt-10 mb-12">
         <button
           onClick={() => router.back()}
-          className="border border-slate-700 text-slate-300 px-6 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+          className="border border-slate-300 text-slate-700 px-6 py-3 rounded-lg hover:bg-slate-100 transition-colors text-sm"
         >
           ← Back to results
         </button>
         <button
           onClick={() => router.replace('/')}
-          className="border border-slate-800 text-slate-500 px-6 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
+          className="border border-slate-200 text-slate-500 px-6 py-3 rounded-lg hover:text-slate-700 hover:border-slate-300 transition-colors text-sm"
         >
           New simulation
         </button>
@@ -558,7 +558,7 @@ function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex gap-2">
       <span className="text-slate-600 shrink-0">{label}:</span>
-      <span className="text-slate-400 font-mono">{value}</span>
+      <span className="text-slate-600 font-mono">{value}</span>
     </div>
   )
 }

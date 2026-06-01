@@ -174,17 +174,17 @@ export default function ResultsScreen() {
     <main className="max-w-6xl mx-auto px-6 py-14">
       {/* ── Sample banner ─────────────────────────────────────────── */}
       {report._sample && (
-        <div className="mb-6 border border-sky-800/60 bg-sky-950/30 rounded-lg px-4 py-3 flex items-center justify-between gap-4">
+        <div className="mb-6 border border-sky-200/60 bg-sky-50/30 rounded-lg px-4 py-3 flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-mono text-sky-400 uppercase tracking-widest mb-0.5">Sample report</p>
-            <p className="text-sm text-slate-300">
+            <p className="text-xs font-mono text-sky-600 uppercase tracking-widest mb-0.5">Sample report</p>
+            <p className="text-sm text-slate-700">
               This is a pre-computed example run, shown so you can read the output before running your own.
               Every number below comes from a real deterministic scenario.
             </p>
           </div>
           <button
             onClick={() => router.push('/')}
-            className="shrink-0 text-xs font-medium text-sky-300 border border-sky-700 hover:bg-sky-900/40 px-3 py-1.5 rounded transition-colors"
+            className="shrink-0 text-xs font-medium text-sky-700 border border-sky-700 hover:bg-sky-900/40 px-3 py-1.5 rounded transition-colors"
           >
             Run your own →
           </button>
@@ -194,7 +194,7 @@ export default function ResultsScreen() {
       {/* ── Header ────────────────────────────────────────────────── */}
       <header className="mb-10">
         {contextLabel && (
-          <p className="text-xs text-slate-400 mb-3 inline-flex items-center gap-2 border border-slate-800 bg-slate-900/40 rounded px-3 py-1.5">
+          <p className="text-xs text-slate-600 mb-3 inline-flex items-center gap-2 border border-slate-200 bg-white/40 rounded px-3 py-1.5">
             <span className="font-mono text-slate-600 uppercase tracking-widest">Reviewing as</span>
             {contextLabel}
           </p>
@@ -204,13 +204,13 @@ export default function ResultsScreen() {
             <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
               Governance scenario · {sr.scenario.packId} · seed {sr.seed} · {sr.timestamp.slice(0, 10)}
             </p>
-            <h1 className="text-5xl font-light text-slate-50 tracking-tight mb-4">
+            <h1 className="text-5xl font-light text-slate-900 tracking-tight mb-4">
               {sr.scenario.name}
             </h1>
             <div className="flex items-center gap-4 text-xs text-slate-500">
               <span>{sr.base_event_count} organic events</span>
               <span>+</span>
-              <span className="text-slate-400">{sr.injected_event_count} injected stressors</span>
+              <span className="text-slate-600">{sr.injected_event_count} injected stressors</span>
               <span>·</span>
               <span>run {sr.run_id.slice(0, 8)}</span>
             </div>
@@ -220,10 +220,10 @@ export default function ResultsScreen() {
             <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
               {report.institutional_profile} · seed {report.seed} · {report.timestamp.slice(0, 10)}
             </p>
-            <h1 className="text-5xl font-light text-slate-50 tracking-tight mb-4">
+            <h1 className="text-5xl font-light text-slate-900 tracking-tight mb-4">
               What did this cost us?
             </h1>
-            <p className="text-slate-400 text-sm max-w-2xl leading-relaxed">
+            <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
               {ps.interpretation}
             </p>
           </>
@@ -234,7 +234,7 @@ export default function ResultsScreen() {
       {sr && fiveSignals && (
         <div className="mb-14 space-y-10">
           {/* Ontological disclaimer — hard gate invariant */}
-          <div className="border border-slate-800/60 rounded p-3 bg-slate-950/60">
+          <div className="border border-slate-200/60 rounded p-3 bg-slate-50/60">
             <p className="text-[10px] font-mono text-slate-600 text-center tracking-wider">
               This is a scenario-based governance simulation. It does not predict reality.
             </p>
@@ -265,7 +265,7 @@ export default function ResultsScreen() {
           )}
 
           {/* Divider before v1 content */}
-          <div className="border-t border-slate-800 pt-6">
+          <div className="border-t border-slate-200 pt-6">
             <p className="text-xs font-mono text-slate-600 tracking-widest uppercase">
               Patient flow detail — v1 analysis
             </p>
@@ -279,10 +279,10 @@ export default function ResultsScreen() {
           <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-2">
             Patient flow replay
           </p>
-          <h2 className="text-2xl font-light text-slate-100 tracking-tight mb-2">
+          <h2 className="text-2xl font-light text-slate-900 tracking-tight mb-2">
             Watch what happened, tick by tick.
           </h2>
-          <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+          <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
             Every dot is a patient. Colour is triage urgency. Pulsing rings are ethical events —
             refusals, harm classifications, value conflicts. The numbers below are summaries of what
             you&apos;re watching here.
@@ -301,7 +301,7 @@ export default function ResultsScreen() {
       <ReflectiveStatePanel report={report} />
 
       {/* ── Cost Accounting ───────────────────────────────────────── */}
-      <section className="border border-amber-900/60 bg-amber-950/20 rounded-lg p-6 mb-10">
+      <section className="border border-amber-200/60 bg-amber-50/20 rounded-lg p-6 mb-10">
         <p className="text-xs font-mono text-amber-500 tracking-widest uppercase mb-4">
           What did this cost us, and why?
         </p>
@@ -372,10 +372,10 @@ export default function ResultsScreen() {
         <SectionHeading>What the simulation observed</SectionHeading>
         <div className="space-y-3">
           {sy.insights.map((insight, i) => (
-            <div key={i} className="border border-slate-800 rounded-lg p-4 bg-slate-900">
+            <div key={i} className="border border-slate-200 rounded-lg p-4 bg-white">
               <div className="flex items-start gap-3">
                 <SeverityBadge severity={insight.severity} />
-                <p className="text-sm text-slate-300 leading-relaxed">{insight.message}</p>
+                <p className="text-sm text-slate-700 leading-relaxed">{insight.message}</p>
               </div>
             </div>
           ))}
@@ -387,7 +387,7 @@ export default function ResultsScreen() {
         <p className="text-xs font-mono text-amber-500 tracking-widest uppercase mb-2">
           For governance review
         </p>
-        <p className="text-base text-slate-200 leading-relaxed italic">
+        <p className="text-base text-slate-800 leading-relaxed italic">
           &ldquo;{sy.critical_question}&rdquo;
         </p>
       </section>
@@ -400,10 +400,10 @@ export default function ResultsScreen() {
           Value drift is a structural signal — it reflects resourcing and protocol, not individuals.
           These figures are observations, not verdicts.
         </p>
-        <div className="border border-slate-800 rounded-lg overflow-hidden">
+        <div className="border border-slate-200 rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-800 text-left">
+              <tr className="border-b border-slate-200 text-left">
                 <th className="px-4 py-3 text-xs font-mono text-slate-500 uppercase tracking-widest">Value</th>
                 <th className="px-4 py-3 text-xs font-mono text-slate-500 uppercase tracking-widest">Declared weight</th>
                 <th className="px-4 py-3 text-xs font-mono text-slate-500 uppercase tracking-widest">Drift</th>
@@ -417,13 +417,13 @@ export default function ResultsScreen() {
                 const isPrimary = mr.value_drift.primary_misalignment === val
                 return (
                   <tr key={val} className="border-b border-slate-900 last:border-0">
-                    <td className="px-4 py-3 text-slate-200 capitalize">
+                    <td className="px-4 py-3 text-slate-800 capitalize">
                       {val}{isPrimary && <span className="ml-2 text-xs text-amber-500">primary drift</span>}
                     </td>
-                    <td className="px-4 py-3 text-slate-400 tabular-nums">{(weight as number).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-slate-600 tabular-nums">{(weight as number).toFixed(2)}</td>
                     <td className="px-4 py-3 tabular-nums">
                       {driftNum !== null ? (
-                        <span className={driftNum > 0.3 ? 'text-red-400' : driftNum > 0.15 ? 'text-amber-400' : 'text-slate-400'}>
+                        <span className={driftNum > 0.3 ? 'text-red-400' : driftNum > 0.15 ? 'text-amber-400' : 'text-slate-600'}>
                           {driftNum.toFixed(2)}
                         </span>
                       ) : '—'}
@@ -442,17 +442,17 @@ export default function ResultsScreen() {
         <SectionHeading>Ethical debt</SectionHeading>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <p className="text-4xl font-light text-slate-50 tabular-nums mb-1">
+            <p className="text-4xl font-light text-slate-900 tabular-nums mb-1">
               {mr.ethical_debt.current_debt.toFixed(0)}
             </p>
             <p className="text-xs text-slate-500">units accrued this run</p>
-            <p className="text-xs text-slate-400 mt-3 leading-relaxed">{mr.ethical_debt.interpretation}</p>
+            <p className="text-xs text-slate-600 mt-3 leading-relaxed">{mr.ethical_debt.interpretation}</p>
           </div>
           <div className="space-y-2">
             {Object.entries(mr.ethical_debt.category_breakdown).map(([cat, val]) => (
               <div key={cat} className="flex items-center justify-between text-sm">
-                <span className="text-slate-400 capitalize">{cat.replace(/_/g, ' ')}</span>
-                <span className="text-slate-300 tabular-nums">{(val as number).toFixed(0)}</span>
+                <span className="text-slate-600 capitalize">{cat.replace(/_/g, ' ')}</span>
+                <span className="text-slate-700 tabular-nums">{(val as number).toFixed(0)}</span>
               </div>
             ))}
           </div>
@@ -467,8 +467,8 @@ export default function ResultsScreen() {
           Avoidable harms are instances where alternatives existed; only these are within governance reach.
         </p>
         <div className="flex gap-6 mb-5 text-sm">
-          <span className="text-slate-400">
-            Total: <span className="text-slate-100 font-medium">{mr.harm_classifications.summary.total_harms_classified}</span>
+          <span className="text-slate-600">
+            Total: <span className="text-slate-900 font-medium">{mr.harm_classifications.summary.total_harms_classified}</span>
           </span>
           <span className="text-red-400">
             Forced (capacity-constrained): <span className="font-medium">{mr.harm_classifications.summary.forced_count}</span>
@@ -479,12 +479,12 @@ export default function ResultsScreen() {
         </div>
         <div className="space-y-2">
           {mr.harm_classifications.details.map((h, i) => (
-            <div key={i} className="border border-slate-800 rounded p-3 bg-slate-900">
+            <div key={i} className="border border-slate-200 rounded p-3 bg-white">
               <div className="flex items-start justify-between gap-3 mb-1">
-                <span className="text-xs font-mono text-slate-400 capitalize">{h.harm_type.replace(/_/g, ' ')}</span>
+                <span className="text-xs font-mono text-slate-600 capitalize">{h.harm_type.replace(/_/g, ' ')}</span>
                 {h.tick !== undefined && <span className="text-xs text-slate-600">tick {h.tick}</span>}
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">{h.justification}</p>
+              <p className="text-xs text-slate-700 leading-relaxed">{h.justification}</p>
               {h.avoidable_with && (
                 <p className="text-xs text-amber-500 mt-1">Avoidable with: {h.avoidable_with}</p>
               )}
@@ -503,19 +503,19 @@ export default function ResultsScreen() {
         </p>
         <div className="space-y-2">
           {mr.refusals.details.map((r, i) => (
-            <div key={i} className="border border-slate-800 rounded p-3 bg-slate-900">
+            <div key={i} className="border border-slate-200 rounded p-3 bg-white">
               <div className="flex items-start justify-between gap-3 mb-1">
-                <span className="text-xs font-mono text-slate-400 capitalize">{r.reason.replace(/_/g, ' ')}</span>
+                <span className="text-xs font-mono text-slate-600 capitalize">{r.reason.replace(/_/g, ' ')}</span>
                 <div className="flex items-center gap-2">
                   {r.requires_human && (
-                    <span className="text-xs text-blue-400 border border-blue-900 px-1.5 py-0.5 rounded">
+                    <span className="text-xs text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded">
                       human required
                     </span>
                   )}
                   {r.tick !== undefined && <span className="text-xs text-slate-600">tick {r.tick}</span>}
                 </div>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">{r.description}</p>
+              <p className="text-xs text-slate-700 leading-relaxed">{r.description}</p>
             </div>
           ))}
         </div>
@@ -525,7 +525,7 @@ export default function ResultsScreen() {
       <section className="mb-10">
         <SectionHeading>Capacity-constrained harm summary</SectionHeading>
         {mr.unavoidable_harm_summary.summary && (
-          <p className="text-sm text-slate-300 leading-relaxed mb-5">{mr.unavoidable_harm_summary.summary}</p>
+          <p className="text-sm text-slate-700 leading-relaxed mb-5">{mr.unavoidable_harm_summary.summary}</p>
         )}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
           <NamedList title="Harms that occurred" items={mr.unavoidable_harm_summary.harms_that_occurred} />
@@ -540,19 +540,19 @@ export default function ResultsScreen() {
         {glp.status === 'optimal' ? (
           <GlpPanel glp={glp} />
         ) : (
-          <div className="border border-slate-800 rounded-lg p-5 bg-slate-900 text-sm text-slate-400">
-            <p className="text-slate-300 mb-2 font-medium">GLP panel unavailable</p>
+          <div className="border border-slate-200 rounded-lg p-5 bg-white text-sm text-slate-600">
+            <p className="text-slate-700 mb-2 font-medium">GLP panel unavailable</p>
             <p className="leading-relaxed">{glp.placeholder ?? glp.reason}</p>
           </div>
         )}
       </section>
 
       {/* ── Recommendation ───────────────────────────────────────── */}
-      <section className="mb-10 bg-slate-900 border border-slate-800 rounded-lg p-6">
+      <section className="mb-10 bg-white border border-slate-200 rounded-lg p-6">
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-3">
           Simulation recommendation
         </p>
-        <p className="text-sm text-slate-200 leading-relaxed">{sy.recommendation}</p>
+        <p className="text-sm text-slate-800 leading-relaxed">{sy.recommendation}</p>
       </section>
 
       {/* ── Governance Action Questions ──────────────────────────── */}
@@ -577,25 +577,25 @@ export default function ResultsScreen() {
         )}
         <button
           onClick={() => router.push('/report')}
-          className={`flex-1 ${sr ? 'border border-slate-700 text-slate-200 hover:bg-slate-800' : 'bg-slate-50 text-slate-950 hover:bg-white'} font-medium py-3 rounded-lg transition-colors text-sm`}
+          className={`flex-1 ${sr ? 'border border-slate-300 text-slate-800 hover:bg-slate-100' : 'bg-slate-50 text-slate-950 hover:bg-white'} font-medium py-3 rounded-lg transition-colors text-sm`}
         >
           Role-specific report →
         </button>
         <button
           onClick={() => router.push('/inspector')}
-          className="flex-1 border border-slate-700 text-slate-200 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+          className="flex-1 border border-slate-300 text-slate-800 py-3 rounded-lg hover:bg-slate-100 transition-colors text-sm"
         >
           Decision Inspector →
         </button>
         <button
           onClick={() => router.push('/export')}
-          className="border border-slate-700 text-slate-300 px-5 py-3 rounded-lg hover:bg-slate-800 transition-colors text-sm"
+          className="border border-slate-300 text-slate-700 px-5 py-3 rounded-lg hover:bg-slate-100 transition-colors text-sm"
         >
           Export →
         </button>
         <button
           onClick={() => router.replace('/')}
-          className="border border-slate-800 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-300 hover:border-slate-700 transition-colors text-sm"
+          className="border border-slate-200 text-slate-500 px-5 py-3 rounded-lg hover:text-slate-700 hover:border-slate-300 transition-colors text-sm"
         >
           New simulation
         </button>
@@ -632,8 +632,8 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 function CostItem({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
     <div>
-      <p className="text-2xl font-light text-slate-50 tabular-nums">
-        {value}{unit && <span className="text-sm text-slate-400 ml-1">{unit}</span>}
+      <p className="text-2xl font-light text-slate-900 tabular-nums">
+        {value}{unit && <span className="text-sm text-slate-600 ml-1">{unit}</span>}
       </p>
       <p className="text-xs text-slate-500 mt-0.5">{label}</p>
     </div>
@@ -658,13 +658,13 @@ function ReflectiveStatePanel({ report }: { report: SimulationReport }) {
   const observations = (rs.observations ?? []).slice(0, 3)
 
   return (
-    <section className="mb-10 border border-blue-900/50 bg-blue-950/10 rounded-lg p-6">
+    <section className="mb-10 border border-blue-200/50 bg-blue-50/10 rounded-lg p-6">
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
-          <p className="text-xs font-mono text-blue-400 tracking-widest uppercase mb-2">
+          <p className="text-xs font-mono text-blue-600 tracking-widest uppercase mb-2">
             Institutional state
           </p>
-          <h2 className="text-2xl font-light text-slate-100 tracking-tight">
+          <h2 className="text-2xl font-light text-slate-900 tracking-tight">
             Trust, strain, and governance under pressure.
           </h2>
         </div>
@@ -727,12 +727,12 @@ function ReflectiveStatePanel({ report }: { report: SimulationReport }) {
       </div>
 
       {observations.length > 0 && (
-        <div className="mt-5 border-t border-blue-900/40 pt-4 space-y-3">
+        <div className="mt-5 border-t border-blue-200/40 pt-4 space-y-3">
           {observations.map((obs, i) => (
             <div key={`${obs.type}-${i}`} className="flex items-start gap-3">
               <SeverityBadge severity={normalizeSeverity(obs.severity)} />
               <div>
-                <p className="text-sm text-slate-300 leading-relaxed">{obs.message}</p>
+                <p className="text-sm text-slate-700 leading-relaxed">{obs.message}</p>
                 {obs.governance_implication && (
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                     {obs.governance_implication}
@@ -760,11 +760,11 @@ function StateVital({
     ? pct >= 70 ? 'text-emerald-400' : pct >= 45 ? 'text-amber-400' : 'text-red-400'
     : pct >= 65 ? 'text-red-400' : pct >= 35 ? 'text-amber-400' : 'text-emerald-400'
   return (
-    <div className="bg-slate-950/60 border border-slate-800 rounded-lg p-4">
+    <div className="bg-slate-50/60 border border-slate-200 rounded-lg p-4">
       <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">{label}</p>
       <p className={`text-4xl font-light tabular-nums ${color}`}>{pct}%</p>
       <p className="text-xs text-slate-500 mt-2">{detail}</p>
-      <div className="h-1.5 bg-slate-800 rounded-full mt-3 overflow-hidden">
+      <div className="h-1.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
         <div className={`h-full ${color.replace('text-', 'bg-')}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -779,7 +779,7 @@ function StateDetail({
   goodHighRows?: string[]
 }) {
   return (
-    <div className="bg-slate-950/40 border border-slate-800 rounded-lg p-4">
+    <div className="bg-slate-50/40 border border-slate-200 rounded-lg p-4">
       <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">{title}</p>
       <div className="space-y-2">
         {rows.map(([label, value]) => {
@@ -787,7 +787,7 @@ function StateDetail({
           const goodHigh = goodHighRows.includes(label)
           const color = goodHigh
             ? pct >= 70 ? 'text-emerald-400' : pct >= 45 ? 'text-amber-400' : 'text-red-400'
-            : pct >= 65 ? 'text-red-400' : pct >= 35 ? 'text-amber-400' : 'text-slate-400'
+            : pct >= 65 ? 'text-red-400' : pct >= 35 ? 'text-amber-400' : 'text-slate-600'
           return (
             <div key={label} className="flex items-center justify-between gap-3">
               <span className="text-slate-500">{label}</span>
@@ -808,13 +808,13 @@ function normalizeSeverity(severity: string | undefined): 'INFO' | 'MEDIUM' | 'H
 }
 
 function NamedList({ title, items, accent }: { title: string; items: string[]; accent?: 'amber' | 'red' }) {
-  const color = accent === 'amber' ? 'text-amber-500' : accent === 'red' ? 'text-red-400' : 'text-slate-400'
+  const color = accent === 'amber' ? 'text-amber-500' : accent === 'red' ? 'text-red-400' : 'text-slate-600'
   return (
     <div>
       <p className={`font-mono tracking-widest uppercase text-xs mb-2 ${color}`}>{title}</p>
       <ul className="space-y-1">
         {items.map((item, i) => (
-          <li key={i} className="text-slate-400 leading-relaxed before:content-['—'] before:mr-2 before:text-slate-700">
+          <li key={i} className="text-slate-600 leading-relaxed before:content-['—'] before:mr-2 before:text-slate-700">
             {item}
           </li>
         ))}
@@ -827,10 +827,10 @@ function GlpPanel({ glp }: { glp: NonNullable<SimulationReport['glp_optimal']> }
   if (glp.status !== 'optimal' || !glp.deviations) return null
   return (
     <div className="space-y-4">
-      <div className="border border-slate-800 rounded-lg overflow-hidden">
+      <div className="border border-slate-200 rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-800">
+            <tr className="border-b border-slate-200">
               <th className="px-4 py-3 text-left text-xs font-mono text-slate-500 uppercase tracking-widest">Goal</th>
               <th className="px-4 py-3 text-right text-xs font-mono text-slate-500 uppercase tracking-widest">Target</th>
               <th className="px-4 py-3 text-right text-xs font-mono text-slate-500 uppercase tracking-widest">Actual</th>
@@ -842,9 +842,9 @@ function GlpPanel({ glp }: { glp: NonNullable<SimulationReport['glp_optimal']> }
               const gap = row.d_minus + row.d_plus
               return (
                 <tr key={name} className="border-b border-slate-900 last:border-0">
-                  <td className="px-4 py-3 font-mono text-slate-200">{name}</td>
-                  <td className="px-4 py-3 text-right text-slate-400 tabular-nums">{row.target.toFixed(2)}</td>
-                  <td className="px-4 py-3 text-right text-slate-400 tabular-nums">{row.actual.toFixed(2)}</td>
+                  <td className="px-4 py-3 font-mono text-slate-800">{name}</td>
+                  <td className="px-4 py-3 text-right text-slate-600 tabular-nums">{row.target.toFixed(2)}</td>
+                  <td className="px-4 py-3 text-right text-slate-600 tabular-nums">{row.actual.toFixed(2)}</td>
                   <td className={`px-4 py-3 text-right tabular-nums ${gap > 0.2 ? 'text-amber-400' : 'text-slate-500'}`}>
                     {gap > 0.001 ? (row.d_minus > 0 ? `−${row.d_minus.toFixed(2)}` : `+${row.d_plus.toFixed(2)}`) : '—'}
                   </td>
@@ -857,7 +857,7 @@ function GlpPanel({ glp }: { glp: NonNullable<SimulationReport['glp_optimal']> }
       {glp.forced_deviations && glp.forced_deviations.length > 0 && (
         <div>
           <p className="text-xs font-mono text-red-500 tracking-widest uppercase mb-2">Forced deviations</p>
-          <ul className="space-y-1 text-xs text-slate-400">
+          <ul className="space-y-1 text-xs text-slate-600">
             {glp.forced_deviations.map((d, i) => <li key={i}>{d}</li>)}
           </ul>
         </div>
@@ -865,13 +865,13 @@ function GlpPanel({ glp }: { glp: NonNullable<SimulationReport['glp_optimal']> }
       {glp.avoidable_deviations && glp.avoidable_deviations.length > 0 && (
         <div>
           <p className="text-xs font-mono text-amber-500 tracking-widest uppercase mb-2">Avoidable deviations</p>
-          <ul className="space-y-1 text-xs text-slate-400">
+          <ul className="space-y-1 text-xs text-slate-600">
             {glp.avoidable_deviations.map((d, i) => <li key={i}>{d}</li>)}
           </ul>
         </div>
       )}
       {glp.eic_note && (
-        <p className="text-xs text-slate-500 border-t border-slate-800 pt-3">{glp.eic_note}</p>
+        <p className="text-xs text-slate-500 border-t border-slate-200 pt-3">{glp.eic_note}</p>
       )}
     </div>
   )
@@ -942,7 +942,7 @@ function GovernanceTimeline({ timeline }: { timeline: GovernanceTimelinePoint[] 
       <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-3">
         Governance timeline — {timeline.length} snapshots
       </p>
-      <div className="border border-slate-800 rounded-lg p-4 bg-slate-950/60 overflow-x-auto">
+      <div className="border border-slate-200 rounded-lg p-4 bg-slate-50/60 overflow-x-auto">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" style={{ minWidth: 240 }}>
           {/* Zero line at y=50% */}
           <line
@@ -1018,7 +1018,7 @@ function GovernanceQuestions({ report }: { report: SimulationReport }) {
       {finalQuestions.map((q, i) => (
         <li key={i} className="flex gap-4">
           <span className="text-xs font-mono text-slate-600 mt-0.5 shrink-0">0{i + 1}</span>
-          <p className="text-sm text-slate-300 leading-relaxed">{q}</p>
+          <p className="text-sm text-slate-700 leading-relaxed">{q}</p>
         </li>
       ))}
     </ol>

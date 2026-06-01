@@ -1,13 +1,13 @@
 export default function Disclaimer() {
   return (
-    <div className="border-t border-slate-800 mt-12 pt-6 pb-8">
+    <div className="border-t border-slate-200 mt-12 pt-6 pb-8">
       <p className="text-xs text-slate-500 leading-relaxed max-w-3xl">
-        <span className="text-slate-400 font-medium">Simulation only. </span>
+        <span className="text-slate-600 font-medium">Simulation only. </span>
         This is a governance and institutional self-reflection tool. It uses synthetic data and
         parameterised profiles. It does not make clinical decisions, diagnose conditions, or
         evaluate real patients. It is not a performance ranking tool, a predictive triage
         system, or a justification for austerity measures.{' '}
-        <span className="text-slate-400">
+        <span className="text-slate-600">
           This tool does not evaluate your hospital. It helps your hospital evaluate itself.
         </span>{' '}
         Designed for governance literacy and institutional self-awareness, in alignment with

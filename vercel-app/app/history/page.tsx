@@ -24,9 +24,9 @@ import AssumptionsPanel from '@/components/AssumptionsPanel'
 // ── Pack colour lookup ─────────────────────────────────────────────────────────
 
 const PACK_BADGE: Record<string, string> = {
-  'automation-failure':  'text-amber-400 border-amber-800/60 bg-amber-950/30',
+  'automation-failure':  'text-amber-400 border-amber-800/60 bg-amber-50/30',
   'institutional-strain':'text-orange-400 border-orange-800/60 bg-orange-950/30',
-  'equity-participation':'text-sky-400 border-sky-800/60 bg-sky-950/30',
+  'equity-participation':'text-sky-600 border-sky-200/60 bg-sky-50/30',
   'security-stress-test':'text-rose-400 border-rose-800/60 bg-rose-950/30',
 }
 
@@ -58,7 +58,7 @@ function SignalDots({ signals }: { signals: Record<string, { value: number }> | 
         const color = effective >= 70 ? 'bg-slate-300' : effective >= 40 ? 'bg-amber-500' : 'bg-red-500'
         return (
           <div key={key} className="flex flex-col items-center gap-0.5">
-            <div className="w-6 bg-slate-800 rounded h-1.5 overflow-hidden">
+            <div className="w-6 bg-slate-100 rounded h-1.5 overflow-hidden">
               <div className={`h-full rounded ${color}`} style={{ width: `${val}%` }} />
             </div>
             <span className="text-[8px] font-mono text-slate-600">{key}</span>
@@ -87,7 +87,7 @@ function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
   } | null
 
   const scenarioId = run.scenario_id ?? ''
-  const badge = PACK_BADGE[scenarioId] ?? 'text-slate-400 border-slate-700 bg-slate-800/30'
+  const badge = PACK_BADGE[scenarioId] ?? 'text-slate-600 border-slate-300 bg-slate-100/30'
   const packLabel = PACK_LABELS[scenarioId] ?? scenarioId
   const scenarioName = meta?.scenarioName ?? scenarioId ?? 'Unknown scenario'
   const createdAt = run.created_at
@@ -110,11 +110,11 @@ function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
   }
 
   return (
-    <div className="border border-slate-800 rounded-lg p-5 bg-slate-900/20 hover:border-slate-700 hover:bg-slate-900/40 transition-all">
+    <div className="border border-slate-200 rounded-lg p-5 bg-white/20 hover:border-slate-300 hover:bg-white/40 transition-all">
       <div className="flex items-start justify-between gap-4 mb-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-sm font-medium text-slate-200">{scenarioName}</h3>
+            <h3 className="text-sm font-medium text-slate-800">{scenarioName}</h3>
           </div>
           <div className="flex items-center gap-2">
             {scenarioId && (
@@ -130,7 +130,7 @@ function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
             <div>
               <p className="text-[10px] font-mono text-slate-500 mb-0.5">composite</p>
               <p className={`text-xl font-mono ${
-                composite >= 70 ? 'text-slate-300'
+                composite >= 70 ? 'text-slate-700'
                   : composite >= 40 ? 'text-amber-400'
                   : 'text-red-400'
               }`}>{composite}</p>
@@ -167,7 +167,7 @@ function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
           type="button"
           onClick={() => onReopen(run)}
           disabled={isReopening}
-          className="flex-1 text-xs border border-slate-700 text-slate-300 py-2 rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-40"
+          className="flex-1 text-xs border border-slate-300 text-slate-700 py-2 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-40"
         >
           {isReopening ? 'Loading…' : 'Re-open results →'}
         </button>
@@ -249,22 +249,22 @@ export default function HistoryPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-slate-50 text-slate-900">
       {/* ── Navigation ─────────────────────────────────────────────────────── */}
-      <div className="border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-10">
+      <div className="border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-[10px] font-mono text-slate-500 hover:text-slate-300 transition-colors uppercase tracking-widest">
+            <Link href="/" className="text-[10px] font-mono text-slate-500 hover:text-slate-700 transition-colors uppercase tracking-widest">
               ← Home
             </Link>
             <span className="text-slate-800">|</span>
-            <span className="text-xs font-mono text-slate-400 tracking-wider">Run History</span>
+            <span className="text-xs font-mono text-slate-600 tracking-wider">Run History</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/sandbox" className="text-[10px] font-mono text-slate-500 hover:text-slate-300 transition-colors uppercase tracking-widest">
+            <Link href="/sandbox" className="text-[10px] font-mono text-slate-500 hover:text-slate-700 transition-colors uppercase tracking-widest">
               Sandbox
             </Link>
-            <Link href="/export" className="text-[10px] font-mono text-slate-500 hover:text-slate-300 transition-colors uppercase tracking-widest">
+            <Link href="/export" className="text-[10px] font-mono text-slate-500 hover:text-slate-700 transition-colors uppercase tracking-widest">
               Export
             </Link>
           </div>
@@ -273,7 +273,7 @@ export default function HistoryPage() {
 
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* ── Disclaimer ───────────────────────────────────────────────────── */}
-        <div className="border border-slate-800 bg-slate-900/40 rounded-lg px-4 py-2.5 mb-8 flex items-center gap-3">
+        <div className="border border-slate-200 bg-white/40 rounded-lg px-4 py-2.5 mb-8 flex items-center gap-3">
           <span className="text-[10px] font-mono text-slate-600 uppercase tracking-widest shrink-0">Notice</span>
           <p className="text-xs text-slate-500">
             This is a scenario-based governance simulation. It does not predict reality.
@@ -285,8 +285,8 @@ export default function HistoryPage() {
           <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-2">
             Institutional Mirror v2 · Phase 8
           </p>
-          <h1 className="text-2xl font-light text-slate-100 mb-2">Run History</h1>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <h1 className="text-2xl font-light text-slate-900 mb-2">Run History</h1>
+          <p className="text-sm text-slate-600 leading-relaxed">
             Previous simulation runs are stored in the governance audit log.
             Re-open any run to view its results and export governance artifacts.
           </p>
@@ -294,7 +294,7 @@ export default function HistoryPage() {
 
         {/* ── Auth notice ───────────────────────────────────────────────────── */}
         {!isAuthenticated && !loading && (
-          <div className="border border-amber-900/40 bg-amber-950/20 rounded-lg px-5 py-4 mb-6">
+          <div className="border border-amber-200/40 bg-amber-50/20 rounded-lg px-5 py-4 mb-6">
             <p className="text-[10px] font-mono text-amber-500 uppercase tracking-widest mb-1.5">
               Anonymous session
             </p>
@@ -310,10 +310,10 @@ export default function HistoryPage() {
         {loading && (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="border border-slate-800 rounded-lg p-5 animate-pulse">
-                <div className="h-4 bg-slate-800 rounded w-48 mb-2" />
-                <div className="h-3 bg-slate-800/60 rounded w-32 mb-3" />
-                <div className="h-2 bg-slate-800/40 rounded w-full" />
+              <div key={i} className="border border-slate-200 rounded-lg p-5 animate-pulse">
+                <div className="h-4 bg-slate-100 rounded w-48 mb-2" />
+                <div className="h-3 bg-slate-100/60 rounded w-32 mb-3" />
+                <div className="h-2 bg-slate-100/40 rounded w-full" />
               </div>
             ))}
           </div>
@@ -331,7 +331,7 @@ export default function HistoryPage() {
 
         {/* ── No runs ───────────────────────────────────────────────────────── */}
         {!loading && !error && runs.length === 0 && (
-          <div className="border border-slate-800 rounded-lg px-6 py-12 text-center">
+          <div className="border border-slate-200 rounded-lg px-6 py-12 text-center">
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-2">
               No runs found
             </p>
@@ -372,7 +372,7 @@ export default function HistoryPage() {
         </div>
 
         {/* ── Audit note ────────────────────────────────────────────────────── */}
-        <div className="mt-10 pt-6 border-t border-slate-800/50">
+        <div className="mt-10 pt-6 border-t border-slate-200/50">
           <p className="text-[10px] font-mono text-slate-700 leading-relaxed">
             All simulation runs are stored in an append-only governance audit log. Deletion is not possible —
             runs can only be soft-archived. This satisfies Hard Gate 4: immutable audit log.

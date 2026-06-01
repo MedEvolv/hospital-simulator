@@ -88,7 +88,7 @@ function MetricBar({
   const delta = projected !== undefined ? projected - value : undefined
   const deltaColor = delta !== undefined
     ? (highMeansGood ? delta >= 0 : delta <= 0)
-      ? 'text-slate-400'
+      ? 'text-slate-600'
       : 'text-amber-400'
     : ''
 
@@ -102,13 +102,13 @@ function MetricBar({
               {delta > 0 ? `+${delta}` : delta}
             </span>
           )}
-          <span className="text-xs font-mono tabular-nums text-slate-400">{Math.round(value)}</span>
+          <span className="text-xs font-mono tabular-nums text-slate-600">{Math.round(value)}</span>
           {projected !== undefined && projected !== value && (
-            <span className="text-xs font-mono tabular-nums text-slate-300">→ {Math.round(projected)}</span>
+            <span className="text-xs font-mono tabular-nums text-slate-700">→ {Math.round(projected)}</span>
           )}
         </div>
       </div>
-      <div className="relative h-1 bg-slate-800 rounded-full overflow-visible">
+      <div className="relative h-1 bg-slate-100 rounded-full overflow-visible">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${value}%` }} />
         {projected !== undefined && projected !== value && (
           <div
@@ -147,10 +147,10 @@ function InterventionCard({
     <div
       className={`border rounded-lg transition-all ${
         isApplied
-          ? 'border-slate-700 bg-slate-900/30 opacity-60'
+          ? 'border-slate-300 bg-white/30 opacity-60'
           : isSelected
-          ? 'border-slate-500 bg-slate-900/70'
-          : 'border-slate-800 bg-slate-950/40 hover:border-slate-700'
+          ? 'border-slate-500 bg-white/70'
+          : 'border-slate-200 bg-slate-50/40 hover:border-slate-300'
       }`}
     >
       {/* ── Card header (always visible) ───────────────────────── */}
@@ -163,14 +163,14 @@ function InterventionCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h3 className="text-sm font-medium text-slate-200">{intervention.label}</h3>
+              <h3 className="text-sm font-medium text-slate-800">{intervention.label}</h3>
               {intervention.requiresApproval && (
-                <span className="text-[10px] font-mono border border-amber-900/60 text-amber-500 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                <span className="text-[10px] font-mono border border-amber-200/60 text-amber-500 px-1.5 py-0.5 rounded uppercase tracking-wider">
                   committee
                 </span>
               )}
               {isApplied && (
-                <span className="text-[10px] font-mono border border-slate-700 text-slate-500 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                <span className="text-[10px] font-mono border border-slate-300 text-slate-500 px-1.5 py-0.5 rounded uppercase tracking-wider">
                   applied
                 </span>
               )}
@@ -185,13 +185,13 @@ function InterventionCard({
 
       {/* ── Expanded content ────────────────────────────────────── */}
       {isSelected && !isApplied && (
-        <div className="px-4 pb-4 space-y-4 border-t border-slate-800 pt-4">
+        <div className="px-4 pb-4 space-y-4 border-t border-slate-200 pt-4">
           {/* Rationale */}
           <div>
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-1">
               When to apply
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">{intervention.rationale}</p>
+            <p className="text-xs text-slate-600 leading-relaxed">{intervention.rationale}</p>
           </div>
 
           {/* Effects preview */}
@@ -212,7 +212,7 @@ function InterventionCard({
                       <span className="text-slate-700">→</span>
                       <span className={`text-xs font-mono tabular-nums ${
                         (effect.delta > 0 && meta.highMeansGood) || (effect.delta < 0 && !meta.highMeansGood)
-                          ? 'text-slate-300'
+                          ? 'text-slate-700'
                           : 'text-amber-400'
                       }`}>
                         {Math.max(0, Math.min(100, current + effect.delta))}
@@ -232,7 +232,7 @@ function InterventionCard({
               </p>
               <ul className="space-y-1">
                 {intervention.tradeoff.benefits.map((b, i) => (
-                  <li key={i} className="text-slate-400 before:content-['+'] before:mr-1.5 before:text-slate-600">
+                  <li key={i} className="text-slate-600 before:content-['+'] before:mr-1.5 before:text-slate-600">
                     {b}
                   </li>
                 ))}
@@ -244,7 +244,7 @@ function InterventionCard({
               </p>
               <ul className="space-y-1">
                 {intervention.tradeoff.costs.map((c, i) => (
-                  <li key={i} className="text-slate-400 before:content-['−'] before:mr-1.5 before:text-slate-600">
+                  <li key={i} className="text-slate-600 before:content-['−'] before:mr-1.5 before:text-slate-600">
                     {c}
                   </li>
                 ))}
@@ -253,8 +253,8 @@ function InterventionCard({
           </div>
 
           {/* Tradeoff summary */}
-          <div className="border-l-2 border-slate-700 pl-3">
-            <p className="text-xs text-slate-400 italic leading-relaxed">
+          <div className="border-l-2 border-slate-300 pl-3">
+            <p className="text-xs text-slate-600 italic leading-relaxed">
               {intervention.tradeoff.summary}
             </p>
           </div>
@@ -271,7 +271,7 @@ function InterventionCard({
             onClick={onApply}
             className={`w-full py-3 rounded-lg text-sm font-medium transition-colors ${
               intervention.requiresApproval
-                ? 'border border-amber-900/60 text-amber-400 hover:bg-amber-950/30'
+                ? 'border border-amber-200/60 text-amber-400 hover:bg-amber-50/30'
                 : 'bg-slate-200 text-slate-950 hover:bg-white'
             }`}
           >
@@ -330,14 +330,14 @@ export default function GovernanceConsole({
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-1">
           Governance console
         </p>
-        <h2 className="text-3xl font-light text-slate-50 tracking-tight mb-2">
+        <h2 className="text-3xl font-light text-slate-900 tracking-tight mb-2">
           Intervene.
         </h2>
-        <p className="text-sm text-slate-400 leading-relaxed max-w-2xl">
+        <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
           Governance interventions modify the institutional state going forward.
           Every intervention involves a tradeoff — the console makes them explicit before you commit.
           {scenarioName && (
-            <> Scenario context: <span className="text-slate-300">{scenarioName}</span>.</>
+            <> Scenario context: <span className="text-slate-700">{scenarioName}</span>.</>
           )}
         </p>
         {runId && (
@@ -350,7 +350,7 @@ export default function GovernanceConsole({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ── Left: current state panel ─────────────────────────── */}
         <div className="lg:col-span-1">
-          <div className="border border-slate-800 rounded-lg p-5 bg-slate-950/60 sticky top-6">
+          <div className="border border-slate-200 rounded-lg p-5 bg-slate-50/60 sticky top-6">
             <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">
               Current governance state
             </p>
@@ -376,14 +376,14 @@ export default function GovernanceConsole({
             </div>
 
             {log.length > 0 && (
-              <div className="mt-5 border-t border-slate-800 pt-4">
+              <div className="mt-5 border-t border-slate-200 pt-4">
                 <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-3">
                   Applied interventions
                 </p>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {log.map((entry, i) => (
                     <div key={i} className="text-xs">
-                      <span className="text-slate-400">{entry.label}</span>
+                      <span className="text-slate-600">{entry.label}</span>
                       <span className="text-slate-700 ml-2">{entry.timestamp}</span>
                     </div>
                   ))}
@@ -412,7 +412,7 @@ export default function GovernanceConsole({
       </div>
 
       {/* ── Disclaimer ────────────────────────────────────────────── */}
-      <div className="mt-10 border-t border-slate-800 pt-6">
+      <div className="mt-10 border-t border-slate-200 pt-6">
         <p className="text-[10px] font-mono text-slate-700 text-center tracking-wider">
           This is a scenario-based governance simulation. Interventions affect the simulation
           state only — they do not reflect real clinical decisions. They do not predict reality.

@@ -101,8 +101,8 @@ const STACK = [
     name: 'SAHI',
     tag: 'Direction',
     nature: 'National strategy · MoHFW, Feb 2026',
-    nameClass: 'text-sky-300',
-    tagClass: 'bg-sky-900/40 text-sky-300 border-sky-800/60',
+    nameClass: 'text-sky-700',
+    tagClass: 'bg-sky-900/40 text-sky-700 border-sky-200/60',
     gives: 'The direction — five pillars, seven guiding principles, and priority actions for trustworthy AI in healthcare.',
     lacks: 'A way to test whether your institution actually lives those principles under stress.',
   },
@@ -119,8 +119,8 @@ const STACK = [
     name: 'DPDP',
     tag: 'Floor',
     nature: 'Data-protection law · Govt. of India',
-    nameClass: 'text-slate-200',
-    tagClass: 'bg-slate-800 text-slate-400 border-slate-700',
+    nameClass: 'text-slate-800',
+    tagClass: 'bg-slate-100 text-slate-600 border-slate-300',
     gives: 'The floor — the legal baseline for consent, personal-data handling, and the rights of the Data Principal.',
     lacks: 'Anything about clinical-AI safety, trust, or oversight quality.',
   },
@@ -134,23 +134,23 @@ export default function SahiPage() {
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase">
           Institutional Mirror v2 · Policy Alignment
         </p>
-        <Link href="/" className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors">
+        <Link href="/" className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors">
           ← Home
         </Link>
       </div>
 
       {/* ── Header ──────────────────────────────────────────────────── */}
       <header className="mb-10">
-        <h1 className="text-4xl font-light text-slate-50 tracking-tight mb-4">
+        <h1 className="text-4xl font-light text-slate-900 tracking-tight mb-4">
           Alignment with India&rsquo;s SAHI strategy
         </h1>
-        <p className="text-lg text-slate-300 leading-relaxed mb-4">
+        <p className="text-lg text-slate-700 leading-relaxed mb-4">
           How Institutional Mirror responds to the Strategy for Artificial Intelligence
           in Healthcare (SAHI), launched by the Ministry of Health and Family Welfare
           at the India AI Impact Summit, February 2026.
         </p>
         <div className="border-l-2 border-sky-700 pl-4 py-1">
-          <p className="text-sm text-slate-300 leading-relaxed">
+          <p className="text-sm text-slate-700 leading-relaxed">
             We are not doing something parallel to national policy. We are implementing
             what national policy asked for &mdash; and providing the tooling to make it
             actionable at the institutional level where SAHI is silent.
@@ -161,7 +161,7 @@ export default function SahiPage() {
       {/* ── What SAHI is ────────────────────────────────────────────── */}
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">What SAHI is</h2>
-        <p className="text-sm text-slate-400 leading-relaxed mb-4">
+        <p className="text-sm text-slate-600 leading-relaxed mb-4">
           India&rsquo;s first national framework for AI governance in healthcare, structured
           around five pillars. SAHI functions as a guiding and enabling framework rather than
           a prescriptive mandate &mdash; explicitly designed to support institutions, not replace
@@ -171,23 +171,23 @@ export default function SahiPage() {
           {PILLARS.map(p => (
             <div key={p.n} className="flex items-center gap-3 text-sm">
               <span className="font-mono text-xs text-slate-600 w-12 shrink-0">Pillar {p.n}</span>
-              <span className="text-slate-300">{p.label}</span>
+              <span className="text-slate-700">{p.label}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── The gap ─────────────────────────────────────────────────── */}
-      <section className="mb-10 border border-slate-800 rounded-lg p-6 bg-slate-900/40">
-        <h2 className="text-sm font-medium text-slate-200 mb-3">Where SAHI is strong &mdash; and where it is silent</h2>
-        <p className="text-sm text-slate-400 leading-relaxed mb-3">
-          SAHI is authoritative on <span className="text-slate-200">what</span> India&rsquo;s
+      <section className="mb-10 border border-slate-200 rounded-lg p-6 bg-white/40">
+        <h2 className="text-sm font-medium text-slate-800 mb-3">Where SAHI is strong &mdash; and where it is silent</h2>
+        <p className="text-sm text-slate-600 leading-relaxed mb-3">
+          SAHI is authoritative on <span className="text-slate-800">what</span> India&rsquo;s
           healthcare-AI ecosystem needs. It is almost entirely silent on{' '}
-          <span className="text-slate-200">how</span> a tier-2 or tier-3 hospital with no
+          <span className="text-slate-800">how</span> a tier-2 or tier-3 hospital with no
           dedicated IT staff, no AI governance committee, and no budget for either is supposed
           to implement these recommendations.
         </p>
-        <p className="text-sm text-slate-400 leading-relaxed">
+        <p className="text-sm text-slate-600 leading-relaxed">
           This is not a criticism &mdash; SAHI is a guiding framework, not an implementation
           manual. But it creates a concrete gap, and that gap is what this work fills.
         </p>
@@ -202,28 +202,28 @@ export default function SahiPage() {
           {RECS.map(rec => (
             <div key={rec.n}
               className={`border rounded-lg p-5 ${
-                rec.highlight ? 'border-sky-800/60 bg-sky-950/20' : 'border-slate-800 bg-slate-900/30'
+                rec.highlight ? 'border-sky-200/60 bg-sky-50/20' : 'border-slate-200 bg-white/30'
               }`}>
               <div className="flex items-center gap-3 mb-2">
                 <span className={`text-xs font-mono px-2 py-0.5 rounded font-medium ${
-                  rec.highlight ? 'bg-sky-900/50 text-sky-300' : 'bg-slate-800 text-slate-400'
+                  rec.highlight ? 'bg-sky-900/50 text-sky-700' : 'bg-slate-100 text-slate-600'
                 }`}>
                   Recommendation {rec.n}
                 </span>
                 <span className="text-[10px] font-mono text-slate-600 uppercase tracking-wider">{rec.pillar}</span>
                 {rec.status === 'future' && (
-                  <span className="text-[10px] font-mono text-amber-500 border border-amber-900/60 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                  <span className="text-[10px] font-mono text-amber-500 border border-amber-200/60 px-1.5 py-0.5 rounded uppercase tracking-wider">
                     Roadmap
                   </span>
                 )}
                 {rec.highlight && (
-                  <span className="text-[10px] font-mono text-sky-400 uppercase tracking-wider">Most important</span>
+                  <span className="text-[10px] font-mono text-sky-600 uppercase tracking-wider">Most important</span>
                 )}
               </div>
-              <p className="text-sm text-slate-400 italic leading-relaxed mb-3 border-l border-slate-700 pl-3">
+              <p className="text-sm text-slate-600 italic leading-relaxed mb-3 border-l border-slate-300 pl-3">
                 &ldquo;{rec.quote}&rdquo;
               </p>
-              <p className="text-sm text-slate-300 leading-relaxed">{rec.response}</p>
+              <p className="text-sm text-slate-700 leading-relaxed">{rec.response}</p>
             </div>
           ))}
         </div>
@@ -236,12 +236,12 @@ export default function SahiPage() {
         </h2>
         <div className="space-y-3">
           {GAP_POINTS.map((g, i) => (
-            <div key={i} className="border border-slate-800 rounded-lg p-5 bg-slate-900/30">
+            <div key={i} className="border border-slate-200 rounded-lg p-5 bg-white/30">
               <div className="flex items-baseline gap-3 mb-1.5">
                 <span className="text-sm font-mono text-slate-600">{i + 1}</span>
-                <h3 className="text-sm font-medium text-slate-200">{g.title}</h3>
+                <h3 className="text-sm font-medium text-slate-800">{g.title}</h3>
               </div>
-              <p className="text-sm text-slate-400 leading-relaxed pl-7">{g.body}</p>
+              <p className="text-sm text-slate-600 leading-relaxed pl-7">{g.body}</p>
             </div>
           ))}
         </div>
@@ -252,14 +252,14 @@ export default function SahiPage() {
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
           The wider governance stack
         </h2>
-        <p className="text-sm text-slate-400 leading-relaxed mb-3">
+        <p className="text-sm text-slate-600 leading-relaxed mb-3">
           SAHI does not stand alone. A hospital governing AI in 2026 answers to three instruments at
           once &mdash; and the same gap runs through all of them.
         </p>
-        <p className="text-sm text-slate-300 leading-relaxed mb-6">
-          <span className="text-sky-300">SAHI is the direction.</span>{' '}
+        <p className="text-sm text-slate-700 leading-relaxed mb-6">
+          <span className="text-sky-700">SAHI is the direction.</span>{' '}
           <span className="text-emerald-300">NABH Digital Health Standards is the bar.</span>{' '}
-          <span className="text-slate-200">DPDP is the floor.</span>{' '}
+          <span className="text-slate-800">DPDP is the floor.</span>{' '}
           Each tells institutions to adopt, comply, and be trustworthy. None of them lets the
           institution rehearse what happens when its AI governance actually fails.
         </p>
@@ -267,7 +267,7 @@ export default function SahiPage() {
         {/* explainer graphic — three instruments, what each gives vs. withholds */}
         <div className="space-y-3">
           {STACK.map(s => (
-            <div key={s.name} className="border border-slate-800 rounded-lg p-5 bg-slate-900/30">
+            <div key={s.name} className="border border-slate-200 rounded-lg p-5 bg-white/30">
               <div className="flex flex-wrap items-center gap-3 mb-3">
                 <span className={`text-sm font-medium ${s.nameClass}`}>{s.name}</span>
                 <span className={`text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border ${s.tagClass}`}>
@@ -278,11 +278,11 @@ export default function SahiPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1">What it gives</p>
-                  <p className="text-sm text-slate-300 leading-relaxed">{s.gives}</p>
+                  <p className="text-sm text-slate-700 leading-relaxed">{s.gives}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-1">What it does not</p>
-                  <p className="text-sm text-slate-400 leading-relaxed">{s.lacks}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed">{s.lacks}</p>
                 </div>
               </div>
             </div>
@@ -291,24 +291,24 @@ export default function SahiPage() {
 
         {/* NABH anchor — secondary, honestly framed */}
         <div className="mt-6 border border-emerald-900/40 rounded-lg p-6 bg-emerald-950/10">
-          <h3 className="text-sm font-medium text-slate-200 mb-3">Complementing the NABH digital-maturity bar</h3>
-          <p className="text-sm text-slate-400 leading-relaxed mb-3">
-            NABH Digital Health Standards is a digital-<span className="text-slate-200">maturity</span> standard,
-            not an AI-governance framework. It tells a hospital to <span className="text-slate-200">adopt</span>{' '}
+          <h3 className="text-sm font-medium text-slate-800 mb-3">Complementing the NABH digital-maturity bar</h3>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            NABH Digital Health Standards is a digital-<span className="text-slate-800">maturity</span> standard,
+            not an AI-governance framework. It tells a hospital to <span className="text-slate-800">adopt</span>{' '}
             clinical decision support and stand up digital operations &mdash; anchored most directly in
             Chapter 5 (Digital Operations Management) and Chapter 8 (Information Management System / CDSS).
           </p>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             Institutional Mirror rehearses what an accreditation checklist cannot: what happens when reliance
             on those systems drifts, when overrides quietly stop, when throughput is bought with care
-            shortcuts. It <span className="text-slate-200">complements</span> the maturity NABH certifies. It
+            shortcuts. It <span className="text-slate-800">complements</span> the maturity NABH certifies. It
             does not certify NABH conformance and is not an accreditation tool.
           </p>
         </div>
 
         {/* synthesis — drop-in §6 framing */}
         <div className="mt-6 border-l-2 border-sky-700 pl-4 py-1">
-          <p className="text-sm text-slate-300 leading-relaxed">
+          <p className="text-sm text-slate-700 leading-relaxed">
             India now has the strategy (SAHI, 2026), the accreditation bar (NABH Digital Health Standards,
             2025), and the data-protection floor (DPDP). Together they tell hospitals to adopt clinical AI,
             mature their digital operations, and protect patient data. What none of them provides is a way to
@@ -327,7 +327,7 @@ export default function SahiPage() {
       </section>
 
       {/* ── Citation ────────────────────────────────────────────────── */}
-      <section className="border-t border-slate-800 pt-6">
+      <section className="border-t border-slate-200 pt-6">
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
           Ministry of Health and Family Welfare, Government of India. <span className="italic">Strategy
           for Artificial Intelligence in Healthcare for India (SAHI).</span> Launched at the

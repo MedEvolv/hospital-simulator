@@ -96,14 +96,14 @@ const REPORT_DEFS: Array<{
 
 function PreviewPanel({ content }: { content: string }) {
   return (
-    <div className="border border-slate-800 rounded-lg bg-slate-950 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800">
+    <div className="border border-slate-200 rounded-lg bg-slate-50 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200">
         <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Preview</p>
         <p className="text-[10px] font-mono text-slate-700">
           {content.split('\n').length} lines
         </p>
       </div>
-      <pre className="p-4 text-xs text-slate-400 font-mono leading-relaxed whitespace-pre-wrap overflow-auto max-h-96">
+      <pre className="p-4 text-xs text-slate-600 font-mono leading-relaxed whitespace-pre-wrap overflow-auto max-h-96">
         {content.slice(0, 3000)}{content.length > 3000 ? '\n\n... (preview truncated)' : ''}
       </pre>
     </div>
@@ -184,10 +184,10 @@ export default function ExportPage() {
           <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-2">
             Institutional Mirror v2
           </p>
-          <h1 className="text-4xl font-light text-slate-50 tracking-tight mb-2">
+          <h1 className="text-4xl font-light text-slate-900 tracking-tight mb-2">
             Export governance artifact
           </h1>
-          <p className="text-sm text-slate-400 leading-relaxed max-w-2xl">
+          <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
             Every scenario run produces at least one exportable governance artifact.
             Choose a format, preview it, and download or copy it to clipboard.
           </p>
@@ -196,14 +196,14 @@ export default function ExportPage() {
           {scenarioRun && (
             <button
               onClick={() => router.push('/results')}
-              className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
             >
               ← Results
             </button>
           )}
           <button
             onClick={() => router.push('/')}
-            className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
           >
             New scenario
           </button>
@@ -212,11 +212,11 @@ export default function ExportPage() {
 
       {/* ── No scenario loaded ────────────────────────────────── */}
       {!scenarioRun && (
-        <div className="border border-slate-800 rounded-lg p-6 mb-8 bg-slate-950/40 text-center">
+        <div className="border border-slate-200 rounded-lg p-6 mb-8 bg-slate-50/40 text-center">
           <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">
             No scenario loaded
           </p>
-          <p className="text-sm text-slate-400 leading-relaxed mb-4">
+          <p className="text-sm text-slate-600 leading-relaxed mb-4">
             Export requires a completed scenario run. Run a scenario first to generate exportable artifacts.
           </p>
           <button
@@ -230,11 +230,11 @@ export default function ExportPage() {
 
       {/* ── Scenario context ─────────────────────────────────── */}
       {scenarioRun && (
-        <div className="border border-slate-800 rounded-lg p-4 mb-8 bg-slate-950/40">
+        <div className="border border-slate-200 rounded-lg p-4 mb-8 bg-slate-50/40">
           <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-1">
             Source run
           </p>
-          <p className="text-sm text-slate-200">{scenarioRun.scenario.name}</p>
+          <p className="text-sm text-slate-800">{scenarioRun.scenario.name}</p>
           <div className="flex gap-4 mt-1 text-[10px] font-mono text-slate-600">
             <span>{scenarioRun.scenario.packId}</span>
             <span>·</span>
@@ -261,14 +261,14 @@ export default function ExportPage() {
                 onClick={() => { setSelectedType(def.type); setPreview(null) }}
                 className={`w-full text-left border rounded-lg p-4 transition-all ${
                   selectedType === def.type
-                    ? 'border-slate-500 bg-slate-800'
-                    : 'border-slate-800 bg-slate-950/40 hover:border-slate-700'
+                    ? 'border-slate-500 bg-slate-100'
+                    : 'border-slate-200 bg-slate-50/40 hover:border-slate-300'
                 }`}
               >
                 <div className="flex items-start gap-2">
                   <span className="text-base shrink-0">{def.icon}</span>
                   <div>
-                    <p className="text-xs font-medium text-slate-200 leading-snug">{def.label}</p>
+                    <p className="text-xs font-medium text-slate-800 leading-snug">{def.label}</p>
                     <p className="text-[10px] text-slate-500 leading-relaxed mt-1">{def.description}</p>
                   </div>
                 </div>
@@ -281,7 +281,7 @@ export default function ExportPage() {
             <div className="flex items-center gap-3 mb-4">
               <button
                 onClick={generatePreview}
-                className="text-sm border border-slate-700 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-lg transition-colors"
+                className="text-sm border border-slate-300 text-slate-700 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors"
               >
                 Preview
               </button>
@@ -293,7 +293,7 @@ export default function ExportPage() {
               </button>
               <button
                 onClick={copyToClipboard}
-                className="text-sm border border-slate-700 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-lg transition-colors"
+                className="text-sm border border-slate-300 text-slate-700 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors"
               >
                 {copied ? '✓ Copied' : 'Copy to clipboard'}
               </button>
@@ -302,10 +302,10 @@ export default function ExportPage() {
             {preview ? (
               <PreviewPanel content={preview} />
             ) : (
-              <div className="border border-slate-800 rounded-lg p-8 text-center bg-slate-950/40">
+              <div className="border border-slate-200 rounded-lg p-8 text-center bg-slate-50/40">
                 <p className="text-sm text-slate-600">
-                  Click <span className="text-slate-400">Preview</span> to see the report,
-                  or <span className="text-slate-400">Download</span> directly.
+                  Click <span className="text-slate-600">Preview</span> to see the report,
+                  or <span className="text-slate-600">Download</span> directly.
                 </p>
               </div>
             )}

@@ -190,7 +190,7 @@ function RecCard({
       )}
 
       {rec.sahi_anchor && (
-        <p className="text-blue-400/70 text-xs">{rec.sahi_anchor}</p>
+        <p className="text-blue-600/70 text-xs">{rec.sahi_anchor}</p>
       )}
 
       {rec.status === 'pending' && (
@@ -337,7 +337,7 @@ export default function AdminPage() {
               onClick={() => setTab(t.key as typeof tab)}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
                 tab === t.key
-                  ? 'border-blue-500 text-blue-400'
+                  ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-neutral-500 hover:text-neutral-300'
               }`}
             >

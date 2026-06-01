@@ -31,18 +31,18 @@ const TYPE_META: Record<InsightType, {
 }> = {
   operational: {
     label: 'Operational',
-    cardBorder: 'border-slate-800 bg-slate-950/40',
-    tagStyle: 'text-slate-400 border-slate-700',
+    cardBorder: 'border-slate-200 bg-slate-50/40',
+    tagStyle: 'text-slate-600 border-slate-300',
   },
   human_state: {
     label: 'Human state',
-    cardBorder: 'border-blue-900/40 bg-blue-950/10',
-    tagStyle: 'text-blue-400 border-blue-900/60',
+    cardBorder: 'border-blue-200/40 bg-blue-50/10',
+    tagStyle: 'text-blue-600 border-blue-200/60',
   },
   governance: {
     label: 'Governance',
-    cardBorder: 'border-amber-900/40 bg-amber-950/10',
-    tagStyle: 'text-amber-400 border-amber-900/60',
+    cardBorder: 'border-amber-200/40 bg-amber-50/10',
+    tagStyle: 'text-amber-400 border-amber-200/60',
   },
   trust_debt: {
     label: 'Trust & debt',
@@ -54,8 +54,8 @@ const TYPE_META: Record<InsightType, {
 // ── Severity badge ────────────────────────────────────────────────────────────
 
 const SEVERITY_STYLES: Record<InsightSeverity, string> = {
-  info:     'text-slate-500 border-slate-700 bg-slate-900',
-  concern:  'text-amber-500 border-amber-900/60 bg-amber-950/30',
+  info:     'text-slate-500 border-slate-300 bg-white',
+  concern:  'text-amber-500 border-amber-200/60 bg-amber-50/30',
   critical: 'text-red-400 border-red-900/60 bg-red-950/30',
 }
 
@@ -93,21 +93,21 @@ function InsightCard({ insight, index }: { insight: ReflectiveInsight; index: nu
       </div>
 
       {/* ── Title ──────────────────────────────────────────────────── */}
-      <h3 className="text-sm font-medium text-slate-200 mb-1.5 leading-snug">
+      <h3 className="text-sm font-medium text-slate-800 mb-1.5 leading-snug">
         {insight.title}
       </h3>
 
       {/* ── Explanation ────────────────────────────────────────────── */}
-      <p className="text-xs text-slate-400 leading-relaxed mb-3">
+      <p className="text-xs text-slate-600 leading-relaxed mb-3">
         {insight.explanation}
       </p>
 
       {/* ── Governance implication ─────────────────────────────────── */}
-      <div className="border-t border-slate-800/60 pt-3">
+      <div className="border-t border-slate-200/60 pt-3">
         <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-1">
           Governance implication
         </p>
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-600 leading-relaxed">
           {insight.governanceImplication}
         </p>
       </div>
@@ -130,7 +130,7 @@ function InsightCard({ insight, index }: { insight: ReflectiveInsight; index: nu
                   <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-1">
                     Suggested intervention
                   </p>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-700 leading-relaxed">
                     {insight.suggestedIntervention}
                   </p>
                 </div>
@@ -144,7 +144,7 @@ function InsightCard({ insight, index }: { insight: ReflectiveInsight; index: nu
                     {insight.affectedConcepts.map(c => (
                       <span
                         key={c}
-                        className="text-[10px] font-mono text-slate-500 border border-slate-800 px-1.5 py-0.5 rounded"
+                        className="text-[10px] font-mono text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded"
                       >
                         {c.replace(/_/g, ' ')}
                       </span>
@@ -177,8 +177,8 @@ function FilterChip({
       onClick={onClick}
       className={`text-[10px] font-mono border px-2 py-1 rounded uppercase tracking-widest transition-colors ${
         active
-          ? 'text-slate-200 border-slate-500 bg-slate-800'
-          : 'text-slate-600 border-slate-800 hover:border-slate-700 hover:text-slate-400'
+          ? 'text-slate-800 border-slate-500 bg-slate-100'
+          : 'text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-600'
       }`}
     >
       {label}
@@ -216,13 +216,13 @@ export default function ReflectiveInsightFeed({
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-1">
           Reflective insight feed
         </p>
-        <h2 className="text-2xl font-light text-slate-100 tracking-tight mb-2">
+        <h2 className="text-2xl font-light text-slate-900 tracking-tight mb-2">
           What the scenario revealed.
         </h2>
         {scenarioName && (
           <p className="text-sm text-slate-500 leading-relaxed max-w-2xl">
             These observations emerge from replaying the governance engines over{' '}
-            <span className="text-slate-300">{scenarioName}</span>.
+            <span className="text-slate-700">{scenarioName}</span>.
             They are not a verdict. They are the specific moments where institutional
             structure became a liability.
           </p>
@@ -275,7 +275,7 @@ export default function ReflectiveInsightFeed({
 
       {/* ── Cards ─────────────────────────────────────────────────── */}
       {filtered.length === 0 ? (
-        <div className="border border-slate-800 rounded-lg p-6 text-center">
+        <div className="border border-slate-200 rounded-lg p-6 text-center">
           <p className="text-sm text-slate-600">No insights match the current filter.</p>
         </div>
       ) : (
@@ -288,11 +288,11 @@ export default function ReflectiveInsightFeed({
 
       {/* ── Moral reckoning gate — invariant ──────────────────────── */}
       {insights.length === 0 && (
-        <div className="border border-amber-900/40 bg-amber-950/10 rounded-lg p-5 mt-3">
+        <div className="border border-amber-200/40 bg-amber-50/10 rounded-lg p-5 mt-3">
           <p className="text-xs font-mono text-amber-500 uppercase tracking-widest mb-2">
             Moral reckoning unavailable
           </p>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             No reflective insights were generated for this run. Every scenario must produce
             at least one insight per category — if you see this, check the governance engine replay.
           </p>

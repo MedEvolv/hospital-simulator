@@ -89,7 +89,7 @@ function getSignalColor(value: number, highMeansGood: boolean): {
   const effectiveValue = highMeansGood ? value : (100 - value)
 
   if (effectiveValue >= 70) {
-    return { text: 'text-slate-300', bar: 'bg-slate-500', glow: '' }
+    return { text: 'text-slate-700', bar: 'bg-slate-500', glow: '' }
   }
   if (effectiveValue >= 45) {
     return { text: 'text-amber-400', bar: 'bg-amber-500', glow: 'shadow-amber-900/50' }
@@ -129,26 +129,26 @@ function SignalGauge({
 
   const deltaColor = delta !== undefined
     ? def.highMeansGood
-      ? delta >= 0 ? 'text-slate-400' : 'text-amber-400'
-      : delta <= 0 ? 'text-slate-400' : 'text-amber-400'
+      ? delta >= 0 ? 'text-slate-600' : 'text-amber-400'
+      : delta <= 0 ? 'text-slate-600' : 'text-amber-400'
     : ''
 
   return (
-    <div className="border border-slate-800 rounded-lg bg-slate-950/60 p-4">
+    <div className="border border-slate-200 rounded-lg bg-slate-50/60 p-4">
       {/* ── Header row ─────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <div>
           <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-0.5">
             {def.abbrev.toUpperCase()}
           </p>
-          <p className="text-xs text-slate-400">{def.fullName}</p>
+          <p className="text-xs text-slate-600">{def.fullName}</p>
         </div>
         <div className="text-right shrink-0">
           <span className={`text-xs font-mono border px-1.5 py-0.5 rounded ${
             label === 'nominal'
-              ? 'text-slate-500 border-slate-700'
+              ? 'text-slate-500 border-slate-300'
               : label === 'degraded'
-              ? 'text-amber-500 border-amber-900'
+              ? 'text-amber-500 border-amber-200'
               : 'text-red-400 border-red-900'
           }`}>
             {label}
@@ -172,7 +172,7 @@ function SignalGauge({
       </div>
 
       {/* ── Progress bar ───────────────────────────────────────────── */}
-      <div className="h-1 bg-slate-800 rounded-full overflow-hidden mb-3">
+      <div className="h-1 bg-slate-100 rounded-full overflow-hidden mb-3">
         <div
           className={`h-full rounded-full transition-all ${bar}`}
           style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
@@ -186,13 +186,13 @@ function SignalGauge({
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="text-[10px] font-mono text-slate-600 hover:text-slate-400 transition-colors mt-2 uppercase tracking-widest"
+        className="text-[10px] font-mono text-slate-600 hover:text-slate-600 transition-colors mt-2 uppercase tracking-widest"
       >
         {expanded ? '▲ hide note' : '▼ governance note'}
       </button>
 
       {expanded && (
-        <p className="text-xs text-slate-400 leading-relaxed mt-2 border-t border-slate-800 pt-2">
+        <p className="text-xs text-slate-600 leading-relaxed mt-2 border-t border-slate-200 pt-2">
           {def.governanceNote}
         </p>
       )}
@@ -213,7 +213,7 @@ function HumanStatePanel({ state }: { state: HumanStateSnapshot }) {
   ]
 
   return (
-    <div className="border border-slate-800 rounded-lg bg-slate-950/60 p-4">
+    <div className="border border-slate-200 rounded-lg bg-slate-50/60 p-4">
       <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">
         Human state
       </p>
@@ -229,7 +229,7 @@ function HumanStatePanel({ state }: { state: HumanStateSnapshot }) {
                     {Math.round(value)}
                   </span>
                 </div>
-                <div className="h-0.5 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-0.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${getSignalColor(value, highMeansGood).bar}`}
                     style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
@@ -270,7 +270,7 @@ export default function InstitutionalVitalSigns({
           <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-1">
             Five signal metrics
           </p>
-          <h2 className="text-2xl font-light text-slate-100 tracking-tight">
+          <h2 className="text-2xl font-light text-slate-900 tracking-tight">
             Institutional vital signs.
           </h2>
         </div>
@@ -284,7 +284,7 @@ export default function InstitutionalVitalSigns({
       {scenarioName && (
         <p className="text-sm text-slate-500 mb-5 leading-relaxed">
           These metrics reflect the cumulative governance state at end of scenario:{' '}
-          <span className="text-slate-300">{scenarioName}</span>.
+          <span className="text-slate-700">{scenarioName}</span>.
           They are not a score — they are a map of where institutional pressure accumulated.
         </p>
       )}
@@ -308,7 +308,7 @@ export default function InstitutionalVitalSigns({
       )}
 
       {/* ── Reading guide ─────────────────────────────────────────── */}
-      <div className="mt-4 p-4 border border-slate-800/60 rounded-lg bg-slate-950/40">
+      <div className="mt-4 p-4 border border-slate-200/60 rounded-lg bg-slate-50/40">
         <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-2">
           How to read these signals
         </p>

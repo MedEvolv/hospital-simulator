@@ -51,9 +51,9 @@ type SlotId = 'A' | 'B'
 // ── Pack colours ──────────────────────────────────────────────────────────────
 
 const PACK_BADGE: Record<string, string> = {
-  'automation-failure':  'text-amber-400 border-amber-800/60 bg-amber-950/40',
+  'automation-failure':  'text-amber-400 border-amber-800/60 bg-amber-50/40',
   'institutional-strain':'text-orange-400 border-orange-800/60 bg-orange-950/40',
-  'equity-participation':'text-sky-400 border-sky-800/60 bg-sky-950/40',
+  'equity-participation':'text-sky-600 border-sky-200/60 bg-sky-50/40',
   'security-stress-test':'text-rose-400 border-rose-800/60 bg-rose-950/40',
 }
 
@@ -123,7 +123,7 @@ function SliderRow({
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{label}</span>
+        <span className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">{label}</span>
         <span className="text-[10px] font-mono text-slate-500">{value}</span>
       </div>
       <input
@@ -133,7 +133,7 @@ function SliderRow({
         step={5}
         value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1.5 appearance-none bg-slate-800 rounded cursor-pointer"
+        className="w-full h-1.5 appearance-none bg-slate-100 rounded cursor-pointer"
         title={description}
       />
       <p className="text-[10px] text-slate-600 mt-0.5 leading-relaxed">{description}</p>
@@ -161,10 +161,10 @@ function MiniSignalBar({
   return (
     <div className="flex items-center gap-2">
       <span className="text-[10px] font-mono text-slate-500 w-8 shrink-0">{label}</span>
-      <div className="flex-1 bg-slate-800 rounded h-1.5 overflow-hidden">
+      <div className="flex-1 bg-slate-100 rounded h-1.5 overflow-hidden">
         <div className={`h-full rounded transition-all ${color}`} style={{ width: `${value}%` }} />
       </div>
-      <span className="text-[10px] font-mono text-slate-400 w-8 text-right shrink-0">{Math.round(value)}</span>
+      <span className="text-[10px] font-mono text-slate-600 w-8 text-right shrink-0">{Math.round(value)}</span>
     </div>
   )
 }
@@ -190,23 +190,23 @@ function ComparisonRow({
   const barColorB = effectiveB >= 70 ? SLOT_STYLES.B.bar : effectiveB >= 40 ? 'bg-amber-500' : 'bg-red-500'
 
   return (
-    <div className="grid grid-cols-[1fr_140px_1fr] gap-4 items-center py-3 border-b border-slate-800/60 last:border-0">
+    <div className="grid grid-cols-[1fr_140px_1fr] gap-4 items-center py-3 border-b border-slate-200/60 last:border-0">
       {/* Slot A */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono text-slate-300">{Math.round(aVal)}</span>
+          <span className="text-xs font-mono text-slate-700">{Math.round(aVal)}</span>
           {winner === 'A' && (
             <span className="text-[9px] font-mono text-violet-400 border border-violet-800/60 px-1.5 py-0.5 rounded">better</span>
           )}
         </div>
-        <div className="bg-slate-800 rounded h-2 overflow-hidden">
+        <div className="bg-slate-100 rounded h-2 overflow-hidden">
           <div className={`h-full rounded ${barColorA} transition-all`} style={{ width: `${aVal}%` }} />
         </div>
       </div>
 
       {/* Centre: metric label */}
       <div className="text-center">
-        <p className="text-[11px] font-mono text-slate-300 mb-0.5">{def.abbr}</p>
+        <p className="text-[11px] font-mono text-slate-700 mb-0.5">{def.abbr}</p>
         <p className="text-[10px] text-slate-600 leading-tight">{def.label}</p>
         {!def.highMeansGood && (
           <p className="text-[9px] text-slate-700 mt-0.5 italic">lower = more strain</p>
@@ -216,12 +216,12 @@ function ComparisonRow({
       {/* Slot B */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between flex-row-reverse">
-          <span className="text-xs font-mono text-slate-300">{Math.round(bVal)}</span>
+          <span className="text-xs font-mono text-slate-700">{Math.round(bVal)}</span>
           {winner === 'B' && (
             <span className="text-[9px] font-mono text-emerald-400 border border-emerald-800/60 px-1.5 py-0.5 rounded">better</span>
           )}
         </div>
-        <div className="bg-slate-800 rounded h-2 overflow-hidden">
+        <div className="bg-slate-100 rounded h-2 overflow-hidden">
           <div className={`h-full rounded ${barColorB} transition-all ml-auto`} style={{ width: `${bVal}%` }} />
         </div>
       </div>
@@ -333,7 +333,7 @@ export default function ScenarioSandbox() {
     const isConfigExpanded = expandedConfig === slot
 
     return (
-      <div className={`border rounded-xl overflow-hidden ring-1 ${styles.ring} border-slate-800`}>
+      <div className={`border rounded-xl overflow-hidden ring-1 ${styles.ring} border-slate-200`}>
         {/* ── Slot header ──────────────────────────────────────────────── */}
         <div className={`border-b px-5 py-3 flex items-center justify-between ${styles.header}`}>
           <div className="flex items-center gap-2.5">
@@ -361,7 +361,7 @@ export default function ScenarioSandbox() {
             </p>
             <div className="space-y-1.5">
               {loadingScenarios && [1, 2, 3, 4].map(i => (
-                <div key={i} className="h-9 bg-slate-800/40 rounded-lg animate-pulse" />
+                <div key={i} className="h-9 bg-slate-100/40 rounded-lg animate-pulse" />
               ))}
               {!loadingScenarios && scenarios.map(s => {
                 const isSelected = config.scenarioId === s.id
@@ -373,8 +373,8 @@ export default function ScenarioSandbox() {
                     onClick={() => updateConfig(slot, { scenarioId: s.id })}
                     className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all ${
                       isSelected
-                        ? 'border-slate-600 bg-slate-800/60'
-                        : 'border-slate-800 bg-slate-900/20 hover:border-slate-700'
+                        ? 'border-slate-600 bg-slate-100/60'
+                        : 'border-slate-200 bg-white/20 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -383,7 +383,7 @@ export default function ScenarioSandbox() {
                           isSelected ? (slot === 'A' ? 'bg-violet-400' : 'bg-emerald-400') : 'bg-slate-700'
                         }`} />
                         <div>
-                          <p className="text-xs text-slate-200 font-medium leading-snug">{s.name}</p>
+                          <p className="text-xs text-slate-800 font-medium leading-snug">{s.name}</p>
                           {isSelected && (
                             <p className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">{s.description}</p>
                           )}
@@ -404,13 +404,13 @@ export default function ScenarioSandbox() {
             <button
               type="button"
               onClick={() => setExpandedConfig(isConfigExpanded ? null : slot)}
-              className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 uppercase tracking-widest hover:text-slate-400 transition-colors"
+              className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 uppercase tracking-widest hover:text-slate-600 transition-colors"
             >
               <span>{isConfigExpanded ? '▾' : '▸'}</span>
               Parameter overrides
             </button>
             {isConfigExpanded && (
-              <div className="mt-3 space-y-4 pl-3 border-l border-slate-800">
+              <div className="mt-3 space-y-4 pl-3 border-l border-slate-200">
                 <SliderRow
                   label="Staffing level"
                   value={config.staffingLevel}
@@ -465,7 +465,7 @@ export default function ScenarioSandbox() {
 
           {/* ── Run result: mini signals ──────────────────────────────── */}
           {run && (
-            <div className="space-y-3 pt-2 border-t border-slate-800">
+            <div className="space-y-3 pt-2 border-t border-slate-200">
               <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                 Results — {run.eventCount} events
               </p>
@@ -482,7 +482,7 @@ export default function ScenarioSandbox() {
               <div className="flex items-center gap-4 pt-1">
                 <div className="text-[10px] font-mono">
                   <span className="text-slate-500">Insights </span>
-                  <span className="text-slate-300">{run.insightCount}</span>
+                  <span className="text-slate-700">{run.insightCount}</span>
                 </div>
                 {run.criticalInsightCount > 0 && (
                   <div className="text-[10px] font-mono">
@@ -509,20 +509,20 @@ export default function ScenarioSandbox() {
     const overallWinner: SlotId | 'tie' = scoreA > scoreB + 2 ? 'A' : scoreB > scoreA + 2 ? 'B' : 'tie'
 
     return (
-      <div className="border border-slate-800 rounded-xl overflow-hidden mt-8">
+      <div className="border border-slate-200 rounded-xl overflow-hidden mt-8">
         {/* Header */}
-        <div className="border-b border-slate-800 bg-slate-900/60 px-6 py-4 flex items-center justify-between">
+        <div className="border-b border-slate-200 bg-white/60 px-6 py-4 flex items-center justify-between">
           <div>
             <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">
               Comparative governance analysis
             </p>
-            <p className="text-sm text-slate-200 font-medium">
+            <p className="text-sm text-slate-800 font-medium">
               {runs.A.scenarioName} vs {runs.B.scenarioName}
             </p>
           </div>
           <div className="text-right">
             {overallWinner === 'tie' ? (
-              <span className="text-[10px] font-mono text-slate-400 border border-slate-700 px-2.5 py-1.5 rounded">
+              <span className="text-[10px] font-mono text-slate-600 border border-slate-300 px-2.5 py-1.5 rounded">
                 Comparable outcomes
               </span>
             ) : (
@@ -556,24 +556,24 @@ export default function ScenarioSandbox() {
         </div>
 
         {/* Insight comparison footer */}
-        <div className="border-t border-slate-800 px-6 py-4 grid grid-cols-3 gap-4 bg-slate-900/40">
+        <div className="border-t border-slate-200 px-6 py-4 grid grid-cols-3 gap-4 bg-white/40">
           <div className="space-y-2">
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Slot A insights</p>
-            <p className="text-lg font-mono text-slate-200">{runs.A.insightCount}</p>
+            <p className="text-lg font-mono text-slate-800">{runs.A.insightCount}</p>
             {runs.A.criticalInsightCount > 0 && (
               <p className="text-[10px] font-mono text-red-400">{runs.A.criticalInsightCount} critical</p>
             )}
           </div>
           <div className="space-y-2 text-center">
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Difference</p>
-            <p className="text-lg font-mono text-slate-400">
+            <p className="text-lg font-mono text-slate-600">
               {scoreA > scoreB ? '+' : ''}{scoreA - scoreB}
             </p>
             <p className="text-[10px] font-mono text-slate-600">composite pts</p>
           </div>
           <div className="space-y-2 text-right">
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Slot B insights</p>
-            <p className="text-lg font-mono text-slate-200">{runs.B.insightCount}</p>
+            <p className="text-lg font-mono text-slate-800">{runs.B.insightCount}</p>
             {runs.B.criticalInsightCount > 0 && (
               <p className="text-[10px] font-mono text-red-400">{runs.B.criticalInsightCount} critical</p>
             )}
@@ -581,9 +581,9 @@ export default function ScenarioSandbox() {
         </div>
 
         {/* Interpretation note */}
-        <div className="border-t border-slate-800 px-6 py-4 bg-slate-950/40">
+        <div className="border-t border-slate-200 px-6 py-4 bg-slate-50/40">
           <p className="text-xs text-slate-500 leading-relaxed">
-            <span className="text-slate-400 font-medium">Interpretation note: </span>
+            <span className="text-slate-600 font-medium">Interpretation note: </span>
             Composite scores reflect equally weighted governance health across five signals.
             A higher composite score indicates less institutional stress — not better patient care per se.
             Scenarios with more stressors may surface more learning value even if composite scores are lower.
@@ -596,7 +596,7 @@ export default function ScenarioSandbox() {
   return (
     <div>
       {/* ── Intro ──────────────────────────────────────────────────────────── */}
-      <p className="text-sm text-slate-400 leading-relaxed mb-6 max-w-2xl">
+      <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-2xl">
         Run two governance scenarios side by side and compare their institutional outcomes.
         Adjust staffing, patient load, AI autonomy, and governance maturity independently for each slot.
       </p>
@@ -612,7 +612,7 @@ export default function ScenarioSandbox() {
 
       {/* ── Pending state hint ─────────────────────────────────────────────── */}
       {!bothComplete && (runs.A || runs.B) && (
-        <div className="mt-6 border border-slate-800 rounded-lg px-5 py-4 text-center">
+        <div className="mt-6 border border-slate-200 rounded-lg px-5 py-4 text-center">
           <p className="text-xs text-slate-500">
             Run both slots to see the comparative governance analysis.
           </p>

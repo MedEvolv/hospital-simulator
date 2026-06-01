@@ -103,15 +103,15 @@ export default function ContextSurvey() {
   // ── Collapsed summary chip (context is set) ─────────────────────────────────
   if (ctx && !open) {
     return (
-      <div className="mb-6 flex items-center justify-between gap-4 border border-slate-800 bg-slate-900/40 rounded-lg px-4 py-3">
-        <div className="flex items-center gap-2 text-sm text-slate-300 flex-wrap">
+      <div className="mb-6 flex items-center justify-between gap-4 border border-slate-200 bg-white/40 rounded-lg px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-slate-700 flex-wrap">
           <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">Reviewing as</span>
-          {ctx.role && <span className="text-slate-200">{label(ROLES, ctx.role)}</span>}
-          {ctx.institutionType && <><span className="text-slate-600">·</span><span className="text-slate-400">{label(INSTITUTION_TYPES, ctx.institutionType)}</span></>}
-          {ctx.primaryConcern && <><span className="text-slate-600">·</span><span className="text-slate-400">focus: {label(CONCERNS, ctx.primaryConcern)}</span></>}
+          {ctx.role && <span className="text-slate-800">{label(ROLES, ctx.role)}</span>}
+          {ctx.institutionType && <><span className="text-slate-600">·</span><span className="text-slate-600">{label(INSTITUTION_TYPES, ctx.institutionType)}</span></>}
+          {ctx.primaryConcern && <><span className="text-slate-600">·</span><span className="text-slate-600">focus: {label(CONCERNS, ctx.primaryConcern)}</span></>}
         </div>
         <button onClick={() => setOpen(true)}
-          className="shrink-0 text-xs text-slate-400 hover:text-slate-200 border border-slate-700 hover:border-slate-500 px-3 py-1.5 rounded transition-colors">
+          className="shrink-0 text-xs text-slate-600 hover:text-slate-800 border border-slate-300 hover:border-slate-500 px-3 py-1.5 rounded transition-colors">
           Edit context
         </button>
       </div>
@@ -121,12 +121,12 @@ export default function ContextSurvey() {
   // ── Collapsed prompt (no context yet) ───────────────────────────────────────
   if (!ctx && !open) {
     return (
-      <div className="mb-6 flex items-center justify-between gap-4 border border-slate-800 border-dashed bg-slate-900/20 rounded-lg px-4 py-3">
+      <div className="mb-6 flex items-center justify-between gap-4 border border-slate-200 border-dashed bg-white/20 rounded-lg px-4 py-3">
         <p className="text-xs text-slate-500 leading-relaxed">
           Optional: set your role and institutional context to personalize how insights and reports are framed.
         </p>
         <button onClick={() => setOpen(true)}
-          className="shrink-0 text-xs font-medium text-slate-300 border border-slate-600 hover:border-slate-400 hover:bg-slate-800 px-3 py-1.5 rounded transition-colors">
+          className="shrink-0 text-xs font-medium text-slate-700 border border-slate-600 hover:border-slate-400 hover:bg-slate-100 px-3 py-1.5 rounded transition-colors">
           Set context →
         </button>
       </div>
@@ -135,12 +135,12 @@ export default function ContextSurvey() {
 
   // ── Expanded form ───────────────────────────────────────────────────────────
   return (
-    <div className="mb-6 border border-slate-700 bg-slate-900/60 rounded-lg p-5">
+    <div className="mb-6 border border-slate-300 bg-white/60 rounded-lg p-5">
       <div className="flex items-start justify-between mb-1">
-        <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">Your governance context</p>
+        <p className="text-xs font-mono text-slate-600 uppercase tracking-widest">Your governance context</p>
       </div>
       <p className="text-xs text-slate-500 leading-relaxed mb-4 max-w-2xl">
-        This personalizes how the simulation frames its insights for you — it does <span className="text-slate-400">not</span> change
+        This personalizes how the simulation frames its insights for you — it does <span className="text-slate-600">not</span> change
         the deterministic scenario. The same scenario always produces the same metrics.
       </p>
 
@@ -169,7 +169,7 @@ export default function ContextSurvey() {
             Clear
           </button>
         )}
-        <button onClick={() => setOpen(false)} className="text-xs text-slate-500 hover:text-slate-300 transition-colors ml-auto">
+        <button onClick={() => setOpen(false)} className="text-xs text-slate-500 hover:text-slate-700 transition-colors ml-auto">
           Cancel
         </button>
       </div>
@@ -196,7 +196,7 @@ function Select({ value, onChange, options, placeholder }: {
 }) {
   return (
     <select value={value} onChange={e => onChange(e.target.value)}
-      className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-slate-500 transition-colors">
+      className="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-500 transition-colors">
       <option value="">{placeholder}</option>
       {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
     </select>

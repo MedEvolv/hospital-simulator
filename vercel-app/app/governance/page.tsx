@@ -68,7 +68,7 @@ export default function GovernancePage() {
           <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-2">
             Institutional Mirror v2
           </p>
-          <h1 className="text-4xl font-light text-slate-50 tracking-tight">
+          <h1 className="text-4xl font-light text-slate-900 tracking-tight">
             Governance Console
           </h1>
         </div>
@@ -76,14 +76,14 @@ export default function GovernancePage() {
           {scenarioRun && (
             <button
               onClick={() => router.push('/results')}
-              className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
             >
               ← Results
             </button>
           )}
           <button
             onClick={() => router.push('/')}
-            className="text-xs text-slate-500 hover:text-slate-300 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
           >
             New scenario
           </button>
@@ -92,18 +92,18 @@ export default function GovernancePage() {
 
       {/* ── Context banner ────────────────────────────────────────── */}
       {!scenarioRun && (
-        <div className="border border-slate-800 rounded-lg p-4 mb-8 bg-slate-950/40">
+        <div className="border border-slate-200 rounded-lg p-4 mb-8 bg-slate-50/40">
           <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">
             No scenario loaded
           </p>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             The governance console is most useful after running a scenario — it loads the governance
             state from that run and shows you the projected effect of each intervention.
             You can also use it standalone with default metrics as a training exercise.
           </p>
           <button
             onClick={() => router.push('/')}
-            className="mt-3 text-xs text-slate-400 border border-slate-700 hover:border-slate-500 px-3 py-1.5 rounded transition-colors"
+            className="mt-3 text-xs text-slate-600 border border-slate-300 hover:border-slate-500 px-3 py-1.5 rounded transition-colors"
           >
             Run a scenario first →
           </button>
@@ -111,11 +111,11 @@ export default function GovernancePage() {
       )}
 
       {scenarioRun && (
-        <div className="border border-slate-800 rounded-lg p-4 mb-8 bg-slate-950/40">
+        <div className="border border-slate-200 rounded-lg p-4 mb-8 bg-slate-50/40">
           <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-1">
             Loaded from scenario run
           </p>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-700">
             {scenarioRun.scenario.name}
           </p>
           <p className="text-[10px] font-mono text-slate-600 mt-1">

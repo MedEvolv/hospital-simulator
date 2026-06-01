@@ -218,21 +218,21 @@ function getOverlayStyle(zone: ZoneState, overlay: OverlayMode): {
       bg: zone.governanceStatus === 'failing'
         ? 'bg-red-950/40'
         : zone.governanceStatus === 'strained'
-        ? 'bg-amber-950/30'
-        : 'bg-slate-900/50',
+        ? 'bg-amber-50/30'
+        : 'bg-white/50',
       border: zone.governanceStatus === 'failing'
         ? 'border-red-700/60'
         : zone.governanceStatus === 'strained'
         ? 'border-amber-700/50'
-        : 'border-slate-700/60',
+        : 'border-slate-300/60',
       intensity: 0,
     }
   }
   if (overlay === 'queue_density') {
     const v = zone.queuePressure
     return {
-      bg: v > 70 ? 'bg-orange-950/55' : v > 40 ? 'bg-amber-950/35' : 'bg-slate-900/50',
-      border: v > 70 ? 'border-orange-600/60' : v > 40 ? 'border-amber-600/50' : 'border-slate-700/60',
+      bg: v > 70 ? 'bg-orange-950/55' : v > 40 ? 'bg-amber-50/35' : 'bg-white/50',
+      border: v > 70 ? 'border-orange-600/60' : v > 40 ? 'border-amber-600/50' : 'border-slate-300/60',
       intensity: v,
       label: `${Math.round(v)}`,
     }
@@ -240,8 +240,8 @@ function getOverlayStyle(zone: ZoneState, overlay: OverlayMode): {
   if (overlay === 'trust_degradation') {
     const v = 100 - zone.trustLevel
     return {
-      bg: v > 60 ? 'bg-red-950/55' : v > 30 ? 'bg-amber-950/35' : 'bg-slate-900/50',
-      border: v > 60 ? 'border-red-600/60' : v > 30 ? 'border-amber-600/50' : 'border-slate-700/60',
+      bg: v > 60 ? 'bg-red-950/55' : v > 30 ? 'bg-amber-50/35' : 'bg-white/50',
+      border: v > 60 ? 'border-red-600/60' : v > 30 ? 'border-amber-600/50' : 'border-slate-300/60',
       intensity: v,
       label: `${Math.round(v)}%`,
     }
@@ -249,8 +249,8 @@ function getOverlayStyle(zone: ZoneState, overlay: OverlayMode): {
   if (overlay === 'ethical_debt') {
     const v = zone.ethicalDebt
     return {
-      bg: v > 60 ? 'bg-rose-950/55' : v > 30 ? 'bg-rose-950/30' : 'bg-slate-900/50',
-      border: v > 60 ? 'border-rose-600/60' : v > 30 ? 'border-rose-700/50' : 'border-slate-700/60',
+      bg: v > 60 ? 'bg-rose-950/55' : v > 30 ? 'bg-rose-950/30' : 'bg-white/50',
+      border: v > 60 ? 'border-rose-600/60' : v > 30 ? 'border-rose-700/50' : 'border-slate-300/60',
       intensity: v,
       label: `${Math.round(v)}`,
     }
@@ -258,13 +258,13 @@ function getOverlayStyle(zone: ZoneState, overlay: OverlayMode): {
   if (overlay === 'ai_interventions') {
     const v = Math.min(100, zone.aiEventCount * 5)
     return {
-      bg: v > 60 ? 'bg-sky-950/45' : v > 20 ? 'bg-sky-950/25' : 'bg-slate-900/50',
-      border: v > 60 ? 'border-sky-600/60' : v > 20 ? 'border-sky-700/50' : 'border-slate-700/60',
+      bg: v > 60 ? 'bg-sky-50/45' : v > 20 ? 'bg-sky-50/25' : 'bg-white/50',
+      border: v > 60 ? 'border-sky-600/60' : v > 20 ? 'border-sky-700/50' : 'border-slate-300/60',
       intensity: v,
       label: `${zone.aiEventCount}`,
     }
   }
-  return { bg: 'bg-slate-900/50', border: 'border-slate-700/60', intensity: 0 }
+  return { bg: 'bg-white/50', border: 'border-slate-300/60', intensity: 0 }
 }
 
 // ── Zone tile ─────────────────────────────────────────────────────────────────
@@ -284,8 +284,8 @@ function ZoneTile({
 
   const statusConfig = {
     failing:  { dot: 'bg-red-500',    badge: 'text-red-400 bg-red-950/60 border-red-800/60',    label: 'Failing' },
-    strained: { dot: 'bg-amber-400',  badge: 'text-amber-400 bg-amber-950/60 border-amber-800/60', label: 'Strained' },
-    nominal:  { dot: 'bg-emerald-500', badge: 'text-slate-500 bg-slate-800/60 border-slate-700/60', label: 'Nominal' },
+    strained: { dot: 'bg-amber-400',  badge: 'text-amber-400 bg-amber-50/60 border-amber-800/60', label: 'Strained' },
+    nominal:  { dot: 'bg-emerald-500', badge: 'text-slate-500 bg-slate-100/60 border-slate-300/60', label: 'Nominal' },
   }[zone.governanceStatus]
 
   return (
@@ -303,7 +303,7 @@ function ZoneTile({
         <div className="flex items-center gap-2.5">
           <span className="text-xl leading-none">{zone.icon}</span>
           <div>
-            <p className="text-base font-semibold text-slate-100 leading-tight">{zone.label}</p>
+            <p className="text-base font-semibold text-slate-900 leading-tight">{zone.label}</p>
             <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mt-0.5">{zone.shortLabel}</p>
           </div>
         </div>
@@ -312,7 +312,7 @@ function ZoneTile({
             {statusConfig.label}
           </span>
           {overlayLabel && (
-            <span className="text-sm font-mono font-bold text-slate-300 tabular-nums">
+            <span className="text-sm font-mono font-bold text-slate-700 tabular-nums">
               {overlayLabel}
             </span>
           )}
@@ -323,7 +323,7 @@ function ZoneTile({
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-2.5 h-2.5 rounded-full ${statusConfig.dot} shrink-0`} />
         {/* Inline queue pressure bar */}
-        <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all ${
               zone.queuePressure > 70 ? 'bg-orange-500' : zone.queuePressure > 40 ? 'bg-amber-500' : 'bg-slate-600'
@@ -339,17 +339,17 @@ function ZoneTile({
       {/* Stat chips */}
       <div className="flex flex-wrap gap-1.5 text-xs font-mono">
         {zone.patientCount > 0 && (
-          <span className="bg-slate-800/80 text-slate-400 px-2 py-0.5 rounded-md">
+          <span className="bg-slate-100/80 text-slate-600 px-2 py-0.5 rounded-md">
             {zone.patientCount} pts
           </span>
         )}
         {zone.escalationCount > 0 && (
-          <span className="bg-amber-950/60 text-amber-400 border border-amber-800/40 px-2 py-0.5 rounded-md">
+          <span className="bg-amber-50/60 text-amber-400 border border-amber-800/40 px-2 py-0.5 rounded-md">
             {zone.escalationCount} escalation{zone.escalationCount !== 1 ? 's' : ''}
           </span>
         )}
         {zone.aiEventCount > 0 && (
-          <span className="bg-sky-950/60 text-sky-400 border border-sky-800/40 px-2 py-0.5 rounded-md">
+          <span className="bg-sky-50/60 text-sky-600 border border-sky-200/40 px-2 py-0.5 rounded-md">
             {zone.aiEventCount} AI events
           </span>
         )}
@@ -374,18 +374,18 @@ function ZoneDetailPanel({ zone, onClose }: { zone: ZoneState; onClose: () => vo
 
   const statusConfig = {
     failing:  { label: 'Failing',  classes: 'text-red-400 bg-red-950/50 border-red-800/60' },
-    strained: { label: 'Strained', classes: 'text-amber-400 bg-amber-950/50 border-amber-800/60' },
-    nominal:  { label: 'Nominal',  classes: 'text-slate-400 bg-slate-800/50 border-slate-700/60' },
+    strained: { label: 'Strained', classes: 'text-amber-400 bg-amber-50/50 border-amber-800/60' },
+    nominal:  { label: 'Nominal',  classes: 'text-slate-600 bg-slate-100/50 border-slate-300/60' },
   }[zone.governanceStatus]
 
   return (
-    <div className="border border-slate-600 rounded-xl p-6 bg-slate-900/80 backdrop-blur-sm">
+    <div className="border border-slate-600 rounded-xl p-6 bg-white/80 backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-start justify-between mb-5">
         <div className="flex items-center gap-3">
           <span className="text-2xl">{zone.icon}</span>
           <div>
-            <h3 className="text-lg font-semibold text-slate-100">{zone.label}</h3>
+            <h3 className="text-lg font-semibold text-slate-900">{zone.label}</h3>
             <span className={`text-xs font-mono border px-2.5 py-0.5 rounded-full mt-1 inline-block ${statusConfig.classes}`}>
               {statusConfig.label}
             </span>
@@ -394,13 +394,13 @@ function ZoneDetailPanel({ zone, onClose }: { zone: ZoneState; onClose: () => vo
         <button
           type="button"
           onClick={onClose}
-          className="text-slate-500 hover:text-slate-200 text-sm font-mono border border-slate-700 hover:border-slate-500 px-2.5 py-1 rounded-lg transition-colors"
+          className="text-slate-500 hover:text-slate-800 text-sm font-mono border border-slate-300 hover:border-slate-500 px-2.5 py-1 rounded-lg transition-colors"
         >
           ✕ close
         </button>
       </div>
 
-      <p className="text-sm text-slate-400 leading-relaxed mb-5 bg-slate-800/40 rounded-lg px-4 py-3">
+      <p className="text-sm text-slate-600 leading-relaxed mb-5 bg-slate-100/40 rounded-lg px-4 py-3">
         {zone.description}
       </p>
 
@@ -408,19 +408,19 @@ function ZoneDetailPanel({ zone, onClose }: { zone: ZoneState; onClose: () => vo
         {rows.map(({ label, value, highMeansGood, note }) => {
           const isGood = highMeansGood ? value >= 70 : value <= 30
           const isWarn = highMeansGood ? value >= 45 : value <= 55
-          const numColor = isGood ? 'text-slate-300' : isWarn ? 'text-amber-400' : 'text-red-400'
+          const numColor = isGood ? 'text-slate-700' : isWarn ? 'text-amber-400' : 'text-red-400'
           const barColor = isGood ? 'bg-slate-500' : isWarn ? 'bg-amber-500' : 'bg-red-500'
 
           return (
             <div key={label}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm text-slate-300 font-medium">{label}</span>
+                <span className="text-sm text-slate-700 font-medium">{label}</span>
                 <span className={`text-sm font-mono font-bold tabular-nums ${numColor}`}>
                   {Math.round(value)}
                   <span className="text-xs font-normal text-slate-600 ml-0.5">/ 100</span>
                 </span>
               </div>
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${barColor}`}
                   style={{ width: `${value}%` }}
@@ -435,21 +435,21 @@ function ZoneDetailPanel({ zone, onClose }: { zone: ZoneState; onClose: () => vo
       </div>
 
       {(zone.aiEventCount > 0 || zone.escalationCount > 0) && (
-        <div className="mt-5 pt-4 border-t border-slate-800 flex flex-col gap-2">
+        <div className="mt-5 pt-4 border-t border-slate-200 flex flex-col gap-2">
           {zone.aiEventCount > 0 && (
-            <div className="flex items-center gap-2 text-sm text-sky-400">
-              <span className="bg-sky-950/50 border border-sky-800/40 px-2.5 py-0.5 rounded-md font-mono font-bold">
+            <div className="flex items-center gap-2 text-sm text-sky-600">
+              <span className="bg-sky-50/50 border border-sky-200/40 px-2.5 py-0.5 rounded-md font-mono font-bold">
                 {zone.aiEventCount}
               </span>
-              <span className="text-slate-400">AI interventions logged in this zone</span>
+              <span className="text-slate-600">AI interventions logged in this zone</span>
             </div>
           )}
           {zone.escalationCount > 0 && (
             <div className="flex items-center gap-2 text-sm text-amber-400">
-              <span className="bg-amber-950/50 border border-amber-800/40 px-2.5 py-0.5 rounded-md font-mono font-bold">
+              <span className="bg-amber-50/50 border border-amber-800/40 px-2.5 py-0.5 rounded-md font-mono font-bold">
                 {zone.escalationCount}
               </span>
-              <span className="text-slate-400">escalation events — check event log for unresolved chains</span>
+              <span className="text-slate-600">escalation events — check event log for unresolved chains</span>
             </div>
           )}
         </div>
@@ -493,10 +493,10 @@ export default function InstitutionalMap({
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-1">
           Institutional map
         </p>
-        <h2 className="text-2xl font-light text-slate-100 tracking-tight mb-2">
+        <h2 className="text-2xl font-light text-slate-900 tracking-tight mb-2">
           Where the pressure accumulated
         </h2>
-        <p className="text-sm text-slate-400 leading-relaxed">
+        <p className="text-sm text-slate-600 leading-relaxed">
           Click any zone to see its full governance breakdown.
           Toggle the overlay to switch signal layers.
         </p>
@@ -511,15 +511,15 @@ export default function InstitutionalMap({
             onClick={() => setOverlay(o.value)}
             className={`text-xs font-medium border px-3 py-1.5 rounded-lg uppercase tracking-wide transition-colors ${
               overlay === o.value
-                ? 'text-slate-100 border-slate-400 bg-slate-700'
-                : 'text-slate-500 border-slate-700 hover:border-slate-500 hover:text-slate-300'
+                ? 'text-slate-900 border-slate-400 bg-slate-700'
+                : 'text-slate-500 border-slate-300 hover:border-slate-500 hover:text-slate-700'
             }`}
           >
             {o.label}
           </button>
         ))}
       </div>
-      <p className="text-xs text-slate-500 mb-5 leading-relaxed bg-slate-900/40 border border-slate-800 rounded-lg px-3 py-2">
+      <p className="text-xs text-slate-500 mb-5 leading-relaxed bg-white/40 border border-slate-200 rounded-lg px-3 py-2">
         {activeOverlayMeta.description}
       </p>
 

@@ -13,26 +13,26 @@ const PACK_STYLES: Record<string, {
   dot: string
 }> = {
   'automation-failure': {
-    badge: 'text-amber-400 border-amber-800/60 bg-amber-950/40',
-    card: 'border-slate-800 hover:border-amber-900/60',
-    cardSelected: 'border-amber-700/70 bg-amber-950/20',
+    badge: 'text-amber-400 border-amber-800/60 bg-amber-50/40',
+    card: 'border-slate-200 hover:border-amber-200/60',
+    cardSelected: 'border-amber-700/70 bg-amber-50/20',
     dot: 'bg-amber-500',
   },
   'institutional-strain': {
     badge: 'text-orange-400 border-orange-800/60 bg-orange-950/40',
-    card: 'border-slate-800 hover:border-orange-900/60',
+    card: 'border-slate-200 hover:border-orange-900/60',
     cardSelected: 'border-orange-700/70 bg-orange-950/20',
     dot: 'bg-orange-500',
   },
   'equity-participation': {
-    badge: 'text-sky-400 border-sky-800/60 bg-sky-950/40',
-    card: 'border-slate-800 hover:border-sky-900/60',
-    cardSelected: 'border-sky-700/70 bg-sky-950/20',
+    badge: 'text-sky-600 border-sky-200/60 bg-sky-50/40',
+    card: 'border-slate-200 hover:border-sky-900/60',
+    cardSelected: 'border-sky-700/70 bg-sky-50/20',
     dot: 'bg-sky-500',
   },
   'security-stress-test': {
     badge: 'text-rose-400 border-rose-800/60 bg-rose-950/40',
-    card: 'border-slate-800 hover:border-rose-900/60',
+    card: 'border-slate-200 hover:border-rose-900/60',
     cardSelected: 'border-rose-700/70 bg-rose-950/20',
     dot: 'bg-rose-500',
   },
@@ -127,22 +127,22 @@ export default function ScenarioSelector({
   return (
     <div>
       {/* ── Label ─────────────────────────────────────────────────────── */}
-      <p className="text-xs font-mono text-slate-400 tracking-widest uppercase mb-3">
+      <p className="text-xs font-mono text-slate-600 tracking-widest uppercase mb-3">
         Governance stress-test scenarios
       </p>
-      <p className="text-sm text-slate-400 leading-relaxed mb-6 max-w-2xl">
+      <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-2xl">
         Each scenario is a structured governance stress test — not a random simulation.
         Select one to run a deterministic sequence of institutional failures and measure
         how trust, ethical debt, and human state degrade.
       </p>
 
       {/* ── Cards grid ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-3 mb-6">
+      <div className="grid grid-cols-1 gap-3 mb-6" role="listbox" aria-label="Governance stress-test scenarios">
         {loadingScenarios && [1, 2, 3, 4].map(i => (
-          <div key={i} className="border border-slate-800 rounded-lg p-5 animate-pulse">
-            <div className="h-3 bg-slate-800 rounded w-48 mb-2" />
-            <div className="h-2 bg-slate-800/60 rounded w-full mb-1" />
-            <div className="h-2 bg-slate-800/40 rounded w-3/4" />
+          <div key={i} className="border border-slate-200 rounded-lg p-5 animate-pulse">
+            <div className="h-3 bg-slate-100 rounded w-48 mb-2" />
+            <div className="h-2 bg-slate-100/60 rounded w-full mb-1" />
+            <div className="h-2 bg-slate-100/40 rounded w-3/4" />
           </div>
         ))}
         {!loadingScenarios && scenarios.map(scenario => {
@@ -153,23 +153,25 @@ export default function ScenarioSelector({
             <button
               key={scenario.id}
               type="button"
+              role="option"
+              aria-selected={isSelected}
               onClick={() => setSelected(isSelected ? null : scenario.id)}
               className={`text-left border rounded-lg p-5 transition-all ${
-                isSelected ? pack.cardSelected : `bg-slate-900/40 ${pack.card}`
+                isSelected ? pack.cardSelected : `bg-white/40 ${pack.card}`
               }`}
             >
               {/* ── Card header ────────────────────────────────────────── */}
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2.5">
                   <span className={`inline-block w-2 h-2 rounded-full ${pack.dot} mt-0.5 shrink-0`} />
-                  <h3 className="text-sm font-medium text-slate-100">{scenario.name}</h3>
+                  <span className="text-sm font-medium text-slate-900 block">{scenario.name}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className={`text-[10px] font-mono border px-2 py-0.5 rounded tracking-wider uppercase ${pack.badge}`}>
                     {PACK_LABELS[scenario.packId] ?? scenario.packId}
                   </span>
                   {isSelected && (
-                    <span className="text-[10px] font-mono text-slate-400 border border-slate-700 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono text-slate-600 border border-slate-300 px-2 py-0.5 rounded">
                       selected
                     </span>
                   )}
@@ -177,7 +179,7 @@ export default function ScenarioSelector({
               </div>
 
               {/* ── Description ────────────────────────────────────────── */}
-              <p className="text-xs text-slate-400 leading-relaxed mb-3 ml-4.5 pl-[18px]">
+              <p className="text-xs text-slate-600 leading-relaxed mb-3 ml-4.5 pl-[18px]">
                 {scenario.description}
               </p>
 
@@ -192,14 +194,14 @@ export default function ScenarioSelector({
 
               {/* ── Expanded: risk pathways ─────────────────────────────── */}
               {isSelected && (
-                <div className="mt-4 pl-[18px] border-t border-slate-800 pt-4 space-y-2">
+                <div className="mt-4 pl-[18px] border-t border-slate-200 pt-4 space-y-2">
                   <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">
                     Expected risk pathways
                   </p>
                   {scenario.expectedRiskPathways.map((p, i) => (
                     <div key={i} className="flex items-start gap-2">
                       <span className="text-slate-700 text-xs shrink-0 mt-0.5">→</span>
-                      <p className="text-xs text-slate-400 leading-relaxed">{p}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed">{p}</p>
                     </div>
                   ))}
                 </div>

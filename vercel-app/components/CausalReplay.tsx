@@ -27,9 +27,9 @@ interface CausalReplayProps {
 
 const IMPACT_STYLES: Record<TraceImpactLevel, { border: string; tag: string }> = {
   critical: { border: 'border-red-900/60 bg-red-950/20',   tag: 'text-red-400 border-red-900' },
-  high:     { border: 'border-amber-900/40 bg-amber-950/10', tag: 'text-amber-400 border-amber-900' },
-  medium:   { border: 'border-slate-800 bg-slate-950/40',  tag: 'text-slate-400 border-slate-700' },
-  low:      { border: 'border-slate-800/60 bg-transparent', tag: 'text-slate-600 border-slate-800' },
+  high:     { border: 'border-amber-200/40 bg-amber-50/10', tag: 'text-amber-400 border-amber-200' },
+  medium:   { border: 'border-slate-200 bg-slate-50/40',  tag: 'text-slate-600 border-slate-300' },
+  low:      { border: 'border-slate-200/60 bg-transparent', tag: 'text-slate-600 border-slate-200' },
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -76,7 +76,7 @@ function TraceCard({
             <span className={`text-[9px] font-mono border px-1.5 py-0.5 rounded uppercase tracking-wider ${tag}`}>
               {trace.impactLevel}
             </span>
-            <span className="text-[9px] font-mono text-slate-600 border border-slate-800 px-1.5 py-0.5 rounded">
+            <span className="text-[9px] font-mono text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">
               {CATEGORY_LABELS[trace.category] ?? trace.category}
             </span>
           </div>
@@ -89,7 +89,7 @@ function TraceCard({
         </p>
 
         {/* ── Surfaced explanation (the tired-nurse sentence) ─── */}
-        <p className="text-xs text-slate-300 leading-snug">
+        <p className="text-xs text-slate-700 leading-snug">
           {trace.surfacedExplanation}
         </p>
 
@@ -97,12 +97,12 @@ function TraceCard({
         {(trace.ethicalDebtImpact !== 0 || trace.trustImpact !== 0) && (
           <div className="flex gap-3 mt-1.5 text-[9px] font-mono">
             {trace.trustImpact !== 0 && (
-              <span className={trace.trustImpact < 0 ? 'text-red-500' : 'text-slate-400'}>
+              <span className={trace.trustImpact < 0 ? 'text-red-500' : 'text-slate-600'}>
                 trust {trace.trustImpact > 0 ? '+' : ''}{trace.trustImpact}
               </span>
             )}
             {trace.ethicalDebtImpact !== 0 && (
-              <span className={trace.ethicalDebtImpact > 0 ? 'text-amber-600' : 'text-slate-400'}>
+              <span className={trace.ethicalDebtImpact > 0 ? 'text-amber-600' : 'text-slate-600'}>
                 debt {trace.ethicalDebtImpact > 0 ? '+' : ''}{trace.ethicalDebtImpact}
               </span>
             )}
@@ -131,29 +131,29 @@ function CausalChainPanel({
   )
 
   return (
-    <div className="border border-slate-700 rounded-lg bg-slate-900">
+    <div className="border border-slate-300 rounded-lg bg-white">
       {/* ── Header ──────────────────────────────────────────── */}
-      <div className="flex items-start justify-between p-4 border-b border-slate-800">
+      <div className="flex items-start justify-between p-4 border-b border-slate-200">
         <div>
           <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">
             Causal chain analysis
           </p>
-          <h3 className="text-sm font-medium text-slate-200">
+          <h3 className="text-sm font-medium text-slate-800">
             {trace.eventType.replace(/_/g, ' ')} — tick {trace.tick}
           </h3>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="text-xs font-mono text-slate-600 hover:text-slate-400 transition-colors"
+          className="text-xs font-mono text-slate-600 hover:text-slate-600 transition-colors"
         >
           ✕
         </button>
       </div>
 
       {/* ── Explanation ─────────────────────────────────────── */}
-      <div className="p-4 border-b border-slate-800">
-        <p className="text-xs text-slate-400 leading-relaxed mb-2">
+      <div className="p-4 border-b border-slate-200">
+        <p className="text-xs text-slate-600 leading-relaxed mb-2">
           {trace.surfacedExplanation}
         </p>
         <p className="text-xs text-slate-600 leading-relaxed">
@@ -162,26 +162,26 @@ function CausalChainPanel({
       </div>
 
       {/* ── Recommended action ──────────────────────────────── */}
-      <div className="px-4 py-3 border-b border-slate-800">
+      <div className="px-4 py-3 border-b border-slate-200">
         <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-1">
           Governance action
         </p>
-        <p className="text-xs text-slate-300 leading-relaxed">
+        <p className="text-xs text-slate-700 leading-relaxed">
           {trace.recommendedAction}
         </p>
         <div className="flex flex-wrap gap-2 mt-2">
           {trace.governanceCheck.escalationRequired && (
-            <span className="text-[9px] font-mono border border-amber-900 text-amber-500 px-1.5 py-0.5 rounded uppercase">
+            <span className="text-[9px] font-mono border border-amber-200 text-amber-500 px-1.5 py-0.5 rounded uppercase">
               escalation required
             </span>
           )}
           {trace.governanceCheck.humanReviewRequired && (
-            <span className="text-[9px] font-mono border border-blue-900 text-blue-400 px-1.5 py-0.5 rounded uppercase">
+            <span className="text-[9px] font-mono border border-blue-200 text-blue-600 px-1.5 py-0.5 rounded uppercase">
               human review
             </span>
           )}
           {trace.governanceCheck.auditRequired && (
-            <span className="text-[9px] font-mono border border-slate-700 text-slate-500 px-1.5 py-0.5 rounded uppercase">
+            <span className="text-[9px] font-mono border border-slate-300 text-slate-500 px-1.5 py-0.5 rounded uppercase">
               audit required
             </span>
           )}
@@ -206,19 +206,19 @@ function CausalChainPanel({
                     <div className="flex flex-col items-center">
                       <span className={`w-2 h-2 rounded-full mt-1 ${isTarget ? 'bg-slate-300' : 'bg-slate-700'}`} />
                       {i < chain.chain.length - 1 && (
-                        <div className="w-px flex-1 bg-slate-800 mt-1" />
+                        <div className="w-px flex-1 bg-slate-100 mt-1" />
                       )}
                     </div>
                     <div className="pb-2">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className={`text-[9px] font-mono ${isTarget ? 'text-slate-300' : 'text-slate-500'}`}>
+                        <span className={`text-[9px] font-mono ${isTarget ? 'text-slate-700' : 'text-slate-500'}`}>
                           t{node.tick}
                         </span>
-                        <span className={`text-[9px] font-mono ${isTarget ? 'text-slate-200' : 'text-slate-500'}`}>
+                        <span className={`text-[9px] font-mono ${isTarget ? 'text-slate-800' : 'text-slate-500'}`}>
                           {node.eventType.replace(/_/g, ' ')}
                         </span>
                         {isTarget && (
-                          <span className="text-[8px] font-mono border border-slate-600 text-slate-400 px-1 rounded">
+                          <span className="text-[8px] font-mono border border-slate-600 text-slate-600 px-1 rounded">
                             this event
                           </span>
                         )}
@@ -233,7 +233,7 @@ function CausalChainPanel({
                 )
               })}
             </div>
-            <p className="text-xs text-slate-600 border-t border-slate-800 pt-3">
+            <p className="text-xs text-slate-600 border-t border-slate-200 pt-3">
               {chain.summary}
             </p>
           </>
@@ -241,7 +241,7 @@ function CausalChainPanel({
 
         {/* ── Consequences ──────────────────────────────────── */}
         {trace.consequences.length > 0 && (
-          <div className="border-t border-slate-800 mt-3 pt-3">
+          <div className="border-t border-slate-200 mt-3 pt-3">
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-2">
               Consequences
             </p>
@@ -249,7 +249,7 @@ function CausalChainPanel({
               {trace.consequences.map((c, i) => (
                 <div key={i} className="flex items-start gap-2">
                   <span className={`text-[10px] font-mono tabular-nums shrink-0 mt-0.5 ${
-                    c.delta > 0 ? 'text-amber-600' : 'text-slate-400'
+                    c.delta > 0 ? 'text-amber-600' : 'text-slate-600'
                   }`}>
                     {c.delta > 0 ? '+' : ''}{c.delta}
                   </span>
@@ -261,11 +261,11 @@ function CausalChainPanel({
         )}
 
         {/* ── Audit log entry ───────────────────────────────── */}
-        <div className="border-t border-slate-800 mt-3 pt-3">
+        <div className="border-t border-slate-200 mt-3 pt-3">
           <p className="text-[10px] font-mono text-slate-700 uppercase tracking-widest mb-1">
             Audit entry
           </p>
-          <p className="text-[10px] font-mono text-slate-600 bg-slate-950 rounded p-2">
+          <p className="text-[10px] font-mono text-slate-600 bg-slate-50 rounded p-2">
             {trace.logEntry}
           </p>
         </div>
@@ -336,12 +336,12 @@ export default function CausalReplay({ events, scenarioName }: CausalReplayProps
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-1">
           Causal replay
         </p>
-        <h2 className="text-2xl font-light text-slate-100 tracking-tight mb-2">
+        <h2 className="text-2xl font-light text-slate-900 tracking-tight mb-2">
           Why did this happen?
         </h2>
         {scenarioName && (
           <p className="text-sm text-slate-500 leading-relaxed max-w-2xl">
-            Every event in <span className="text-slate-300">{scenarioName}</span> has a reflexive
+            Every event in <span className="text-slate-700">{scenarioName}</span> has a reflexive
             trace — a one-sentence explanation readable to anyone who was there. Click any event
             to see its causal ancestry.
           </p>
@@ -354,7 +354,7 @@ export default function CausalReplay({ events, scenarioName }: CausalReplayProps
           <p className="text-[10px] font-mono text-rose-500 uppercase tracking-widest mb-1">
             First governance failure
           </p>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-700">
             <span className="font-medium">{firstFailure.event_type.replace(/_/g, ' ')}</span>
             {' '}at tick {Math.floor(firstFailure.timestamp / 5)} — this is where the cascade began.
           </p>
@@ -380,8 +380,8 @@ export default function CausalReplay({ events, scenarioName }: CausalReplayProps
                 onClick={() => setMode(m.value)}
                 className={`text-[10px] font-mono border px-2 py-1 rounded uppercase tracking-widest transition-colors ${
                   mode === m.value
-                    ? 'text-slate-200 border-slate-500 bg-slate-800'
-                    : 'text-slate-600 border-slate-800 hover:text-slate-400 hover:border-slate-700'
+                    ? 'text-slate-800 border-slate-500 bg-slate-100'
+                    : 'text-slate-600 border-slate-200 hover:text-slate-600 hover:border-slate-300'
                 }`}
               >
                 {m.label}
@@ -395,7 +395,7 @@ export default function CausalReplay({ events, scenarioName }: CausalReplayProps
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search events…"
-            className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-slate-600 mb-3"
+            className="w-full bg-white border border-slate-200 rounded px-3 py-2 text-xs text-slate-700 placeholder-slate-600 focus:outline-none focus:border-slate-600 mb-3"
           />
 
           {/* Event list */}
@@ -427,7 +427,7 @@ export default function CausalReplay({ events, scenarioName }: CausalReplayProps
               onClose={() => setSelectedEventId(null)}
             />
           ) : (
-            <div className="border border-slate-800 rounded-lg p-8 text-center bg-slate-950/40">
+            <div className="border border-slate-200 rounded-lg p-8 text-center bg-slate-50/40">
               <p className="text-sm text-slate-600 leading-relaxed">
                 Select an event to see its reflexive trace and causal ancestry.
               </p>

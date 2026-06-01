@@ -52,7 +52,7 @@ function RatingRow({
     <div>
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <p className="text-xs font-medium text-slate-300">{label}</p>
+          <p className="text-xs font-medium text-slate-700">{label}</p>
           <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{description}</p>
         </div>
         <div className="flex items-center gap-1 shrink-0">
@@ -65,8 +65,8 @@ function RatingRow({
                 value === n
                   ? 'bg-slate-200 border-slate-300 text-slate-900'
                   : value > 0 && n <= value
-                  ? 'bg-slate-700 border-slate-600 text-slate-300'
-                  : 'border-slate-800 text-slate-600 hover:border-slate-600 hover:text-slate-400'
+                  ? 'bg-slate-700 border-slate-600 text-slate-700'
+                  : 'border-slate-200 text-slate-600 hover:border-slate-600 hover:text-slate-600'
               }`}
             >
               {n}
@@ -160,10 +160,10 @@ export default function ExpertFeedbackForm({
 
   if (submitted) {
     return (
-      <div className="border border-slate-800 rounded-lg px-5 py-6 bg-slate-900/30 text-center">
+      <div className="border border-slate-200 rounded-lg px-5 py-6 bg-white/30 text-center">
         <p className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">Feedback received</p>
-        <p className="text-base text-slate-200 font-medium mb-1">Thank you.</p>
-        <p className="text-sm text-slate-400 leading-relaxed">
+        <p className="text-base text-slate-800 font-medium mb-1">Thank you.</p>
+        <p className="text-sm text-slate-600 leading-relaxed">
           Your expert feedback has been saved and will be included in the exported governance report.
         </p>
       </div>
@@ -171,15 +171,15 @@ export default function ExpertFeedbackForm({
   }
 
   return (
-    <div className="border border-slate-800 rounded-lg overflow-hidden">
+    <div className="border border-slate-200 rounded-lg overflow-hidden">
       {/* ── Toggle header ──────────────────────────────────────────────────── */}
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-slate-900/30 hover:bg-slate-900/50 transition-colors text-left"
+        className="w-full flex items-center justify-between px-5 py-4 bg-white/30 hover:bg-white/50 transition-colors text-left"
       >
         <div>
-          <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">Expert feedback</p>
+          <p className="text-xs font-mono text-slate-600 uppercase tracking-widest">Expert feedback</p>
           <p className="text-xs text-slate-500 mt-0.5">Help improve simulation validity · Optional</p>
         </div>
         <span className="text-slate-600 text-xs">{expanded ? '▲ Collapse' : '▼ Expand'}</span>
@@ -187,10 +187,10 @@ export default function ExpertFeedbackForm({
 
       {/* ── Form ──────────────────────────────────────────────────────────── */}
       {expanded && (
-        <div className="border-t border-slate-800 px-5 py-6 space-y-6">
+        <div className="border-t border-slate-200 px-5 py-6 space-y-6">
           {/* Context banner */}
-          <div className="bg-slate-800/30 rounded p-3">
-            <p className="text-xs text-slate-400 leading-relaxed">
+          <div className="bg-slate-100/30 rounded p-3">
+            <p className="text-xs text-slate-600 leading-relaxed">
               This feedback is used to improve the simulation&apos;s realism and calibration.
               Questions are designed for clinicians, governance professionals, and AI researchers.
               All fields are optional except scenario realism and insight usefulness.
@@ -199,7 +199,7 @@ export default function ExpertFeedbackForm({
 
           {/* Professional role */}
           <div>
-            <label className="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs font-mono text-slate-600 uppercase tracking-widest mb-2">
               Your professional role (optional)
             </label>
             <input
@@ -207,7 +207,7 @@ export default function ExpertFeedbackForm({
               placeholder="e.g. Clinical governance lead, Emergency physician, AI researcher…"
               value={professionalRole}
               onChange={e => setProfessionalRole(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded px-3 py-2.5 text-sm text-slate-800 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors"
             />
           </div>
 
@@ -249,7 +249,7 @@ export default function ExpertFeedbackForm({
 
           {/* Free text: missing factors */}
           <div>
-            <label className="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs font-mono text-slate-600 uppercase tracking-widest mb-2">
               Missing factors
             </label>
             <textarea
@@ -257,13 +257,13 @@ export default function ExpertFeedbackForm({
               value={missingFactors}
               onChange={e => setMissingFactors(e.target.value)}
               rows={3}
-              className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors resize-none"
+              className="w-full bg-white border border-slate-200 rounded px-3 py-2.5 text-sm text-slate-800 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors resize-none"
             />
           </div>
 
           {/* Free text: strongest insight */}
           <div>
-            <label className="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs font-mono text-slate-600 uppercase tracking-widest mb-2">
               Strongest insight
             </label>
             <textarea
@@ -271,13 +271,13 @@ export default function ExpertFeedbackForm({
               value={strongestInsight}
               onChange={e => setStrongestInsight(e.target.value)}
               rows={2}
-              className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors resize-none"
+              className="w-full bg-white border border-slate-200 rounded px-3 py-2.5 text-sm text-slate-800 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors resize-none"
             />
           </div>
 
           {/* Would use for training */}
           <div>
-            <label className="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs font-mono text-slate-600 uppercase tracking-widest mb-2">
               Would you use this for clinical governance training?
             </label>
             <div className="flex gap-2">
@@ -288,8 +288,8 @@ export default function ExpertFeedbackForm({
                   onClick={() => setWouldUseForTraining(opt)}
                   className={`flex-1 py-2.5 rounded border text-sm transition-all ${
                     wouldUseForTraining === opt
-                      ? 'border-slate-500 bg-slate-800 text-slate-200'
-                      : 'border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'
+                      ? 'border-slate-500 bg-slate-100 text-slate-800'
+                      : 'border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-600'
                   }`}
                 >
                   {opt.charAt(0).toUpperCase() + opt.slice(1)}
@@ -300,7 +300,7 @@ export default function ExpertFeedbackForm({
 
           {/* Additional notes */}
           <div>
-            <label className="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">
+            <label className="block text-xs font-mono text-slate-600 uppercase tracking-widest mb-2">
               Additional notes
             </label>
             <textarea
@@ -308,7 +308,7 @@ export default function ExpertFeedbackForm({
               value={additionalNotes}
               onChange={e => setAdditionalNotes(e.target.value)}
               rows={2}
-              className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors resize-none"
+              className="w-full bg-white border border-slate-200 rounded px-3 py-2.5 text-sm text-slate-800 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition-colors resize-none"
             />
           </div>
 
