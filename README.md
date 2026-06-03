@@ -1,5 +1,10 @@
 # hospital-simulator
 
+> ## ⚠️ Ontological Boundary & Goodhart's Law
+> This engine is a **diagnostic sandbox for private institutional rehearsal**, not a public scoreboard. 
+> Goodhart’s Law states: *"When a measure becomes a target, it ceases to be a good measure."* 
+> If Ethical Debt is used as a KPI for accreditation, funding, or staff penalization, administrators will mathematically optimize to hide the harm rather than solve the systemic issue. The Institutional Mirror explicitly **forbids** the use of its PyGuLP outputs as a punitive regulatory metric. It is designed to expose forced harm, not to launder institutional guilt.
+
 A governance simulator for hospital emergency departments — built for NABH-accredited and pursuing institutions in India.
 
 ## What it does
