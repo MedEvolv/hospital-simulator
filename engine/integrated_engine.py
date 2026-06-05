@@ -19,6 +19,7 @@ from moral_reckoning import (
 from scoring_engine import ScoringEngine
 from playback_engine import EventPlaybackController
 from typing import Dict, Optional, List
+from truememory_client import fetch_vault_facts
 
 
 class IntegratedHospitalSystem:
@@ -203,9 +204,16 @@ class IntegratedHospitalSystem:
             self.current_run.run_id
         )
         
+        # Fetch Vault Context for cross-agent knowledge
+        try:
+            vault_facts = fetch_vault_facts()
+        except Exception:
+            vault_facts = []
+        
         # Combined report
         return {
             'run_id': self.current_run.run_id,
+            'vault_context': vault_facts,
             'institutional_profile': self.current_run.institutional_profile,
             'timestamp': self.current_run.start_time,  # Already a string
             'seed': self.current_run.seed,
@@ -523,6 +531,21 @@ if __name__ == "__main__":
     print("INTEGRATED HOSPITAL ORCHESTRATION SYSTEM")
     print("Event-Sourced Simulation + Moral Reckoning Layer")
     print("="*80)
+    print()
+    
+    print("Fetching cross-agent institutional knowledge from TrueMemory Vault...")
+    try:
+        facts = fetch_vault_facts()
+        if facts:
+            print(f"Loaded {len(facts)} active facts.")
+            for f in facts[:3]:
+                content = f.get('content', '')
+                origin = f.get('origin', 'Unknown')
+                print(f"  -> [{origin}] {content[:100]}...")
+        else:
+            print("No TrueMemory facts found or Vault is offline.")
+    except Exception as e:
+        print(f"Failed to fetch TrueMemory facts: {e}")
     print()
     
     # Get profile from command line or use default

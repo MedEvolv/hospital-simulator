@@ -48,6 +48,15 @@ from scoring_engine import ScoringEngine, ScoringResult
 # Import visual simulation
 from visual_hospital import render_visual_simulation
 
+# Import TrueMemory client
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'engine')))
+try:
+    from truememory_client import fetch_vault_facts
+except ImportError:
+    def fetch_vault_facts(): return []
+
 # ============================================================================
 # GLOBAL CONFIGURATION
 # ============================================================================
@@ -742,9 +751,9 @@ END OF REPORT
         
         # Main tabs
         if st.session_state.mode == "simulation":
-            tabs = st.tabs(["🎮 Visual Sim", "🏥 Live View", "📋 Events", "💬 Chat", "🏠 Rooms", "📊 Metrics"])
+            tabs = st.tabs(["🎮 Visual Sim", "🏥 Live View", "📋 Events", "💬 Chat", "🏠 Rooms", "📊 Metrics", "🧠 TrueMemory"])
         else:
-            tabs = st.tabs(["🔍 Inspector", "📋 Event Log", "⚖️ Decisions", "📊 Scoring", "🔀 Compare"])
+            tabs = st.tabs(["🔍 Inspector", "📋 Event Log", "⚖️ Decisions", "📊 Scoring", "🔀 Compare", "🧠 TrueMemory"])
         
         # ====================================================================
         # SIMULATION MODE TABS
@@ -848,7 +857,20 @@ END OF REPORT
                 if snapshot.metrics:
                     st.json(snapshot.metrics)
                 else:
-                    st.info("Metrics will appear here during simulation")
+                    st.info("No metrics available")
+            
+            # TrueMemory Vault
+            with tabs[6]:
+                st.subheader("🧠 TrueMemory Vault (Pluribus Read-Path)")
+                st.caption("Facts retrieved persistently from the ArchLife Vault across all agents.")
+                facts = fetch_vault_facts()
+                if facts:
+                    for f in facts:
+                        origin = f.get('origin', 'Unknown')
+                        content = f.get('content', '')
+                        st.info(f"**[{origin}]** {content}")
+                else:
+                    st.warning("No facts found in TrueMemory Vault.")
         
         # ====================================================================
         # GOVERNANCE REVIEW MODE TABS
@@ -1041,6 +1063,19 @@ END OF REPORT
                             st.info(f"💡 {insight}")
                 else:
                     st.info("Enable comparison mode in sidebar to compare runs")
+            
+            # TrueMemory Vault
+            with tabs[5]:
+                st.subheader("🧠 TrueMemory Vault (Pluribus Read-Path)")
+                st.caption("Facts retrieved persistently from the ArchLife Vault across all agents.")
+                facts = fetch_vault_facts()
+                if facts:
+                    for f in facts:
+                        origin = f.get('origin', 'Unknown')
+                        content = f.get('content', '')
+                        st.info(f"**[{origin}]** {content}")
+                else:
+                    st.warning("No facts found in TrueMemory Vault.")
         
         # Auto-advance if playing
         if st.session_state.mode == "simulation" and st.session_state.playing:
