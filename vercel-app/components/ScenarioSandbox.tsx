@@ -75,11 +75,11 @@ const SIGNAL_DEFS: Array<{
   highMeansGood: boolean
   description: string
 }> = [
-  { key: 'pss', abbr: 'PSS', label: 'Patient Safety Signal',        highMeansGood: true,  description: 'Absence of patient harm events and escalation failures' },
-  { key: 'pes', abbr: 'PES', label: 'Provider Experience Signal',   highMeansGood: true,  description: 'Staff fatigue, moral distress, override confidence' },
-  { key: 'sss', abbr: 'SSS', label: 'System Strain Signal',         highMeansGood: false, description: 'Queue pressure, documentation load, governance strain (lower = worse)' },
-  { key: 'eic', abbr: 'EIC', label: 'Ethical Integrity Coefficient', highMeansGood: true,  description: 'Absence of ethical debt across fairness and privacy categories' },
-  { key: 'sti', abbr: 'STI', label: 'Systemic Trust Index',         highMeansGood: true,  description: 'Operational trust, governance drift resistance, automation discipline' },
+  { key: 'pss', abbr: 'PSS', label: 'Patient Safety Signal',     highMeansGood: true,  description: 'Safe care delivered; absence of harm and escalation failures (higher = danger not ignored)' },
+  { key: 'pes', abbr: 'PES', label: 'Patient Experience Signal', highMeansGood: true,  description: 'Waiting, communication, and dignity preserved; penalises the unexplained' },
+  { key: 'sss', abbr: 'SSS', label: 'Staff Stress Signal',       highMeansGood: true,  description: 'Cumulative cognitive/moral load on staff (higher value = less strain)' },
+  { key: 'eic', abbr: 'EIC', label: 'Ethics Intervention Count', highMeansGood: true,  description: 'A COUNT of governance interventions; never a penalty, zero in high-acuity is the warning (RULE-M4)' },
+  { key: 'sti', abbr: 'STI', label: 'System Throughput Index',   highMeansGood: true,  description: 'Flow efficiency; high throughput with high ethical debt is the pattern to watch' },
 ]
 
 // ── Slot colour palette ───────────────────────────────────────────────────────

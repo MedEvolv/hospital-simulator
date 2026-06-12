@@ -5,11 +5,11 @@ import { useState } from 'react'
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface FiveSignals {
-  pss: number  // Patient Safety Signal       0–100  (100 = safe)
-  pes: number  // Provider Experience Signal  0–100  (100 = good)
-  sss: number  // System Strain Signal        0–100  (100 = strained)
-  eic: number  // Ethical Integrity Coeff.    0–100  (100 = clean)
-  sti: number  // Systemic Trust Index        0–100  (100 = trusted)
+  pss: number  // Patient Safety Signal       0–100  (higher = safer)
+  pes: number  // Patient Experience Signal   0–100  (higher = better experience/dignity)
+  sss: number  // Staff Stress Signal         0–100  (higher = LESS strain)
+  eic: number  // Ethics Intervention Count   a COUNT, not a 0–100 score (RULE-M4)
+  sti: number  // System Throughput Index     0–100  (flow efficiency)
 }
 
 export interface HumanStateSnapshot {
@@ -49,31 +49,31 @@ const SIGNAL_DEFS: VitalSignalDef[] = [
   },
   {
     abbrev: 'pes',
-    fullName: 'Provider Experience Signal',
+    fullName: 'Patient Experience Signal',
     highMeansGood: true,
-    description: 'Staff fatigue, moral distress, and escalation willingness aggregated.',
-    governanceNote: 'PES degradation is a leading indicator — it precedes governance breakdown, not follows it.',
+    description: 'Waiting times, communication quality, and dignity preserved through care.',
+    governanceNote: 'PES penalises the unexplained, not the deviation — an unexplained queue jump costs more than the wait itself.',
   },
   {
     abbrev: 'sss',
-    fullName: 'System Strain Signal',
-    highMeansGood: false,
-    description: 'Accumulated hidden strain: queue pressure, documentation gaps, governance load.',
-    governanceNote: 'SSS is intentionally a strain indicator — a high value means the system is under institutional stress.',
+    fullName: 'Staff Stress Signal',
+    highMeansGood: true,
+    description: 'Cumulative cognitive and moral load on staff across the run (higher value = less strain).',
+    governanceNote: 'Sustained staff stress links to moral injury — a governance concern, not an HR one. The correction burden is its primary driver.',
   },
   {
     abbrev: 'eic',
-    fullName: 'Ethical Integrity Coefficient',
+    fullName: 'Ethics Intervention Count',
     highMeansGood: true,
-    description: 'Ethical debt accruement: queue displacement, unreviewed AI content, ignored concerns.',
-    governanceNote: 'EIC falling below 50 means governance has already been compromised — interventions after this point are damage control.',
+    description: 'A COUNT of governance overrides / deferrals to human judgement.',
+    governanceNote: 'EIC is a count, never a penalty: a higher count means the governance layer was engaged. A ZERO in a high-acuity run is the warning sign (RULE-M4).',
   },
   {
     abbrev: 'sti',
-    fullName: 'Systemic Trust Index',
+    fullName: 'System Throughput Index',
     highMeansGood: true,
-    description: 'Operational trust, governance drift, and automation drift combined.',
-    governanceNote: 'STI collapse is hard to reverse within a single scenario. Its most useful reading is velocity — how fast it is falling.',
+    description: 'Flow efficiency — how much patient volume the ED processed.',
+    governanceNote: 'High throughput bought with high ethical debt or value drift is the pattern to surface — not celebrate.',
   },
 ]
 

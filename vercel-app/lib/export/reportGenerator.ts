@@ -13,6 +13,7 @@
 // Import canonical types — do NOT redeclare locally; local copies silently
 // diverge from upstream whenever fields are added or renamed.
 import type { SignalMetric } from '@/lib/types/simulation'
+import { SIGNAL_DEFINITIONS } from '@/lib/domain' // canonical names + kind (score vs count)
 import type {
   ReflectiveInsight,
   GovernanceSnapshot as GovernanceTimelinePoint,
@@ -152,24 +153,24 @@ export function generateGovernanceStressTestReport(run: ScenarioRunSnapshot): st
   // ── Five signal metrics ──────────────────────────────────────
   lines.push(`## Five Signal Metrics`)
   lines.push(``)
-  lines.push(`All values 0–100. PSS, PES, EIC, STI: high = healthy. SSS: high = strained.`)
+  lines.push(`PSS, PES, SSS, STI are 0–100 — higher means the value was better honoured (NOT "faster"). EIC is a COUNT of governance interventions, never a penalty: a zero in a high-acuity run is the warning sign (RULE-M4).`)
   lines.push(``)
   lines.push(`| Signal | Value | Status | Explanation |`)
   lines.push(`|--------|-------|--------|-------------|`)
 
-  const signalDefs: Array<{ key: keyof typeof signals; name: string; highMeansGood: boolean }> = [
-    { key: 'PSS', name: 'Patient Safety Signal',        highMeansGood: true },
-    { key: 'PES', name: 'Provider Experience Signal',   highMeansGood: true },
-    { key: 'SSS', name: 'System Strain Signal',         highMeansGood: false },
-    { key: 'EIC', name: 'Ethical Integrity Coefficient',highMeansGood: true },
-    { key: 'STI', name: 'Systemic Trust Index',         highMeansGood: true },
-  ]
-
-  for (const def of signalDefs) {
-    const s = signals[def.key]
-    const status = signalStatus(s.value, def.highMeansGood)
-    const statusMark = status === 'critical' ? '🔴' : status === 'degraded' ? '🟡' : '⚪'
-    lines.push(`| **${def.key}** ${def.name} | **${s.value}** | ${statusMark} ${status} | ${s.explanation} |`)
+  const signalKeys: Array<keyof typeof signals> = ['PSS', 'PES', 'SSS', 'EIC', 'STI']
+  for (const key of signalKeys) {
+    const s = signals[key]
+    const def = SIGNAL_DEFINITIONS[key]
+    if (def.kind === 'count') {
+      // EIC is a COUNT — never scored good/bad (RULE-M4). No status bar.
+      lines.push(`| **${key}** ${def.name} | **${s.value}** (count) | ⚪ engaged | ${s.explanation} |`)
+    } else {
+      // All score signals: higher = the value was better honoured.
+      const status = signalStatus(s.value, true)
+      const statusMark = status === 'critical' ? '🔴' : status === 'degraded' ? '🟡' : '⚪'
+      lines.push(`| **${key}** ${def.name} | **${s.value}** | ${statusMark} ${status} | ${s.explanation} |`)
+    }
   }
   lines.push(``)
 
@@ -374,17 +375,22 @@ export function generateCommitteeBriefing(run: ScenarioRunSnapshot): string {
   lines.push(`## Signal Dashboard`)
   lines.push(``)
   const signalSummary = [
-    { key: 'PSS', label: 'Patient safety',      value: signals.PSS.value, highMeansGood: true },
-    { key: 'PES', label: 'Staff experience',     value: signals.PES.value, highMeansGood: true },
-    { key: 'SSS', label: 'System strain',        value: signals.SSS.value, highMeansGood: false },
-    { key: 'EIC', label: 'Ethical integrity',    value: signals.EIC.value, highMeansGood: true },
-    { key: 'STI', label: 'Systemic trust',       value: signals.STI.value, highMeansGood: true },
+    { key: 'PSS', label: 'Patient safety',       value: signals.PSS.value, kind: 'score' as const },
+    { key: 'PES', label: 'Patient experience',   value: signals.PES.value, kind: 'score' as const },
+    { key: 'SSS', label: 'Staff stress',         value: signals.SSS.value, kind: 'score' as const },
+    { key: 'EIC', label: 'Ethics interventions', value: signals.EIC.value, kind: 'count' as const },
+    { key: 'STI', label: 'System throughput',    value: signals.STI.value, kind: 'score' as const },
   ]
 
   for (const s of signalSummary) {
-    const status = signalStatus(s.value, s.highMeansGood)
-    const mark = status === 'critical' ? '🔴' : status === 'degraded' ? '🟡' : '✅'
-    lines.push(`${mark} **${s.label}:** ${s.value}/100 (${status})`)
+    if (s.kind === 'count') {
+      // EIC: a count, never good/bad (RULE-M4); zero in a high-acuity run is the warning.
+      lines.push(`⚪ **${s.label}:** ${s.value} interventions (count)`)
+    } else {
+      const status = signalStatus(s.value, true) // higher = the value was better honoured
+      const mark = status === 'critical' ? '🔴' : status === 'degraded' ? '🟡' : '✅'
+      lines.push(`${mark} **${s.label}:** ${s.value}/100 (${status})`)
+    }
   }
   lines.push(``)
 
@@ -455,9 +461,11 @@ export function generateEthicalDebtReport(run: ScenarioRunSnapshot): string {
   lines.push(`systems, better resourcing, or better governance processes. It demands institutional`)
   lines.push(`action, not individual punishment.`)
   lines.push(``)
-  lines.push(`## Ethical Integrity Coefficient`)
+  lines.push(`## Ethics Intervention Count`)
   lines.push(``)
-  lines.push(`**EIC: ${signals.EIC.value} / 100**`)
+  lines.push(`**EIC: ${signals.EIC.value} interventions** (a count, not a score)`)
+  lines.push(``)
+  lines.push(`A higher count means the governance layer was actively engaged — it is **not** a penalty. A zero in a high-acuity run is the warning sign, not a success (RULE-M4).`)
   lines.push(``)
   lines.push(signals.EIC.explanation)
   lines.push(``)

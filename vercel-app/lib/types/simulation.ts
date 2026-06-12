@@ -137,19 +137,24 @@ export interface HumanStateAggregate {
   reviewCapacity: number
 }
 
-// ── Five Institutional Signal Metrics (PRD v2 — non-negotiable) ───────────────
-// These are the displayed signals. NEVER collapse into a composite score.
+// ── Five Institutional Signal Metrics — CANONICAL (docs/MASTER_GLOSSARY §B) ────
+// These are the displayed signals. NEVER collapse into a composite score (RULE-A1).
+// Canonical definitions live in lib/domain/signals.ts; values come from the Python
+// scoring engine (RULE-A2 — this layer renders, it does not recompute).
+// NOTE (2026-06-13): the comments below were previously DRIFTED (Provider Experience,
+// System Strain, Ethical Integrity Coefficient, Systemic Trust Index). Corrected to the
+// documented model. This shape is the display carrier for lib/domain's canonical signals.
 
 export interface FiveSignalMetrics {
-  /** Patient Safety Signal — harms, triage failures, escalation failures */
+  /** Patient Safety Signal — safe care delivered; triage/escalation failures, critical-wait breaches */
   PSS: SignalMetric
-  /** Provider Experience Signal — fatigue, burnout, moral distress */
+  /** Patient Experience Signal — waiting, communication, dignity; penalises the unexplained */
   PES: SignalMetric
-  /** System Strain Signal — hidden strain, queue pressure, governance strain */
+  /** Staff Stress Signal — cumulative cognitive/moral load on staff (higher value = less strain) */
   SSS: SignalMetric
-  /** Ethical Integrity Coefficient — ethical debt, fairness, value drift */
+  /** Ethics Intervention Count — a COUNT of governance interventions; never a penalty (RULE-M4) */
   EIC: SignalMetric
-  /** Systemic Trust Index — operational trust, governance drift, automation drift */
+  /** System Throughput Index — flow efficiency; high throughput + high ethical debt is the pattern to watch */
   STI: SignalMetric
 }
 
