@@ -59,7 +59,7 @@ const SIGNAL_DEFS: VitalSignalDef[] = [
     fullName: 'Staff Stress Signal',
     highMeansGood: true,
     description: 'Cumulative cognitive and moral load on staff across the run (higher value = less strain).',
-    governanceNote: 'Sustained staff stress links to moral injury — a governance concern, not an HR one. The correction burden is its primary driver.',
+    governanceNote: 'Sustained staff stress links to moral injury — a governance concern, not an HR one. It accumulates from room overload, repeated overrides, and unresolved escalations.',
   },
   {
     abbrev: 'eic',

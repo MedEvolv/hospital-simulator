@@ -124,12 +124,24 @@ def compute_patient_safety_score(run: SimulationRun) -> Tuple[float, str]:
     # Scoring
     score -= (red_wait_breaches * 10)
     score -= (yellow_wait_breaches * 5)
-    score += (early_escalations * 2)
-    score += (safety_referrals * 2)
-    
+
+    # Proactive behaviour (escalations, referrals) earns credit — "danger was not
+    # ignored" — but the bonus is CAPPED (F2). Without a cap an unbounded stream of
+    # escalations could fully offset real RED/YELLOW breaches, letting a maxed PSS
+    # hide unaddressed danger. The cap keeps proactivity rewarded without erasing
+    # breaches that actually happened.
+    proactive_bonus = min((early_escalations * 2) + (safety_referrals * 2), 15)
+    score += proactive_bonus
+
+    # A RED wait breach is a hard safety event: it must keep PSS out of the
+    # "Excellent" band no matter how much proactive credit accrued. Breaches are a
+    # non-maskable floor on the score's ceiling, not a number to be bought back.
+    if red_wait_breaches > 0:
+        score = min(score, 89)
+
     # Clamp to 0-100
     score = max(0, min(100, score))
-    
+
     # Interpretation
     if score >= 90:
         interpretation = "Excellent - High-risk patients consistently prioritized"
