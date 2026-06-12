@@ -318,6 +318,12 @@ export default function InstitutionalVitalSigns({
           No single signal tells the full story. The most significant pattern is when PSS or EIC
           falls while STI collapses — this is the signature of a governance failure, not a capacity one.
         </p>
+        <p className="text-xs text-slate-500 leading-relaxed mt-3 border-t border-slate-200/60 pt-3">
+          These five signals are read from <span className="text-slate-700">what actually happened</span> in
+          the run. Your stated priorities and survey answers are accounted for in the moral ledger —
+          value drift and ethical debt — not here. A signal you cannot move by changing your intentions
+          is a signal you cannot game.
+        </p>
       </div>
     </section>
   )
