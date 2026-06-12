@@ -72,7 +72,8 @@ function clamp(v: number, min = 0, max = 100) {
  * Compute the Five Signal Metrics from the final governance engine states.
  * All values are 0–100 where 100 = healthy / safe / trusted.
  */
-function computeFiveSignals(scores: PerformanceScores): FiveSignalMetrics {
+// Exported for the reconciliation regression test (fiveSignalReconciliation.test.ts).
+export function computeFiveSignals(scores: PerformanceScores): FiveSignalMetrics {
   // The five signals come from the Python scoring engine — the SINGLE canonical
   // source. Per RULE-A2 (separation of powers) the engine SCORES; this layer only
   // RENDERS. Previously this function RE-DERIVED all five from the TS governance
