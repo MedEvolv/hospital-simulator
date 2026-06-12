@@ -29,7 +29,7 @@ MOCK_RESPONSE = {
         "staff_stress_score": 38.2,
         "ethics_intervention_count": 7,
         "system_throughput_index": 72.1,
-        "institutional_efficacy_score": 58.3,
+        # RULE-A1: no composite institutional_efficacy_score in the payload.
         "interpretation": (
             "System throughput was maintained at the cost of staff stress and patient experience. "
             "Seven ethical overrides were recorded — above baseline for this profile."
@@ -218,7 +218,7 @@ MOCK_RESPONSE = {
             "These are avoidable harms with known mitigation paths."
         ),
         "cost_accounting": {
-            "performance_score": 58.3,
+            # RULE-A1: no composite performance/efficacy score in the payload.
             "ethical_debt": 312.0,
             "forced_harms": 4,
             "avoidable_harms": 5,
@@ -717,7 +717,16 @@ class handler(BaseHTTPRequestHandler):
             # Import inside the handler so sys.path insertion is guaranteed first
             from integrated_engine import create_system_from_profile
 
-            system = create_system_from_profile(profile, seed)
+            # Physical capacity is passed at construction (F1b): it shapes the
+            # actual rooms and arrival cadence — the OBSERVED reality the five
+            # signals are read from — not the priority weights. This replaces the
+            # former capacity→weight nudges, which left the sliders inert
+            # (see audit--engine-convergence-2026-06-12.md, F1b).
+            system = create_system_from_profile(profile, seed, capacity={
+                "patients_per_hour": patients_per_hour,
+                "er_capacity": er_capacity,
+                "opd_capacity": opd_capacity,
+            })
 
             # Apply survey-derived weight adjustments to the simulation params
             # and override declared values for meaningful value drift comparison.
@@ -747,45 +756,10 @@ class handler(BaseHTTPRequestHandler):
                 # maturity adjustments on top of the base weight changes above
                 _apply_nabh_context(system, survey_data)
 
-            # ── Apply capacity-based parameter adjustments ────────────────
-            # These operate on top of survey-derived adjustments, so they
-            # compound correctly — a busy hospital with NABH issues gets
-            # appropriately stressed.
-            cap_p = system.current_run.parameters
-
-            # Patient volume pressure — more arrivals per hour means
-            # throughput is under greater stress; experience degrades
-            if patients_per_hour >= 12:
-                cap_p.throughput_weight *= 1.18
-                cap_p.experience_weight *= 0.88
-                cap_p.staff_weight      *= 1.12
-            elif patients_per_hour >= 8:
-                cap_p.throughput_weight *= 1.08
-                cap_p.experience_weight *= 0.94
-            elif patients_per_hour <= 3:
-                cap_p.experience_weight *= 1.12
-                cap_p.throughput_weight *= 0.88
-
-            # ER capacity — more beds ease critical-care safety pressure
-            if er_capacity >= 5:
-                cap_p.safety_weight *= 1.08
-            elif er_capacity == 1:
-                cap_p.safety_weight *= 0.90
-
-            # OPD capacity — more OPD beds ease overall throughput
-            if opd_capacity >= 8:
-                cap_p.throughput_weight *= 1.10
-            elif opd_capacity <= 2:
-                cap_p.throughput_weight *= 0.90
-
-            # Re-normalise after capacity adjustments
-            _cap_total = (cap_p.safety_weight + cap_p.experience_weight
-                          + cap_p.staff_weight + cap_p.throughput_weight)
-            if _cap_total > 0:
-                cap_p.safety_weight     /= _cap_total
-                cap_p.experience_weight /= _cap_total
-                cap_p.staff_weight      /= _cap_total
-                cap_p.throughput_weight /= _cap_total
+            # Capacity is now physical (applied at construction above) — it moves
+            # the observed signals through real rooms and arrival volume, so no
+            # capacity→weight nudging happens here. Priority weights are shaped
+            # only by the survey block above, which feeds the moral ledger (F1a).
 
             system.run_full_simulation(duration_ticks, verbose=False)
             report = system.generate_complete_report()

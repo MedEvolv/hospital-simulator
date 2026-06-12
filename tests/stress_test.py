@@ -20,8 +20,9 @@ import traceback
 from datetime import datetime
 import json
 
-# Add parent directory to path
-sys.path.insert(0, '/mnt/user-data/outputs')
+# Canonical engine: the deployed copy under vercel-app/api (engine/ is deprecated).
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "vercel-app", "api")))
 
 from integrated_engine import IntegratedHospitalSystem, create_system_from_profile
 from event_sourced_engine import InstitutionalParameters

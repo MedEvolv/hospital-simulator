@@ -217,7 +217,9 @@ class IntegratedHospitalSystem:
                 'staff_stress_score': performance_scores.staff_stress_score,
                 'ethics_intervention_count': performance_scores.ethics_intervention_count,
                 'system_throughput_index': performance_scores.system_throughput_index,
-                'institutional_efficacy_score': performance_scores.institutional_efficacy_score,
+                # RULE-A1: the five signals above are returned separately. The composite
+                # institutional_efficacy_score is deliberately NOT included here — it is an
+                # internal-only narrative gate and must never appear in the API payload.
                 'interpretation': performance_scores.interpretation
             },
             
@@ -297,15 +299,15 @@ class IntegratedHospitalSystem:
             })
         
         # INSIGHT 5: Performance-moral trade-off (the critical one)
+        # The efficacy composite is used ONLY as an internal gate here (RULE-A1); the
+        # composite value itself is never placed in `data` or any other returned field.
         if performance.institutional_efficacy_score > 75 and moral['value_drift']['average_drift'] > 0.3:
             insights.append({
                 'type': 'PERFORMANCE_MORAL_TRADEOFF',
                 'severity': 'CRITICAL',
-                'message': "High performance score achieved at cost of significant value drift. System is succeeding on metrics while failing on values. This is institutional self-deception.",
+                'message': "Strong operational metrics achieved at the cost of significant value drift. The system is succeeding on its individual performance signals while failing on values. This is institutional self-deception.",
                 'data': {
-                    'performance_score': performance.institutional_efficacy_score,
-                    'value_drift': moral['value_drift']['average_drift'],
-                    'gap': performance.institutional_efficacy_score / 100 - (1 - moral['value_drift']['average_drift'])
+                    'value_drift': moral['value_drift']['average_drift']
                 }
             })
         
@@ -334,7 +336,8 @@ class IntegratedHospitalSystem:
             'insights': insights,
             'recommendation': self._generate_recommendation(insights),
             'cost_accounting': {
-                'performance_score': performance.institutional_efficacy_score,
+                # RULE-A1: no composite efficacy/performance score is reported here.
+                # Costs are accounted across separate dimensions, never collapsed.
                 'ethical_debt': moral['ethical_debt']['current_debt'],
                 'forced_harms': harm_summary.get('forced_count', 0),
                 'avoidable_harms': harm_summary.get('avoidable_count', 0),
@@ -354,16 +357,17 @@ class IntegratedHospitalSystem:
         debt = moral['ethical_debt']['current_debt']
         avoidable = moral['harm_classifications']['summary'].get('avoidable_count', 0)
         forced = moral['harm_classifications']['summary'].get('forced_count', 0)
-        ies = performance.institutional_efficacy_score
+        # RULE-A1: the critical question never cites a composite efficacy score.
+        # It speaks to the trade-off in terms of value drift and the separate signals.
 
         if critical:
             top = critical[0]
             if top['type'] == 'PERFORMANCE_MORAL_TRADEOFF':
                 return (
-                    f"This run scored {ies:.1f}/100 on institutional efficacy while average value drift "
-                    f"reached {drift['average_drift']:.2f}. The institution is succeeding on metrics "
-                    f"while failing on values. Is this an acceptable trade-off — and who in this institution "
-                    f"has the authority to name it as one?"
+                    f"This run held strong operational metrics while average value drift "
+                    f"reached {drift['average_drift']:.2f}. The institution is succeeding on its "
+                    f"individual performance signals while failing on values. Is this an acceptable "
+                    f"trade-off — and who in this institution has the authority to name it as one?"
                 )
 
         if drift.get('primary_misalignment') and drift['maximum_drift'] > 0.3:
@@ -426,9 +430,16 @@ class IntegratedHospitalSystem:
 # CONVENIENCE FUNCTIONS
 # ============================================================================
 
-def create_system_from_profile(profile: str, seed: int = 42) -> IntegratedHospitalSystem:
-    """Create integrated system from profile name"""
-    
+def create_system_from_profile(profile: str, seed: int = 42,
+                               capacity: Optional[Dict] = None) -> IntegratedHospitalSystem:
+    """Create integrated system from profile name.
+
+    `capacity` (the API path) carries physical patients_per_hour / er_capacity /
+    opd_capacity. It is applied to the parameters BEFORE the engine constructs,
+    because the RUN_STARTED event snapshots the parameters and rooms are replayed
+    from that snapshot. Omitting it preserves the exact pre-F1b behaviour.
+    """
+
     if profile == "Government Hospital":
         # Government Hospital: High fairness, safety-focused
         params = InstitutionalParameters(
@@ -475,6 +486,15 @@ def create_system_from_profile(profile: str, seed: int = 42) -> IntegratedHospit
             queue_pressure_threshold=15
         )
     
+    # Apply physical capacity onto the frozen parameters before construction (F1b).
+    if capacity:
+        if capacity.get("patients_per_hour") is not None:
+            params.patients_per_hour = int(capacity["patients_per_hour"])
+        if capacity.get("er_capacity") is not None:
+            params.er_capacity = int(capacity["er_capacity"])
+        if capacity.get("opd_capacity") is not None:
+            params.opd_capacity = int(capacity["opd_capacity"])
+
     return IntegratedHospitalSystem(
         institutional_profile=profile,
         parameters=params,
@@ -547,7 +567,7 @@ if __name__ == "__main__":
     
     print("\nPERFORMANCE SCORES:")
     perf = report['performance_scores']
-    print(f"  Institutional Efficacy: {perf['institutional_efficacy_score']:.1f}")
+    # RULE-A1: no composite efficacy score is printed — signals are shown separately.
     print(f"  Patient Safety: {perf['patient_safety_score']:.1f}")
     print(f"  Patient Experience: {perf['patient_experience_score']:.1f}")
     print(f"  Staff Stress: {perf['staff_stress_score']:.1f}")
@@ -576,7 +596,7 @@ if __name__ == "__main__":
     print("="*80)
     
     accounting = synthesis['cost_accounting']
-    print(f"\nPerformance achieved: {accounting['performance_score']:.1f}/100")
+    # RULE-A1: no composite "performance achieved" score — costs are shown separately.
     print(f"Ethical debt carried: {accounting['ethical_debt']:.1f} units")
     print(f"Forced harms (unavoidable): {accounting['forced_harms']}")
     print(f"Avoidable harms: {accounting['avoidable_harms']}")

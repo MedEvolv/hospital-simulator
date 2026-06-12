@@ -18,7 +18,7 @@ import copy
 # Import from event-sourced engine
 from event_sourced_engine import (
     Event, SimulationRun, InstitutionalParameters,
-    PatientStatus, Patient, Room
+    PatientStatus, Patient, Room, build_rooms
 )
 
 # ============================================================================
@@ -147,9 +147,10 @@ def room_state_reducer(rooms: List[Room], event: Event) -> List[Room]:
     payload = event.payload
     
     if event.event_type == "RUN_STARTED":
-        # Initialize rooms from profile
+        # Initialize rooms from profile, honouring physical capacity (F1b)
         profile = payload.get("institutional_profile", "Balanced")
-        rooms = _initialize_rooms(profile)
+        params = payload.get("parameters") or {}
+        rooms = build_rooms(profile, params.get("er_capacity"), params.get("opd_capacity"))
     
     elif event.event_type == "PATIENT_ADMITTED":
         room_name = payload.get("room")
@@ -166,30 +167,9 @@ def room_state_reducer(rooms: List[Room], event: Event) -> List[Room]:
     return rooms
 
 def _initialize_rooms(profile: str) -> List[Room]:
-    """Initialize rooms from profile."""
-    if profile == "Government Hospital":
-        return [
-            Room("Emergency 1", "Emergency", 1),
-            Room("Emergency 2", "Emergency", 1),
-            Room("OPD 1", "General OPD", 2),
-            Room("OPD 2", "General OPD", 2),
-        ]
-    elif profile == "Private Hospital":
-        return [
-            Room("Emergency 1", "Emergency", 2),
-            Room("Emergency 2", "Emergency", 2),
-            Room("OPD 1", "General OPD", 3),
-            Room("OPD 2", "General OPD", 3),
-            Room("Preventive Care", "Preventive Care", 2),
-        ]
-    else:  # Balanced
-        return [
-            Room("Emergency 1", "Emergency", 1),
-            Room("Emergency 2", "Emergency", 2),
-            Room("OPD 1", "General OPD", 2),
-            Room("OPD 2", "General OPD", 3),
-            Room("Preventive Care", "Preventive Care", 1),
-        ]
+    """Initialize rooms from profile (legacy shape). Delegates to the shared
+    build_rooms() so there is a single source of truth for room layouts."""
+    return build_rooms(profile)
 
 def metrics_state_reducer(metrics: Dict[str, Any], event: Event) -> Dict[str, Any]:
     """Pure reducer for metrics state."""

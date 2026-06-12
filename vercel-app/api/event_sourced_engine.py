@@ -82,11 +82,22 @@ class InstitutionalParameters:
     # Capacity parameters
     room_intake_modifier: float = 1.0
     escalation_sensitivity: float = 1.0
-    
+
+    # Physical capacity (F1b) — these drive the OBSERVED reality, not the weights.
+    # Arrival cadence and room bed counts are physical facts of the institution, so
+    # unlike the priority weights they MUST move the five signals. patients_per_hour
+    # defaults to 6 (reproducing the legacy every-5-ticks arrival cadence exactly).
+    # er_capacity / opd_capacity default to None, meaning "use the profile's baseline
+    # rooms" — so create_system_from_profile() without capacity is byte-identical to
+    # the pre-F1b engine, preserving every determinism contract.
+    patients_per_hour: int = 6
+    er_capacity: Optional[int] = None
+    opd_capacity: Optional[int] = None
+
     # Governance thresholds
     red_clustering_threshold: int = 3
     queue_pressure_threshold: int = 15
-    
+
     def __post_init__(self):
         total = self.safety_weight + self.experience_weight + self.staff_weight + self.throughput_weight
         if abs(total - 1.0) > 1e-6:
@@ -185,6 +196,66 @@ class Room:
     max_occupancy: int  # maximum concurrent patients this room can hold
     current_load: int = 0
 
+
+# Legacy per-profile room layouts. Used verbatim when no physical capacity is
+# supplied, so the pre-F1b engine behaviour (and its determinism contracts) is
+# preserved exactly for CLI / test callers.
+_PROFILE_ROOMS = {
+    "Government Hospital": [
+        ("Emergency 1", "Emergency", 1), ("Emergency 2", "Emergency", 1),
+        ("OPD 1", "General OPD", 2), ("OPD 2", "General OPD", 2),
+    ],
+    "Private Hospital": [
+        ("Emergency 1", "Emergency", 2), ("Emergency 2", "Emergency", 2),
+        ("OPD 1", "General OPD", 3), ("OPD 2", "General OPD", 3),
+        ("Preventive Care", "Preventive Care", 2),
+    ],
+    "Balanced": [
+        ("Emergency 1", "Emergency", 1), ("Emergency 2", "Emergency", 2),
+        ("OPD 1", "General OPD", 2), ("OPD 2", "General OPD", 3),
+        ("Preventive Care", "Preventive Care", 1),
+    ],
+}
+
+# Preventive Care bed count kept per profile when capacity overrides ER/OPD — it
+# is not governed by the two capacity sliders, so it remains a profile signature.
+_PROFILE_PREVENTIVE = {"Private Hospital": 2, "Balanced": 1}
+
+
+def _split_beds(total: int):
+    """Distribute `total` beds across up to two rooms (min 1 bed). Monotonic in total:
+    1→[1], 2→[1,1], 3→[2,1], 4→[2,2], 8→[4,4]."""
+    total = max(1, int(total))
+    if total == 1:
+        return [1]
+    return [(total + 1) // 2, total // 2]
+
+
+def build_rooms(profile: str,
+                er_capacity: Optional[int] = None,
+                opd_capacity: Optional[int] = None):
+    """Build the room list for a run.
+
+    With er_capacity / opd_capacity (the API path) Emergency and OPD beds are sized
+    to the slider values, so physical capacity genuinely constrains admissions and
+    therefore moves the observed signals (F1b). Without them, the profile's legacy
+    rooms are returned unchanged.
+    """
+    if er_capacity is None or opd_capacity is None:
+        layout = _PROFILE_ROOMS.get(profile, _PROFILE_ROOMS["Balanced"])
+        return [Room(n, t, cap) for (n, t, cap) in layout]
+
+    rooms = []
+    for i, cap in enumerate(_split_beds(er_capacity), start=1):
+        rooms.append(Room(f"Emergency {i}", "Emergency", cap))
+    for i, cap in enumerate(_split_beds(opd_capacity), start=1):
+        rooms.append(Room(f"OPD {i}", "General OPD", cap))
+    preventive = _PROFILE_PREVENTIVE.get(profile)
+    if preventive:
+        rooms.append(Room("Preventive Care", "Preventive Care", preventive))
+    return rooms
+
+
 # ============================================================================
 # 4. STATE RECONSTRUCTION (EVENT REPLAY)
 # ============================================================================
@@ -214,8 +285,14 @@ class SimulationState:
         payload = event.payload
         
         if event.event_type == "RUN_STARTED":
-            # Initialize rooms based on profile
-            self._initialize_rooms(payload.get("institutional_profile"))
+            # Initialize rooms based on profile, honouring physical capacity (F1b)
+            # carried in the frozen parameters snapshot.
+            params = payload.get("parameters") or {}
+            self._initialize_rooms(
+                payload.get("institutional_profile"),
+                params.get("er_capacity"),
+                params.get("opd_capacity"),
+            )
         
         elif event.event_type == "PATIENT_ARRIVAL":
             patient_id = payload["patient_id"]
@@ -279,31 +356,19 @@ class SimulationState:
         elif event.event_type == "METRIC_UPDATE":
             self.metrics = payload
     
-    def _initialize_rooms(self, profile: str):
-        """Initialize rooms from profile."""
-        if profile == "Government Hospital":
-            self.rooms = [
-                Room("Emergency 1", "Emergency", 1),
-                Room("Emergency 2", "Emergency", 1),
-                Room("OPD 1", "General OPD", 2),
-                Room("OPD 2", "General OPD", 2),
-            ]
-        elif profile == "Private Hospital":
-            self.rooms = [
-                Room("Emergency 1", "Emergency", 2),
-                Room("Emergency 2", "Emergency", 2),
-                Room("OPD 1", "General OPD", 3),
-                Room("OPD 2", "General OPD", 3),
-                Room("Preventive Care", "Preventive Care", 2),
-            ]
-        else:  # Balanced
-            self.rooms = [
-                Room("Emergency 1", "Emergency", 1),
-                Room("Emergency 2", "Emergency", 2),
-                Room("OPD 1", "General OPD", 2),
-                Room("OPD 2", "General OPD", 3),
-                Room("Preventive Care", "Preventive Care", 1),
-            ]
+    def _initialize_rooms(self, profile: str,
+                          er_capacity: Optional[int] = None,
+                          opd_capacity: Optional[int] = None):
+        """
+        Initialize rooms from profile, optionally overridden by physical capacity (F1b).
+
+        When er_capacity / opd_capacity are provided (the API path), Emergency and OPD
+        bed counts are built to sum to those slider values — so capacity genuinely
+        constrains admissions and therefore moves the observed signals. When they are
+        None (CLI / tests), the profile's legacy hardcoded rooms are used unchanged,
+        preserving every determinism contract.
+        """
+        self.rooms = build_rooms(profile, er_capacity, opd_capacity)
     
     @classmethod
     def from_event_log(cls, events: List[Event]) -> 'SimulationState':
@@ -542,6 +607,16 @@ class EventSourcedSimulationEngine:
                 self.governance.observe(event)
             self.governance.tick(self.current_tick)
     
+    def _arrival_interval(self) -> int:
+        """Ticks between random arrivals, derived from physical patients_per_hour (F1b).
+
+        Higher volume → shorter interval → more load. The default of 6 patients/hour
+        maps to an interval of 5 ticks, reproducing the legacy cadence exactly so
+        existing default-capacity runs are unchanged.
+        """
+        pph = getattr(self.run.parameters, "patients_per_hour", 6) or 6
+        return max(1, round(30 / max(1, pph)))
+
     def _perceive(self, state: SimulationState):
         """PERCEIVE: Detect new patient arrivals."""
         # Generate patient (from dataset or random)
@@ -549,8 +624,8 @@ class EventSourcedSimulationEngine:
             patient_data = self.patient_dataset[self.current_tick]
             if patient_data.get("arrival_time", 0) == self.current_tick:
                 self._emit_patient_arrival(patient_data)
-        elif self.current_tick % 5 == 0 and self.current_tick < self.max_ticks:
-            # Random generation every 5 seconds
+        elif self.current_tick % self._arrival_interval() == 0 and self.current_tick < self.max_ticks:
+            # Random generation paced by physical arrival volume
             self._emit_random_patient_arrival()
     
     def _emit_patient_arrival(self, patient_data: Dict):
@@ -613,8 +688,13 @@ class EventSourcedSimulationEngine:
     
     def _classify(self, state: SimulationState):
         """CLASSIFY: Perform refined triage."""
-        wait_threshold = 60
-        
+        # Secondary (refined) triage fires once a waiting patient reaches the front of a
+        # band OR has waited past this threshold. A tick is 5 seconds, so 12 ticks ≈ 1
+        # minute — clinically realistic for ED secondary assessment. The legacy value of
+        # 60 ticks equalled the entire default 5-minute run, so the admission pipeline
+        # never flowed and default runs admitted nobody (degenerate flat signals).
+        wait_threshold = 12
+
         for patient in state.patients.values():
             if patient.status != PatientStatus.WAITING:
                 continue

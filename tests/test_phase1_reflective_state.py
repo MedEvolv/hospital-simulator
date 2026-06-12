@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 
-ENGINE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "engine"))
+# Canonical engine: the deployed copy under vercel-app/api (engine/ is deprecated).
+ENGINE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "vercel-app", "api"))
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
