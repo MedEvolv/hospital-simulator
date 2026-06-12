@@ -13,8 +13,9 @@
  * and TypeScript (governance state) without duplicating either layer.
  */
 
-import type { SimEvent, SimulationReport } from '@/lib/types'
+import type { SimEvent, SimulationReport, PerformanceScores } from '@/lib/types'
 import type { FiveSignalMetrics, SignalMetric } from '@/lib/types/simulation'
+import { SIGNAL_DEFINITIONS } from '@/lib/domain'
 import type {
   OperationalTrustState,
   HiddenStrainState,
@@ -71,107 +72,42 @@ function clamp(v: number, min = 0, max = 100) {
  * Compute the Five Signal Metrics from the final governance engine states.
  * All values are 0–100 where 100 = healthy / safe / trusted.
  */
-function computeFiveSignals(
-  trust: OperationalTrustState,
-  strain: HiddenStrainState,
-  debt: EthicalDebtState,
-  drift: GovernanceDriftState,
-  humanState: AggregateStaffState,
-  prevTrust?: OperationalTrustState,
-  prevStrain?: HiddenStrainState,
-  prevDebt?: EthicalDebtState,
-  prevDrift?: GovernanceDriftState,
-): FiveSignalMetrics {
-  // PSS: Patient Safety Signal
-  // High trust + low escalation failure risk + low ethical debt = safe
-  const pssValue = clamp(
-    trust.patientTrust * 0.5 +
-    (100 - strain.byType.escalation_strain) * 0.3 +
-    (100 - debt.tippingPointRisk) * 0.2,
-  )
-
-  // PES: Provider Experience Signal
-  // Low fatigue + low burnout + low moral distress + high escalation willingness
-  const pesValue = clamp(
-    (100 - humanState.fatigue) * 0.25 +
-    (100 - humanState.burnout) * 0.25 +
-    (100 - humanState.moralDistress) * 0.25 +
-    humanState.escalationWillingness * 0.25,
-  )
-
-  // SSS: System Strain Signal (inverted — lower strain = better)
-  const sssValue = clamp(100 - strain.overall)
-
-  // EIC: Ethical Integrity Coefficient
-  // Scale total debt to 0–100: 0 debt = 100, 500+ debt = ~0
-  const debtNormalized = clamp(Math.min(100, debt.totalDebt / 5))
-  const eicValue = clamp(
-    (100 - debtNormalized) * 0.6 +
-    (100 - debt.tippingPointRisk) * 0.4,
-  )
-
-  // STI: Systemic Trust Index
-  // Operational trust adjusted for governance and automation drift
-  const autonomyMismatch = clamp(
-    Math.abs(drift.effectiveAutonomyLevel - drift.declaredAutonomyLevel) * 10,
-  )
-  const stiValue = clamp(
-    trust.overall * 0.6 +
-    (100 - drift.policyPracticeGap) * 0.25 +
-    (100 - autonomyMismatch) * 0.15,
-  )
-
-  function trend(current: number, prev?: number): 'improving' | 'stable' | 'degrading' {
-    if (prev === undefined) return 'stable'
-    const delta = current - prev
-    if (delta > 2) return 'improving'
-    if (delta < -2) return 'degrading'
-    return 'stable'
-  }
-
-  const prevPSS = prevTrust ? clamp(prevTrust.patientTrust * 0.5 + (100 - (prevStrain?.byType.escalation_strain ?? 0)) * 0.3 + (100 - (prevDebt?.tippingPointRisk ?? 0)) * 0.2) : undefined
-  const prevSSS = prevStrain ? clamp(100 - prevStrain.overall) : undefined
-  const prevEIC = prevDebt ? clamp((100 - clamp(Math.min(100, prevDebt.totalDebt / 5))) * 0.6 + (100 - prevDebt.tippingPointRisk) * 0.4) : undefined
-  const prevSTI = prevTrust && prevDrift ? clamp(prevTrust.overall * 0.6 + (100 - prevDrift.policyPracticeGap) * 0.25 + (100 - clamp(Math.abs(prevDrift.effectiveAutonomyLevel - prevDrift.declaredAutonomyLevel) * 10)) * 0.15) : undefined
-
-  const makeSignal = (
-    value: number,
-    prev: number | undefined,
-    lastEvent: string,
-    explanation: string,
-  ): SignalMetric => ({
+function computeFiveSignals(scores: PerformanceScores): FiveSignalMetrics {
+  // The five signals come from the Python scoring engine — the SINGLE canonical
+  // source. Per RULE-A2 (separation of powers) the engine SCORES; this layer only
+  // RENDERS. Previously this function RE-DERIVED all five from the TS governance
+  // engines with DRIFTED semantics (PES→Provider, SSS→System Strain, EIC→Integrity-
+  // Coefficient, STI→Systemic-Trust) — both a RULE-A2 violation and a drift from the
+  // documented model. Corrected 2026-06-13 (docs-as-types). Canonical: lib/domain/signals.ts.
+  // The TS governance engines remain — but as the separate REFLECTIVE extension
+  // (governanceState), never as the five signals.
+  const make = (value: number, explanation: string): SignalMetric => ({
     value: Math.round(value),
-    delta: prev !== undefined ? Math.round(value - prev) : 0,
-    trend: trend(value, prev),
+    delta: 0,
+    trend: 'stable',
     explanation,
-    lastChangedByEvent: lastEvent,
+    lastChangedByEvent: 'PYTHON_SCORING',
   })
-
   return {
-    PSS: makeSignal(
-      pssValue, prevPSS,
-      trust.lastChangeReason,
-      `Patient safety at ${pssValue.toFixed(0)}% — driven by patient trust (${trust.patientTrust.toFixed(0)}) and escalation pathway health.`,
+    PSS: make(
+      scores.patient_safety_score,
+      `${SIGNAL_DEFINITIONS.PSS.name} at ${scores.patient_safety_score.toFixed(0)} — how consistently safe care was delivered (higher = danger was not ignored, NOT "faster").`,
     ),
-    PES: makeSignal(
-      pesValue, undefined,
-      'HUMAN_STATE',
-      `Provider experience at ${pesValue.toFixed(0)}% — fatigue ${humanState.fatigue.toFixed(0)}, moral distress ${humanState.moralDistress.toFixed(0)}, escalation willingness ${humanState.escalationWillingness.toFixed(0)}.`,
+    PES: make(
+      scores.patient_experience_score,
+      `${SIGNAL_DEFINITIONS.PES.name} at ${scores.patient_experience_score.toFixed(0)} — waiting, communication, and dignity preserved; penalises the unexplained, not the deviation.`,
     ),
-    SSS: makeSignal(
-      sssValue, prevSSS,
-      'HIDDEN_STRAIN',
-      `System strain at ${(100 - sssValue).toFixed(0)}% — ${strain.overall > 60 ? 'approaching tipping point' : 'within operational range'}.`,
+    SSS: make(
+      scores.staff_stress_score,
+      `${SIGNAL_DEFINITIONS.SSS.name} at ${scores.staff_stress_score.toFixed(0)} — cumulative cognitive and moral load on staff (higher = less strain).`,
     ),
-    EIC: makeSignal(
-      eicValue, prevEIC,
-      'ETHICAL_DEBT',
-      `Ethical integrity at ${eicValue.toFixed(0)}% — ${debt.totalDebt.toFixed(0)} units of accumulated debt across ${debt.affectedGroups.length} affected group(s).`,
+    EIC: make(
+      scores.ethics_intervention_count,
+      `${SIGNAL_DEFINITIONS.EIC.name}: ${scores.ethics_intervention_count} — a COUNT of governance interventions, never a penalty; a zero in a high-acuity run is the warning sign.`,
     ),
-    STI: makeSignal(
-      stiValue, prevSTI,
-      trust.lastChangeReason,
-      `Systemic trust at ${stiValue.toFixed(0)}% — operational trust ${trust.overall.toFixed(0)}, policy-practice gap ${drift.policyPracticeGap.toFixed(0)}%.`,
+    STI: make(
+      scores.system_throughput_index,
+      `${SIGNAL_DEFINITIONS.STI.name} at ${scores.system_throughput_index.toFixed(0)} — flow efficiency; high throughput bought with high ethical debt is the pattern to surface.`,
     ),
   }
 }
@@ -445,14 +381,8 @@ export async function runScenario(
   // 3. Replay all governance engines over augmented event log
   const governance = replayGovernanceEngines(augmentedEvents, aiSystemIds)
 
-  // 4. Compute Five Signal Metrics
-  const fiveSignals = computeFiveSignals(
-    governance.trust,
-    governance.strain,
-    governance.debt,
-    governance.drift,
-    governance.humanState,
-  )
+  // 4. Map the canonical five signals from the Python engine (RULE-A2: render, don't recompute)
+  const fiveSignals = computeFiveSignals(baseReport.performance_scores)
 
   // 5. Generate reflective insights (Phase 1 hard gate: ≥1 per category)
   const reflectiveInsights = generateReflectiveInsights(

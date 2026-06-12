@@ -166,6 +166,20 @@ export default function ResultsScreen() {
       }
     : null
 
+  // Reflective governance extension (the V2 layer — distinct from the five signals).
+  // The map reads trust / strain / debt from HERE, never by misusing the signals
+  // (RULE-A2 + the docs-as-types reconciliation, 2026-06-13).
+  const govExt = sr?.governance_state as {
+    trust?: { overall?: number }
+    hidden_strain?: { overall?: number }
+    ethical_debt?: { totalDebt?: number }
+  } | undefined
+  const trustOverall = govExt?.trust?.overall ?? 0
+  const strainOverall = govExt?.hidden_strain?.overall ?? 0
+  // Normalise total debt to the map's 0–100 staining scale (engine convention: ~500 debt ≈ 100,
+  // i.e. totalDebt/5). The map clamps at 100; passing raw total (0–500+) would over-saturate.
+  const ethicalDebtScaled = Math.min(100, (govExt?.ethical_debt?.totalDebt ?? 0) / 5)
+
   const govState: GovernanceStateSnapshot | null = sr?.governance_state?.human_state
     ? { human_state: sr.governance_state.human_state }
     : null
@@ -249,9 +263,9 @@ export default function ResultsScreen() {
 
           <InstitutionalMap
             eventLog={report.event_log as MapEventEntry[] | undefined}
-            trustLevel={fiveSignals.sti}
-            ethicalDebtTotal={100 - fiveSignals.eic}
-            hiddenStrain={100 - fiveSignals.sss}
+            trustLevel={trustOverall}
+            ethicalDebtTotal={ethicalDebtScaled}
+            hiddenStrain={strainOverall}
           />
 
           <ReflectiveInsightFeed
