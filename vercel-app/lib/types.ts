@@ -24,7 +24,8 @@ export interface PerformanceScores {
   staff_stress_score: number
   ethics_intervention_count: number
   system_throughput_index: number
-  institutional_efficacy_score: number
+  // RULE-A1: the five signals above are never collapsed into a composite. No
+  // institutional_efficacy_score field exists in the payload by design.
   interpretation: string
 }
 
@@ -98,7 +99,7 @@ export interface Synthesis {
   insights: SynthesisInsight[]
   recommendation: string
   cost_accounting: {
-    performance_score: number
+    // RULE-A1: no composite performance/efficacy score is reported.
     ethical_debt: number
     forced_harms: number
     avoidable_harms: number

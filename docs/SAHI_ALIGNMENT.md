@@ -47,8 +47,14 @@ their judgment. This is precisely the gap our work fills.
 
 SAHI is authoritative on *what* India's healthcare AI ecosystem needs:
 governance frameworks, lifecycle monitoring, institutional capacity,
-workforce competency, equity safeguards. The 22 formal recommendations
+workforce competency, equity safeguards. The **32 formal recommendations**
 are clear and evidence-based.
+
+> **Correction of record (2026-06-12):** earlier drafts of this file (and the
+> V2 PRD) referenced "22 recommendations." A direct read of the published SAHI
+> (pp. 36–38) confirms **32 recommendations** across the five pillars. All counts
+> below use the verified figure. See the complete 32-recommendation coverage in
+> the "Complete Coverage" section appended at the end.
 
 SAHI is almost entirely silent on *how* a tier 2 or tier 3 hospital with
 no dedicated IT staff, no AI governance committee, and no budget for either
@@ -356,7 +362,7 @@ decisions that require their specific attention.
 
 ## The Gap SAHI Creates — And What We Uniquely Fill
 
-SAHI's 22 recommendations collectively describe a future state: Indian
+SAHI's 32 recommendations collectively describe a future state: Indian
 hospitals with designated AI units, lifecycle monitoring infrastructure,
 role-based competency frameworks, and cross-institutional knowledge exchange.
 
@@ -425,6 +431,71 @@ SAHI (2026), Recommendation [N], Pillar [I-V], Section [number].
 
 ---
 
-*Created April 2026. Update when new SAHI guidance, implementation
-rules, or BODH standards are published. This document is a living
-alignment record — add new recommendations as the work evolves.*
+## Complete Coverage — all 32 recommendations *(appended 2026-06-12)*
+
+The prose above covers the recommendations most central to the pitch. This matrix
+completes the picture across **all 32**, so no recommendation is silently omitted.
+Status: 🟢 directly addressed · 🟡 partial · ⚪ out of IM's institutional scope
+(ecosystem/data-infrastructure/policy level — IM is an institutional tool, so these are
+legitimately out of scope; saying so is discipline, not a gap). Detailed cross-map in
+`STANDARDS_ALIGNMENT_MATRIX.md §2`.
+
+| Pillar | # | Recommendation (abbrev.) | IM | Note |
+|---|---|---|---|---|
+| I | 1 | Risk-classify AI; proportional obligations | 🟢 | Low-risk by design (prose above) |
+| I | 2 | Accountability so liability is allocable | 🟢 | Audit trail + Runtime-Authority bridge |
+| I | 3 | Safety across lifecycle; safety/bias/interop/real-world metrics | 🟡 | Five signals; real-world metrics 🔴 (synthetic) |
+| I | 4 | Representative training/validation data | ⚪ | IM trains no model |
+| I | 5 | Assess & address inequity impact | 🟡 | Equity drift signal |
+| I | 6 | Transparent; communicate use/limits/risk | 🟢 | Disclaimer + role translation |
+| I | 7 | Post-deployment drift/bias monitoring | 🟢 | **Value-drift engine = institutional drift monitoring** |
+| I | 8 | Cross-sector / centre–state coordination | ⚪ | Ecosystem-level |
+| II | 9 | Data participation / min datasets | ⚪ | Data-ecosystem policy |
+| II | 10 | Population-scale representativeness | ⚪ | Data-ecosystem policy |
+| II | 11 | Health Data Quality Framework | ⚪ | Data-ecosystem policy |
+| II | 12 | Privacy-preserving access; de-identification proportional to risk | 🟢 | Above the floor — **no personal data at all** |
+| II | 13 | Cybersecurity standards, incident response, continuity | 🟡→🟢(V2) | V2 cybersecurity human-risk module; SAHI-13 is its anchor |
+| II | 14 | ABDM-aligned interoperability | ⚪ | Conceptual alignment only |
+| II | 15 | Data-sharing categories under legal basis | ⚪ | Data-policy level |
+| III | 16 | Role-based AI competency framework | 🟡 | Role-aware reports = FRAC applied (prose above) |
+| III | 17 | AI competencies in formal education | ⚪ | Curriculum-level |
+| III | 18 | Capacity among regulators/auditors | 🟡 | Usable as governance-training artifact |
+| III | 19 | **Designated AI units / nodal cells** | 🟢 | The tool such a unit runs (prose above) |
+| III | 20 | Collaboration & knowledge-exchange | 🟡 | Cohort + Mirror-family grammar |
+| III | 21 | Embed AI in workflows without increasing burden | 🟢 | IM *measures* the correction burden (SSS) |
+| III | 22 | **Define human/AI roles; oversight & escalation** | 🟢 | Refusal + human authority (prose above) |
+| IV | 23 | **Institutional Ethics Committees made AI-ready** | 🟢 | **IM's primary user; outputs are committee deliberation inputs** |
+| IV | 24 | Research aligned to health priorities | ⚪ | Funding/policy-level |
+| IV | 25 | Open/collaborative innovation | ⚪ | Ecosystem-level |
+| IV | 26 | **Risk-proportionate evaluation: safety/fairness/usability/relevance/accuracy** | 🟢 | **IM *is* an evaluation-deliberation environment across these dimensions — strongest single alignment** |
+| IV | 27 | Staged research→pilot funding | ⚪ | Funding-level |
+| IV | 28 | **Trial designs w/ post-market monitoring, drift detection, feedback loops** | 🟢 | Drift + approval-gated self-learning loop |
+| V | 29 | Public procurement prioritising safety/interop | ⚪ | Procurement-policy |
+| V | 30 | Pilot-to-scale; testbeds/sandboxes/validation | 🟡 | IM is a governance-stress-testing sandbox |
+| V | 31 | Cluster ecosystems anchored in public institutions | ⚪ | Ecosystem-level |
+| V | 32 | Institutionalised ecosystem-learning platforms | ⚪ | Ecosystem-level |
+
+**The five strongest alignments** (centrally answered, not merely touched): **Rec 7**
+(drift monitoring), **Rec 22** (human/AI roles & escalation), **Rec 23** (AI-ready Ethics
+Committees), **Rec 26** (risk-proportionate evaluation), **Rec 28** (post-market monitoring
++ drift + feedback). These are the defensible core of the "we implement what SAHI asked
+for" claim — true precisely where IM operates (the institutional layer), not asserted
+broadly.
+
+**Honest bound (RULE-G2, VALIDATION §1):** IM does not *certify* SAHI compliance, rank any
+institution, or substitute for institutional governance. The ~14 ⚪ recommendations are
+ecosystem/data-infrastructure/policy concerns outside an institutional deliberation tool.
+And no SAHI/NABH authority has reviewed these mappings — one assessor conversation remains
+the right next step (SAHI's own open question on accepting simulation-generated governance
+evidence).
+
+**Part of the research-grade documentation set** (2026-06-12): grounded in a direct read of
+SAHI (all 32 recommendations) and cross-referenced to `STANDARDS_ALIGNMENT_MATRIX.md`,
+`RULE_SETS.md`, `VALIDATION_AND_LIMITATIONS.md`, and `CITATION_REGISTER.md` (NIST AI RMF:
+Govern/Manage).
+
+---
+
+*Created April 2026; extended to all 32 recommendations and integrated with the research-
+grade documentation set 2026-06-12 (Ouroboros Uno / Claude). Update when new SAHI guidance,
+implementation rules, or BODH standards are published. A living alignment record.*

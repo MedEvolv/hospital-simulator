@@ -44,7 +44,13 @@ class ScoringResult:
     ethics_intervention_count: int
     system_throughput_index: float
     
-    # Composite
+    # Composite — INTERNAL ONLY (RULE-A1).
+    # This weighted composite of PSS/PES/SSS/STI must NEVER be serialized into any
+    # API payload or external-facing output. It exists solely as an internal gate for
+    # narrative selection (see integrated_engine._synthesize_report). The "never
+    # composite" invariant is enforced structurally: this field is not added to the
+    # report dict in generate_complete_report(), and tests/test_no_composite_invariant.py
+    # asserts no composite score reaches the payload.
     institutional_efficacy_score: float
     
     # Time series
@@ -360,9 +366,15 @@ def compute_institutional_efficacy_score(
           (PES × experience_weight) +
           (SSS × staff_weight) +
           (STI × throughput_weight)
-    
-    NEVER DISPLAY IES ALONE. Always show individual metrics.
-    
+
+    INTERNAL ONLY — RULE-A1 (the architectural invariant). The five signals
+    (PSS, PES, SSS, EIC, STI) are never collapsed into a composite score that
+    appears in any external-facing output or API payload. A single number invites
+    gaming and hides trade-offs; composite hospital ranks are empirically unstable
+    (Jacobs, Goddard & Smith 2005). This value is used ONLY as an internal gate for
+    narrative selection and must never be returned to a consumer — not as a number,
+    and not embedded in any interpretation/critical-question text.
+
     Returns: (score, narrative)
     """
     ies = (
@@ -454,11 +466,10 @@ class ScoringEngine:
         # Time series (simplified for now)
         time_series = compute_time_series_scores(run)
         
-        # Overall interpretation
+        # Overall interpretation — five signals shown separately, never composited
+        # into a single headline (RULE-A1). ies / ies_narrative are computed above
+        # only as an internal narrative gate and are deliberately NOT surfaced here.
         interpretation = f"""
-Institutional Efficacy: {ies:.1f}/100
-{ies_narrative}
-
 Patient Safety: {pss:.1f}/100 - {pss_interp}
 Patient Experience: {pes:.1f}/100 - {pes_interp}
 Staff Stress: {sss:.1f}/100 - {sss_interp}
@@ -494,16 +505,15 @@ Throughput: {sti:.1f}/100 - {sti_interp}
         result2 = ScoringEngine.score_run(run2)
         
         return {
+            # Signals are compared separately, never via a composite (RULE-A1).
             "run1": {
                 "profile": run1.institutional_profile,
-                "ies": result1.institutional_efficacy_score,
                 "pss": result1.patient_safety_score,
                 "pes": result1.patient_experience_score,
                 "sss": result1.staff_stress_score
             },
             "run2": {
                 "profile": run2.institutional_profile,
-                "ies": result2.institutional_efficacy_score,
                 "pss": result2.patient_safety_score,
                 "pes": result2.patient_experience_score,
                 "sss": result2.staff_stress_score
@@ -549,4 +559,4 @@ if __name__ == "__main__":
     result = ScoringEngine.score_run(run)
     
     print(result.interpretation)
-    print(f"\nIES: {result.institutional_efficacy_score:.1f}/100")
+    # IES is intentionally NOT printed — it is an internal-only gate (RULE-A1).
