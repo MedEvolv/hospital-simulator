@@ -117,6 +117,12 @@ export default function ConfigureScreen() {
             </p>
           </div>
           <nav aria-label="Main navigation" className="flex items-center gap-3">
+            <a
+              href="https://archlife.in/institutional-mirror"
+              className="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+            >
+              ArchLife
+            </a>
             <Link
               href="/sahi"
               className="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
@@ -133,7 +139,7 @@ export default function ConfigureScreen() {
               href="/sandbox"
               className="text-[11px] font-bold uppercase tracking-wider text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 px-4 py-1.5 rounded-md transition-colors shadow-sm"
             >
-              Sandbox →
+              Scenario Studio →
             </Link>
           </nav>
         </div>
@@ -142,6 +148,9 @@ export default function ConfigureScreen() {
         </h1>
         <p className="text-xl text-slate-600 leading-relaxed font-serif max-w-2xl">
           A systemic governance stress-test environment for clinical AI systems.
+        </p>
+        <p className="mt-3 max-w-2xl text-xs font-medium uppercase tracking-wider text-slate-500">
+          Synthetic governance scenarios. No patient data, clinical advice, or predictive output.
         </p>
       </header>
 

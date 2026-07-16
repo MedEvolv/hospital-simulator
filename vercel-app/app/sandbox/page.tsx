@@ -11,7 +11,7 @@ import Link from 'next/link'
 import AssumptionsPanel from '@/components/AssumptionsPanel'
 
 export const metadata = {
-  title: 'Scenario Sandbox — Institutional Mirror v2',
+  title: 'Scenario Studio — Institutional Mirror v2',
   description: 'Compare two governance scenarios side-by-side with configurable parameters.',
 }
 
@@ -26,7 +26,7 @@ export default function SandboxPage() {
               ← Home
             </Link>
             <span className="text-slate-800">|</span>
-            <span className="text-xs font-mono text-slate-600 tracking-wider">Scenario Sandbox</span>
+            <span className="text-xs font-mono text-slate-600 tracking-wider">Scenario Studio</span>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -66,7 +66,7 @@ export default function SandboxPage() {
             Institutional Mirror v2 · Phase 4
           </p>
           <h1 className="text-2xl font-light text-slate-900 mb-3">
-            Scenario Sandbox
+            Scenario Studio
           </h1>
           <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
             Configure two independent simulation slots, run different governance scenarios

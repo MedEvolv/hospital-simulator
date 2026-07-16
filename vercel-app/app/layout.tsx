@@ -4,8 +4,8 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
-  title: 'Institutional Mirror',
-  description: 'A governance simulator for hospital emergency departments',
+  title: 'Institutional Mirror | ArchLife',
+  description: 'A synthetic-scenario governance simulator for clinical AI systems. Not clinical decision support or live hospital monitoring.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
