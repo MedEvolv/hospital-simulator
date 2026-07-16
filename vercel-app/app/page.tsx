@@ -109,35 +109,35 @@ export default function ConfigureScreen() {
     <main className="max-w-4xl mx-auto px-6 py-16 bg-white min-h-screen text-slate-900 font-sans selection:bg-rose-100">
       {/* ── Header ──────────────────────────────────────────────────── */}
       <header className="mb-12 border-b border-slate-200 pb-10">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="h-4 w-4 rounded-sm bg-rose-600"></div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
               Institutional Mirror v2
             </p>
           </div>
-          <nav aria-label="Main navigation" className="flex items-center gap-3">
+          <nav aria-label="Main navigation" className="flex flex-wrap items-center gap-2 sm:justify-end">
             <a
               href="https://archlife.in/institutional-mirror"
-              className="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
             >
               ArchLife
             </a>
             <Link
               href="/sahi"
-              className="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
             >
               SAHI alignment
             </Link>
             <Link
               href="/history"
-              className="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
             >
               Audit History
             </Link>
             <Link
               href="/sandbox"
-              className="text-[11px] font-bold uppercase tracking-wider text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 px-4 py-1.5 rounded-md transition-colors shadow-sm"
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 px-4 py-1.5 rounded-md transition-colors shadow-sm"
             >
               Scenario Studio →
             </Link>
@@ -257,7 +257,7 @@ export default function ConfigureScreen() {
                         : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                     }`}
                   >
-                    <p className={`text-sm font-bold ${profile === p.value ? 'text-white' : 'text-slate-900'}`}>{p.label}</p>
+                    <p className="text-sm font-bold text-slate-900">{p.label}</p>
                     <p className={`text-xs mt-2 leading-relaxed ${profile === p.value ? 'text-slate-700' : 'text-slate-500'}`}>{p.blurb}</p>
                   </button>
                 ))}
@@ -349,7 +349,7 @@ export default function ConfigureScreen() {
           <button
             onClick={runCustomSimulation}
             disabled={loading}
-            className="w-full bg-white text-white font-bold tracking-wide uppercase py-5 rounded-xl hover:bg-slate-100 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed border border-slate-950"
+            className="w-full bg-slate-950 text-white font-bold tracking-wide uppercase py-5 rounded-xl hover:bg-slate-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed border border-slate-950"
           >
             {loading ? 'Executing Clinical Audit…' : 'Execute Simulation Run'}
           </button>
