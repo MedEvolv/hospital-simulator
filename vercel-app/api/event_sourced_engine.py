@@ -701,7 +701,7 @@ class EventSourcedSimulationEngine:
             
             if patient.triage_stage_2 is None:
                 wait_time = self.current_tick - patient.arrival_time
-                
+
                 # Conditions for refined triage
                 at_front = any(
                     queue and queue[0] == patient.id 
@@ -808,15 +808,16 @@ class EventSourcedSimulationEngine:
                 })
 
         # ── CORRECTION_BURDEN: patients needing triage revision under overload ─
-        # Every 50 ticks: flag patients whose ESI level suggests they should have
-        # been triaged higher (proxy: YELLOW/ESI 3 patients waiting > 3× threshold)
-        if self.current_tick % 50 == 0 and total_waiting > 5:
+        # Every 20 ticks: aggregate patients whose ESI level suggests they need
+        # triage revision. A prolonged ESI 3 wait is itself a correction burden,
+        # even when the total queue is below an arbitrary crowding threshold.
+        if self.current_tick % 20 == 0:
             prolonged_yellow = [
                 p for p in state.patients.values()
                 if p.status == PatientStatus.WAITING
                 and p.triage_stage_2 == "YELLOW"
                 and p.esi_level == 3
-                and (self.current_tick - p.arrival_time) > self.run.parameters.max_wait_yellow * 3
+                and (self.current_tick - p.arrival_time) > 10  # ESI 3: >10 ticks triggers correction burden
             ]
             if prolonged_yellow:
                 self.run.add_event("CORRECTION_BURDEN", {
@@ -824,6 +825,41 @@ class EventSourcedSimulationEngine:
                     "reason": "prolonged_wait_beyond_esi3_threshold",
                     "tick": self.current_tick,
                 })
+
+        # ── DETERIORATION_WARNING: early-warning signal (P3 / AAC.5.e ↔ MEWS) ─
+        # Flags patients whose clinical risk level suggests they are deteriorating
+        # while waiting — a proxy for an early-warning / MEWS signal. When an ESI 2
+        # (emergent) patient has waited >6 ticks (~30s) or an ESI 3 (urgent) has
+        # waited >20 ticks (~100s) without admission, emit a deterioration warning.
+        # This feeds into SSS (staff stress), EIC (ethics count), and the synthesis
+        # insights as a proactive escalation credit.
+        if self.current_tick % 15 == 0:
+            for patient in state.patients.values():
+                if patient.status != PatientStatus.WAITING:
+                    continue
+                if patient.esi_level is None:
+                    continue
+                wait_time = self.current_tick - patient.arrival_time
+
+                esi = patient.esi_level
+                deteriorated = False
+                if esi == 1 and wait_time > 1:
+                    deteriorated = True  # ESI 1: any wait beyond immediate
+                elif esi == 2 and wait_time > 6:
+                    deteriorated = True  # ESI 2: >30s emergent wait
+                elif esi == 3 and wait_time > 20:
+                    deteriorated = True  # ESI 3: >100s urgent wait
+
+                if deteriorated:
+                    self.run.add_event("DETERIORATION_WARNING", {
+                        "patient_id": patient.id,
+                        "esi_level": esi,
+                        "wait_time": wait_time,
+                        "tick": self.current_tick,
+                        "triage_band": patient.triage_stage_2 or "unknown",
+                    })
+                    # Only one deterioration event per tick to avoid spam
+                    break
 
         # Emit escalation if recommendations exist
         if recommendations:

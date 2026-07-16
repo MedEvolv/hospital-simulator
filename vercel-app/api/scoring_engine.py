@@ -86,25 +86,43 @@ def compute_patient_safety_score(run: SimulationRun) -> Tuple[float, str]:
     yellow_wait_breaches = 0
     early_escalations = 0
     safety_referrals = 0
+    deterioration_events = 0
     
     # Track patient wait times
     patient_arrivals = {}
     patient_admissions = {}
+    # ESI level per patient — read from ESI_LEVEL_ASSIGNED events (P3 clinical grounding)
+    patient_esi = {}
     
     for event in run.event_log:
         if event.event_type == "PATIENT_ARRIVAL":
             patient_id = event.payload["patient_id"]
             patient_arrivals[patient_id] = event.timestamp
+
+        elif event.event_type == "ESI_LEVEL_ASSIGNED":
+            patient_id = event.payload["patient_id"]
+            patient_esi[patient_id] = event.payload["esi_level"]
         
         elif event.event_type == "TRIAGE_STAGE_2_ASSIGNED":
             patient_id = event.payload["patient_id"]
             triage = event.payload["triage"]
             wait_time = event.payload.get("wait_time", 0)
+            esi = patient_esi.get(patient_id)
             
-            # Check for wait breaches
-            if triage == "RED" and wait_time > 0:
-                red_wait_breaches += 1
-            elif triage == "YELLOW" and wait_time > 180:  # 3 minutes
+            # ESI-appropriate PSS breach thresholds (P3 clinical grounding):
+            #   ESI 1 (immediate):  any wait → breach
+            #   ESI 2 (emergent):   >3 ticks → breach
+            #   RED (fallback):     any wait → breach
+            #   ESI 3 (urgent):     tracked for PES/dignity drift, not PSS breach
+            #   YELLOW (fallback):  >36 ticks → breach (legacy 180s at 5s/tick)
+            if triage == "RED":
+                if esi == 1 and wait_time > 0:
+                    red_wait_breaches += 1
+                elif esi == 2 and wait_time > 3:
+                    red_wait_breaches += 1
+                elif esi is None and wait_time > 0:
+                    red_wait_breaches += 1
+            elif triage == "YELLOW" and wait_time > 180:
                 yellow_wait_breaches += 1
         
         elif event.event_type == "PATIENT_ADMITTED":
@@ -244,6 +262,8 @@ def compute_staff_stress_score(run: SimulationRun) -> Tuple[float, str]:
     overload_events = 0
     ethical_overrides = 0
     escalations = 0
+    correction_burden_events = 0
+    deterioration_events = 0
     
     for event in run.event_log:
         if event.event_type == "ROOM_OVERLOAD":
@@ -254,11 +274,21 @@ def compute_staff_stress_score(run: SimulationRun) -> Tuple[float, str]:
         
         elif event.event_type == "ESCALATION_SUGGESTED":
             escalations += 1
+
+        elif event.event_type == "CORRECTION_BURDEN":
+            correction_burden_events += 1
+
+        elif event.event_type == "DETERIORATION_WARNING":
+            deterioration_events += 1
     
     # Accumulate stress
     stress += (overload_events * 5)
     stress += (ethical_overrides * 3)
     stress += (escalations * 8)
+    # CORRECTION_BURDEN: re-triaging under overload is cognitively costly (P3)
+    stress += (correction_burden_events * 6)
+    # DETERIORATION_WARNING: detecting a worsening patient mid-wait is high-acuity stress (P3)
+    stress += (deterioration_events * 10)
     
     # Invert for score (high stress = low score)
     score = max(0, 100 - stress)
@@ -293,7 +323,7 @@ def compute_ethics_intervention_count(run: SimulationRun) -> Tuple[int, str]:
     count = 0
     
     for event in run.event_log:
-        if event.event_type in ["QUEUE_REORDER", "ESCALATION_SUGGESTED"]:
+        if event.event_type in ["QUEUE_REORDER", "ESCALATION_SUGGESTED", "DETERIORATION_WARNING"]:
             count += 1
     
     # Interpretation
