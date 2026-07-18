@@ -5,7 +5,9 @@
  * Server-side operations (API routes) should use the same client;
  * for service-role bypass, supply SUPABASE_SERVICE_ROLE_KEY env var separately.
  *
- * RLS is always active. The anon key is the correct key for client operations.
+ * The anon-key client is used for public/client operations.
+ * Access control depends on the deployed database policies.
+ * This repository does not by itself prove deployed RLS or immutability enforcement.
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -77,9 +79,7 @@ export async function persistRun(record: RunRecord): Promise<string | null> {
 }
 
 /**
- * Append governance events for a run.
- * Wraps the immutable append-only governance_events table.
- * No-op if persistence is disabled.
+ * Append governance events for a persisted run. Database-level append-only or immutability enforcement depends on the deployed schema and policies; this helper only performs inserts.
  */
 export async function appendGovernanceEvents(
   runId: string,
@@ -115,9 +115,13 @@ export async function fetchUserRuns(limit = 20): Promise<RunRecord[]> {
   if (!supabaseUrl || !supabaseAnon) return []
 
   try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
     const { data, error } = await supabase
       .from('simulation_runs')
       .select('id, scenario_id, five_signals, run_metadata, created_at')
+      .eq('user_id', user.id)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
       .limit(limit)
@@ -141,10 +145,14 @@ export async function fetchRun(runId: string): Promise<RunRecord | null> {
   if (!supabaseUrl || !supabaseAnon) return null
 
   try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+
     const { data, error } = await supabase
       .from('simulation_runs')
       .select('*')
       .eq('id', runId)
+      .eq('user_id', user.id)
       .eq('is_deleted', false)
       .single()
 
@@ -161,29 +169,20 @@ export async function fetchRun(runId: string): Promise<RunRecord | null> {
 }
 
 /**
- * Soft-delete a run (sets is_deleted = true).
- * Hard delete is prohibited by architecture.
+ * Soft-archive an authenticated user's run by setting is_deleted = true. This helper does not establish that hard deletion is prohibited at the database level.
  */
 export async function softDeleteRun(runId: string): Promise<boolean> {
   if (!supabaseUrl || !supabaseAnon) return false
 
   try {
-    // Defence-in-depth: always scope the update to the current user's own rows.
-    // RLS enforces this at the database level too, but this prevents accidental
-    // cross-user deletes if policy gaps exist during development.
     const { data: { user } } = await supabase.auth.getUser()
-    const userId = user?.id
+    if (!user) return false
 
-    let query = supabase
+    const { error } = await supabase
       .from('simulation_runs')
       .update({ is_deleted: true })
       .eq('id', runId)
-
-    if (userId) {
-      query = query.eq('user_id', userId)
-    }
-
-    const { error } = await query
+      .eq('user_id', user.id)
 
     if (error) {
       console.error('[supabase] softDeleteRun error:', error.message)

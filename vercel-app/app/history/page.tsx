@@ -4,11 +4,10 @@
  * /history — Run History
  *
  * Lists the current user's previous simulation runs from Supabase.
- * Runs are loaded client-side via the Supabase anon client (RLS enforced).
- *
- * For authenticated users: shows all their runs.
- * For anonymous users: shows a prompt to sign in, plus a note that
- *   anonymous runs are persisted but not attributable.
+ * Runs are loaded client-side via the Supabase anon client.
+ * Authenticated users can see only runs attributed to their user ID.
+ * Anonymous runs are not queried.
+ * Persistence is best-effort and may be unavailable.
  *
  * Each run card links back to results by re-hydrating sessionStorage
  * from the run_data and redirecting to /results.
@@ -185,13 +184,22 @@ export default function HistoryPage() {
   const [reopening, setReopening] = useState<string | null>(null)   // run id being fetched
   const [error, setError] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
       try {
         // Check auth state
         const { data: { session } } = await supabase.auth.getSession()
-        setIsAuthenticated(!!session)
+        const userId = session?.user.id ?? null
+        setIsAuthenticated(!!userId)
+        setCurrentUserId(userId)
+
+        if (!userId) {
+          setRuns([])
+          setLoading(false)
+          return
+        }
 
         // Load recent runs — intentionally omits run_data (potentially large JSONB).
         // run_data is fetched lazily on "Re-open" to avoid loading 200-event blobs
@@ -199,6 +207,7 @@ export default function HistoryPage() {
         const { data, error: dbError } = await supabase
           .from('simulation_runs')
           .select('id, scenario_id, five_signals, run_metadata, created_at')
+          .eq('user_id', userId)
           .eq('is_deleted', false)
           .order('created_at', { ascending: false })
           .limit(20)
@@ -207,7 +216,7 @@ export default function HistoryPage() {
 
         setRuns((data ?? []) as RunRecord[])
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Failed to load run history')
+        setError('Run history is temporarily unavailable.')
       } finally {
         setLoading(false)
       }
@@ -217,14 +226,20 @@ export default function HistoryPage() {
   }, [])
 
   async function reopenRun(run: RunRecord) {
+    if (!currentUserId || !run.id) {
+      setError('This saved run is not available to this session.')
+      return
+    }
+
     // Lazy-fetch run_data only when the user clicks "Re-open" — avoids loading
     // 200-event blobs for every visible row on mount.
-    setReopening(run.id ?? null)
+    setReopening(run.id)
     try {
       const { data, error: dbError } = await supabase
         .from('simulation_runs')
         .select('run_data')
         .eq('id', run.id)
+        .eq('user_id', currentUserId)
         .eq('is_deleted', false)
         .single()
 
@@ -242,7 +257,7 @@ export default function HistoryPage() {
       }))
       router.push('/results')
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load run data')
+      setError('Could not load this saved run right now.')
     } finally {
       setReopening(null)
     }
@@ -287,8 +302,7 @@ export default function HistoryPage() {
           </p>
           <h1 className="text-2xl font-light text-slate-900 mb-2">Run History</h1>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Previous simulation runs are stored in the governance audit log.
-            Re-open any run to view its results and export governance artifacts.
+            When account-linked persistence is available, runs attributed to that account can be reopened here. A completed simulation does not guarantee that a history record was stored.
           </p>
         </div>
 
@@ -299,9 +313,7 @@ export default function HistoryPage() {
               Anonymous session
             </p>
             <p className="text-xs text-amber-300/70 leading-relaxed">
-              You are not signed in. Simulation runs are persisted to the governance audit log
-              but cannot be retrieved here without authentication.
-              Sign in to see your complete run history.
+              Account-linked run history is not enabled in this public prototype. This page does not retrieve anonymous runs, and a simulation can still complete when no history record is stored.
             </p>
           </div>
         )}
@@ -323,9 +335,6 @@ export default function HistoryPage() {
         {error && !loading && (
           <div className="border border-red-900/50 bg-red-950/20 rounded-lg px-5 py-4 mb-6">
             <p className="text-xs text-red-400">{error}</p>
-            <p className="text-[11px] text-red-500/60 mt-1">
-              Check that NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set.
-            </p>
           </div>
         )}
 
@@ -338,7 +347,7 @@ export default function HistoryPage() {
             <p className="text-sm text-slate-500 mb-6">
               {isAuthenticated
                 ? 'You have no saved runs yet. Run a governance scenario to start.'
-                : 'Sign in to access your run history, or run a new scenario.'}
+                : 'Account-linked history is not enabled here. Run a new scenario to continue in the current browser session.'}
             </p>
             <Link
               href="/"
@@ -374,8 +383,7 @@ export default function HistoryPage() {
         {/* ── Audit note ────────────────────────────────────────────────────── */}
         <div className="mt-10 pt-6 border-t border-slate-200/50">
           <p className="text-[10px] font-mono text-slate-700 leading-relaxed">
-            All simulation runs are stored in an append-only governance audit log. Deletion is not possible —
-            runs can only be soft-archived. This satisfies Hard Gate 4: immutable audit log.
+            Run storage is best-effort in this public prototype. The interface filters soft-archived rows, but this repository alone does not prove database-enforced immutability or hard-delete prevention.
           </p>
         </div>
       </div>
