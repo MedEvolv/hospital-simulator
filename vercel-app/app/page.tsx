@@ -136,6 +136,12 @@ export default function ConfigureScreen() {
               Audit History
             </Link>
             <Link
+              href="/governance-models"
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+            >
+              Governance Models
+            </Link>
+            <Link
               href="/sandbox"
               className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 px-4 py-1.5 rounded-md transition-colors shadow-sm"
             >
