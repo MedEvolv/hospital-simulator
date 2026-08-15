@@ -170,6 +170,12 @@ export default function GovernanceModelsPage() {
             <p key={i}>{line}</p>
           ))}
         </div>
+        <p className="text-[10px] text-slate-400 mt-4 leading-relaxed max-w-3xl">
+          When the live console is up, the models are reachable through a cloudflared
+          tunnel from the estate — the same runtime, decisions logging to the vault,
+          T2 actions still queued for human approval. The tunnel lives only while the
+          host machine is on.
+        </p>
       </div>
 
       {/* ── Related ────────────────────────────────────────────────────── */}
