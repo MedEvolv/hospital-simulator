@@ -3,6 +3,7 @@
   "name": "The Credential Cascade: Cybersecurity Under Clinical Load",
   "description": "A mid-sized private hospital is managing a typical Tuesday afternoon when a targeted phishing campaign hits the clinical staff during a moderate patient surge. One radiologist clicks a link. What follows is a nine-step cascade that demonstrates how cybersecurity failures are not separate from clinical governance — they accelerate every existing fragility: review decay, accountability diffusion, alert fatigue, and trust collapse. By the time ransomware is triggered, five separate governance failures have made it inevitable.",
   "packId": "security-stress-test",
+  "pillars": ["C2-data", "C4-oversight"],
   "simulationProfile": "Private Hospital",
   "durationTicks": 260,
   "seed": 1004,

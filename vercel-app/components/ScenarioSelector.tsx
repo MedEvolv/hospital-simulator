@@ -45,6 +45,15 @@ const PACK_LABELS: Record<string, string> = {
   'security-stress-test': 'Security stress test',
 }
 
+// Canonical taxonomy: the five pillars (C1-C5). Scenarios now carry `pillars`.
+const PILLAR_LABELS: Record<string, string> = {
+  'C1-lifecycle': 'C1 Lifecycle',
+  'C2-data': 'C2 Data',
+  'C3-validation': 'C3 Validation',
+  'C4-oversight': 'C4 Oversight',
+  'C5-outcomes': 'C5 Outcomes',
+}
+
 // ── Scenario card data type (matches GET /api/run-scenario response shape) ─────
 
 interface ScenarioMeta {
@@ -52,6 +61,7 @@ interface ScenarioMeta {
   name: string
   description: string
   packId: string
+  pillars?: string[]
   expectedRiskPathways: string[]
   learningObjectives: string[]
   simulationProfile: string
@@ -168,7 +178,9 @@ export default function ScenarioSelector({
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className={`text-[10px] font-mono border px-2 py-0.5 rounded tracking-wider uppercase ${pack.badge}`}>
-                    {PACK_LABELS[scenario.packId] ?? scenario.packId}
+                    {(scenario.pillars && scenario.pillars.length > 0)
+                      ? scenario.pillars.map(p => PILLAR_LABELS[p] ?? p).join(' · ')
+                      : (PACK_LABELS[scenario.packId] ?? scenario.packId)}
                   </span>
                   {isSelected && (
                     <span className="text-[10px] font-mono text-slate-600 border border-slate-300 px-2 py-0.5 rounded">

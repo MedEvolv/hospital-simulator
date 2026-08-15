@@ -3,6 +3,7 @@
   "name": "The Invisible Queue: Chronic Patients and the Scheduling Algorithm",
   "description": "A private chain hospital OPD uses a scheduling optimiser to maximise appointment throughput. The algorithm systematically deprioritises patients with multiple chronic conditions (longer appointments, lower revenue-per-minute) in favour of patients with single acute complaints. The throughput metrics look excellent. The harm is invisible until a doctor begins tracking it manually.",
   "packId": "equity-participation",
+  "pillars": ["C3-validation", "C5-outcomes"],
   "simulationProfile": "Private Hospital",
   "durationTicks": 240,
   "seed": 1003,

@@ -65,13 +65,6 @@ const GUARDRAILS = [
 
 // ── How they run ──────────────────────────────────────────────────────────────
 
-const RUNNING = [
-  'python healthcare_governance_cli.py advise "<situation>" — the Advisor\u2019s full analysis.',
-  'python healthcare_governance_cli.py audit "<action>" — the Auditor\u2019s tier + checklist + verification.',
-  'python healthcare_governance_cli.py analyze "<situation>" — the full H/L pair with the convergence log.',
-  'Add --json for machine-readable output that can feed the lattice log.',
-]
-
 export default function GovernanceModelsPage() {
   return (
     <main className="max-w-5xl mx-auto px-6 py-14">
@@ -163,18 +156,17 @@ export default function GovernanceModelsPage() {
       {/* ── How they run ───────────────────────────────────────────────── */}
       <div className="border border-slate-200 rounded-lg p-6 mb-12">
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-4">
-          How they run (estate-local, not from this page)
+          How they run
         </p>
-        <div className="bg-slate-900 rounded p-4 font-mono text-xs text-slate-300 space-y-2 overflow-x-auto">
-          {RUNNING.map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </div>
-        <p className="text-[10px] text-slate-400 mt-4 leading-relaxed max-w-3xl">
-          When the live console is up, the models are reachable through a cloudflared
-          tunnel from the estate — the same runtime, decisions logging to the vault,
-          T2 actions still queued for human approval. The tunnel lives only while the
-          host machine is on.
+        <p className="text-sm text-slate-600 leading-relaxed max-w-3xl">
+          The models run on the estate&rsquo;s own runtime — the same code that
+          produced the sample outputs above. The tier classification is
+          deterministic and never an LLM call; every decision is logged to an
+          append-only record; and T2 actions queue for human approval. The full
+          documentation set, training report, and instrument cards live in the
+          governance curriculum. When the live console is up, it is reachable
+          through a cloudflared tunnel from the estate — the tunnel lives only
+          while the host machine is on, by design.
         </p>
       </div>
 

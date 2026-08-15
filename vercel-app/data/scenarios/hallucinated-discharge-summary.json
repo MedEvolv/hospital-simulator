@@ -3,6 +3,7 @@
   "name": "The Hallucinated Discharge Summary",
   "description": "A teaching hospital discharge department uses an LLM to generate discharge summaries. On a Friday afternoon, one resident calls in sick during a bed-pressure surge. The remaining residents, overwhelmed, begin scan-reviewing AI summaries rather than reading them. The AI hallucinates a medication dosage — a real drug, a plausible dose, but wrong for this patient. No one catches it.",
   "packId": "automation-failure",
+  "pillars": ["C4-oversight", "C1-lifecycle"],
   "simulationProfile": "Balanced",
   "durationTicks": 180,
   "seed": 1001,

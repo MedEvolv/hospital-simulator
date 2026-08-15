@@ -3,6 +3,7 @@
   "name": "Triage AI Under Mass Casualty Conditions",
   "description": "A public district hospital ER deploys a triage AI declared at autonomy Level 2 (suggests, clinician decides). A multi-vehicle accident sends 40 patients in 90 minutes. Under surge conditions, clinical staff begin accepting triage AI recommendations without independent assessment. Alert flood from edge cases trains staff to dismiss AI alerts. A chronic-illness patient with stable vitals is de-prioritised. The governance committee intervenes — but only after the damage is done.",
   "packId": "institutional-strain",
+  "pillars": ["C1-lifecycle", "C4-oversight"],
   "simulationProfile": "Government Hospital",
   "durationTicks": 200,
   "seed": 1002,
