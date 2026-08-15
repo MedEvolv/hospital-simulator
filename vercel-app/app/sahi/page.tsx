@@ -329,23 +329,47 @@ export default function SahiPage() {
       {/* ── Citation ────────────────────────────────────────────────── */}
       <section className="border-t border-slate-200 pt-6">
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
-          Ministry of Health and Family Welfare, Government of India. <span className="italic">Strategy
-          for Artificial Intelligence in Healthcare for India (SAHI).</span> Launched at the
-          India AI Impact Summit, February 17, 2026.
+          Ministry of Health and Family Welfare, Government of India.{' '}
+          <a
+            href="https://abdm.gov.in/publication/strategy-documents"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sky-700 underline decoration-sky-200 hover:decoration-sky-700 transition-colors"
+          >
+            <span className="italic">Strategy for Artificial Intelligence in Healthcare for India (SAHI).</span>
+          </a>{' '}
+          Launched at the India AI Impact Summit, February 17, 2026.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
-          National Accreditation Board for Hospitals &amp; Healthcare Providers (NABH). <span className="italic">Digital
-          Health Standards for Hospitals, 2nd Edition.</span> September 2025. Referenced as digital-maturity
-          context only; this work claims no NABH accreditation, conformance, or endorsement.
+          National Accreditation Board for Hospitals &amp; Healthcare Providers (NABH).{' '}
+          <a
+            href="https://nabh.co/digital-health-standards/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-300 underline decoration-emerald-800/40 hover:decoration-emerald-300 transition-colors"
+          >
+            <span className="italic">Digital Health Standards for Hospitals, 2nd Edition.</span>
+          </a>{' '}
+          September 2025. Referenced as digital-maturity context only; this work claims no NABH
+          accreditation, conformance, or endorsement.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
-          Government of India. <span className="italic">Digital Personal Data Protection (DPDP) Rules.</span>{' '}
+          Government of India.{' '}
+          <a
+            href="https://www.meity.gov.in/content/digital-personal-data-protection-act-2023"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-800 underline decoration-slate-300 hover:decoration-slate-800 transition-colors"
+          >
+            <span className="italic">Digital Personal Data Protection (DPDP) Act, 2023 and Rules.</span>
+          </a>{' '}
           Referenced as the data-protection floor.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed">
           This alignment record covers the recommendations Institutional Mirror most directly
           responds to. It is a living document, updated as the work and SAHI guidance evolve.
           Recommendation quotes are paraphrased from the published strategy for reference.
+          Links point to the official published sources and were revalidated August 2026.
         </p>
       </section>
     </main>
