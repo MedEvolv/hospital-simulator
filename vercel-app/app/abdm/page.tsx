@@ -63,6 +63,10 @@ const CITIZEN = [
     name: 'Ayushman Sarathi',
     body: 'WhatsApp chatbot. Same layer: access to scheme information, not institutional governance under stress.',
   },
+  {
+    name: 'eSanjeevani',
+    body: 'National telemedicine surface (esanjeevani.mohfw.gov.in). PIB PRID 2199422 says a CDSS has been integrated since April 2023. Consultation volume is not a governance score, and structured capture is not a diagnosis. This is an ecosystem surface, not a Mirror module.',
+  },
 ]
 
 export default function AbdmPage() {
@@ -119,7 +123,7 @@ export default function AbdmPage() {
             <li>Treat the public UHI GitHub README as the live protocol</li>
             <li>Republish NHCX hub counts as a census</li>
             <li>Confuse e-Sushrut with a NABH objective element</li>
-                <li>Move Consent Monday off the DPDP page</li>
+            <li>Move Consent Monday off the DPDP page</li>
           </ul>
         </div>
       </section>
@@ -231,7 +235,25 @@ export default function AbdmPage() {
           >
             PRID 2278347
           </a>
-          {' '}(27 June 2026).
+          {' '}(27 June 2026). eSanjeevani is MoHFW telemedicine (
+          <a
+            href="https://esanjeevani.mohfw.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-teal-800 underline decoration-teal-200 hover:decoration-teal-800 transition-colors"
+          >
+            esanjeevani.mohfw.gov.in
+          </a>
+          ); CDSS integration is PIB PRID{' '}
+          <a
+            href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=2199422"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-teal-800 underline decoration-teal-200 hover:decoration-teal-800 transition-colors"
+          >
+            2199422
+          </a>
+          , not a census of AI diagnoses.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
           NHA GitHub user{' '}

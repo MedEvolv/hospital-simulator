@@ -11,6 +11,17 @@ const PILLARS = [
   { n: 'V',   label: 'Ecosystem Enablement and Global Leadership' },
 ]
 
+/** Inherited from IndiaAI Governance Guidelines 2025, as printed in the SAHI PDF. */
+const SUTRAS = [
+  'Trust is the foundation',
+  'People first',
+  'Innovation over Restraint',
+  'Fairness and Equity',
+  'Accountability',
+  'Understandable by design',
+  'Safety, Resilience and Sustainability',
+]
+
 // ── Recommendation-by-recommendation alignment (from SAHI_ALIGNMENT.md) ─────────
 interface Rec {
   n: number
@@ -177,6 +188,26 @@ export default function SahiPage() {
         </div>
       </section>
 
+      {/* ── Seven sutras (IndiaAI wording, not a new route) ─────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-3">
+          <span className="text-xs font-mono text-slate-600">Governing principles</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-sky-50 text-sky-800 border-sky-200">
+            7 Sutras
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed mb-3">
+          SAHI inherits seven guiding principles from the IndiaAI Governance Guidelines
+          (2025). Worded here as in the SAHI strategy PDF. The Mirror does not reprint
+          the IndiaAI document and does not give the guidelines their own route.
+        </p>
+        <ol className="text-sm text-slate-700 space-y-1 list-decimal list-inside">
+          {SUTRAS.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ol>
+      </section>
+
       {/* ── Pillar IV · BODH (chip, not a new route) ────────────────── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
         <div className="flex flex-wrap items-center gap-3 mb-2">
@@ -192,6 +223,33 @@ export default function SahiPage() {
           NABH gate. The Mirror does not run BODH benchmarks and does not give BODH
           its own route. Academic host names are omitted here; estate records still
           disagree.
+        </p>
+      </section>
+
+      {/* ── Pillar IV · NHRP draft (chip, not a new route) ──────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Pillar IV · draft</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-sky-50 text-sky-800 border-sky-200">
+            NHRP
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          The Department of Health Research published a draft National Health Research
+          Policy 2026 for public opinion (F. No. T.11014/01/2020-HR, 6 July 2026).{' '}
+          <a
+            href="https://dhr.gov.in/static/uploads/2026/07/cd80b4d9af184586ae68364fc94849ad.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sky-700 underline decoration-sky-200 hover:decoration-sky-700 transition-colors"
+          >
+            dhr.gov.in draft PDF
+          </a>
+          . Clause 4.6.4.1 is a SHALL: standing capability for independent validation of
+          health technologies, including methods for AI-based tools, and validation
+          centres to be established or strengthened. That is draft text. It is not
+          gazette, not a funded centre, and not BODH. PIB PRID 2296281 is not this
+          policy. No /nhrp route.
         </p>
       </section>
 
@@ -419,7 +477,9 @@ export default function SahiPage() {
           >
             <span className="italic">Strategy for Artificial Intelligence in Healthcare for India (SAHI).</span>
           </a>{' '}
-          Launched at the India AI Impact Summit, February 17, 2026.
+          Launched at the India AI Impact Summit, February 17, 2026. Seven guiding
+          principles inherited from the IndiaAI Governance Guidelines, 2025, as printed
+          in that PDF.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
           National Accreditation Board for Hospitals &amp; Healthcare Providers (NABH).{' '}
@@ -445,6 +505,19 @@ export default function SahiPage() {
             <span className="italic">Digital Personal Data Protection (DPDP) Act, 2023 and Rules.</span>
           </a>{' '}
           Referenced as the data-protection floor.
+        </p>
+        <p className="text-xs text-slate-600 leading-relaxed mb-2">
+          Department of Health Research.{' '}
+          <a
+            href="https://dhr.gov.in/static/uploads/2026/07/cd80b4d9af184586ae68364fc94849ad.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sky-700 underline decoration-sky-200 hover:decoration-sky-700 transition-colors"
+          >
+            <span className="italic">Draft National Health Research Policy 2026.</span>
+          </a>{' '}
+          Public-opinion draft (F. No. T.11014/01/2020-HR). Not gazette. Not a funded
+          validation-centre programme.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed">
           This alignment record covers the recommendations Institutional Mirror most directly

@@ -194,6 +194,23 @@ export default function DpdpPage() {
         </p>
       </section>
 
+      {/* ── Section 13 grievance (chip, not a new route) ─────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Section 13</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
+            Grievance
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          DPDP §13 gives the Data Principal a right to readily available grievance
+          redressal with the Data Fiduciary. The Mirror is not that channel: it
+          processes no personal data. Where a hospital&rsquo;s AI will create complaints,
+          the rehearsal is whether a human path still answers when the queue is full.
+          This page does not dump the 2025 Rules&rsquo; timelines.
+        </p>
+      </section>
+
       {/* ── UHI + NHCX (chips; exchange floor lives on /abdm) ───── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
         <div className="flex flex-wrap items-center gap-3 mb-2">
