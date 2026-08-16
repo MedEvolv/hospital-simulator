@@ -14,13 +14,13 @@ const MODELS = [
     explanation:
       'The Advisor is the H-module of the estate\u2019s hierarchical reasoning pair. Given a healthcare-AI situation — a deployment, a policy question, a governance failure — it produces the applicable Indian instruments by name (DPDP, CDSCO, SAHI, ICMR, NHRP, ABDM, BODH, NABH, MeitY), maps them to the five consensus pillars (C1 lifecycle, C2 data governance, C3 validation, C4 oversight realism, C5 outcomes), names which of the four governance gaps applies, and composes a 3–5 step plan that ends in one concrete Monday action.',
     discipline:
-      'It never executes. It plans in 3–5 steps and hands each step to the Auditor. It advances only after the Auditor reports equilibrium — the HRM convergence condition, enforced as code, not habit.',
+      'It never executes. It plans in 3-5 steps. Each step is run through the Auditor. The honesty mark is audited, not a convergence log. The Decision Lattice remains the enforcer. The Builder decides.',
     sampleLabel: 'Sample output — a tier-2 hospital deploys an LLM that screens chest X-rays for TB (validated on a Delhi dataset):',
     sample: [
       'Instruments: BODH · DPDP · NHRP · SAHI',
       'Pillars: C1 lifecycle · C2 data · C3 validation · C4 oversight · C5 outcomes',
       'Gaps: implementation cliff · generative blind spot · participation deficit · agentic horizon',
-      'Plan: (1) audit the consent basis (DPDP: unbundled consent) → (2) name a governance owner and escalation path (SAHI Rec 19 + 22) → (3) establish local validation evidence (NHRP 4.6.4 / BODH) → (4) land at Monday: one owner, one action, one logged decision.',
+      'Plan: (1) audit the consent basis (DPDP: unbundled consent) -> (2) name a governance owner and escalation path (SAHI Rec 19 + 22) -> (3) record local validation evidence the hospital actually holds. NHRP Section 4.6.4.1 is a DHR draft SHALL, not a funded centre. BODH is a voluntary SAHI/PIB benchmark, not a gate and not Eka Care BODHI-S/M. -> (4) land at Monday: one owner, one action, one logged decision.',
     ],
   },
   {
@@ -31,7 +31,7 @@ const MODELS = [
     explanation:
       'The Auditor is the L-module. Given an action in a healthcare-AI context, it classifies it into the decision lattice — T0 autonomous, T1 confirmable, T2 human-required, T3 prohibited — using the same lattice that enforces the estate\u2019s own operations. It then produces the instrument checklist the action must satisfy (what DPDP, CDSCO, SAHI, NABH demand of it) and defines exactly ONE atomic verification step. It never plans beyond one action.',
     discipline:
-      'The tier is deterministic — never an LLM call. When the classification is ambiguous, the Auditor escalates to the Advisor rather than guessing. Every audit ends with the equilibrium report that lets the H-module advance.',
+      'The tier is deterministic: never an LLM call. When the classification is ambiguous, the Auditor escalates to the Advisor rather than guessing. Each Advisor plan step is audited this way. The Decision Lattice remains the enforcer. The Builder decides.',
     sampleLabel: 'Sample output — "publish the Four Gaps analysis publicly on LinkedIn":',
     sample: [
       'Tier: T2 — Human-required (bhai approval queues before any action).',
@@ -95,8 +95,8 @@ export default function GovernanceModelsPage() {
           <div>
             <p className="text-sm font-medium text-slate-800 mb-1">H-module — slow</p>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Abstract reasoning. Plans 3–5 steps maximum. Never touches execution.
-              Advances only when the L-module reports equilibrium.
+              Abstract reasoning. Plans 3-5 steps maximum. Never touches execution.
+              Each plan step is run through the Auditor. The mark is audited.
             </p>
           </div>
           <div>
