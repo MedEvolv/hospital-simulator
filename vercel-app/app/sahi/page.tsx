@@ -195,6 +195,31 @@ export default function SahiPage() {
         </p>
       </section>
 
+      {/* ── Pillar II · CLCI / BHTS (chip, not a new route) ───────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Pillar II</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-sky-50 text-sky-800 border-sky-200">
+            CLCI / BHTS
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          Common LOINC Codes for India and the Bharat Health Terminology Service are NRCeS
+          objects for semantic interoperability: a nationally curated lab-code subset and a
+          FHIR terminology server (
+          <a
+            href="https://www.nrces.in/bhts"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sky-700 underline decoration-sky-200 hover:decoration-sky-700 transition-colors"
+          >
+            nrces.in/bhts
+          </a>
+          ). They are the vocabulary floor Pillar II assumes. Not a new ethics code. Not a
+          BODH benchmark. This page does not name academic hosts.
+        </p>
+      </section>
+
       {/* ── The gap ─────────────────────────────────────────────────── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-6 bg-white/40">
         <h2 className="text-sm font-medium text-slate-800 mb-3">Where SAHI is strong &mdash; and where it is silent</h2>

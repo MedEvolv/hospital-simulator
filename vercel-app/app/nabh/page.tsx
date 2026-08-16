@@ -104,6 +104,20 @@ export default function NabhPage() {
         </div>
       </section>
 
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Product, not an OE</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-emerald-50 text-emerald-800 border-emerald-200">
+            NHA HMIS
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          e-Sushrut Clinic / HMIS lite is an NHA product on ABDM M1-M4. It is not a NABH
+          objective element. Digital Health 2nd Ed already talks interoperability. Do not
+          confuse the SaaS with this bar.
+        </p>
+      </section>
+
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
           Eight chapters of the Digital Health 2nd Edition

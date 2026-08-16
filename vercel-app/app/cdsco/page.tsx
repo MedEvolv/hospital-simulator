@@ -99,6 +99,29 @@ export default function CdscoPage() {
         </div>
       </section>
 
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Medicine identity · not MDSW</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-amber-50 text-amber-800 border-amber-200">
+            Drug Registry
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          The ABDM Drug Registry (
+          <a
+            href="https://drugregistry.abdm.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-amber-800 underline decoration-amber-200 hover:decoration-amber-800 transition-colors"
+          >
+            drugregistry.abdm.gov.in
+          </a>
+          ) is standardised drug codification across apps. We did not scrape a live
+          registry dump (the public host returned 403; a local page scrape is the witness).
+          This is not a CDSCO licence path and not MDSW.
+        </p>
+      </section>
+
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
           Device vs CDS: the grey zone

@@ -194,6 +194,48 @@ export default function DpdpPage() {
         </p>
       </section>
 
+      {/* ── UHI + NHCX (chips, not a new route) ──────────────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Consent substrate · exchange</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
+            UHI
+          </span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
+            NHCX
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed mb-3">
+          Consent Monday stays this page&rsquo;s spine. UHI is NHA&rsquo;s open health-service
+          network on ABHA and health-information exchange, not a single app.{' '}
+          <a
+            href="https://abdm.gov.in/uhi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-800 underline decoration-slate-300 hover:decoration-slate-800 transition-colors"
+          >
+            abdm.gov.in/uhi
+          </a>
+          {' '}lists live services. The NHA GitHub UHI spec last moved September 2024; the
+          gateway is more alive than the public repo. This page does not treat protocol
+          0.0.1 as current.
+        </p>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          NHCX is FHIR claims exchange between providers and payers (
+          <a
+            href="https://nhcx.abdm.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-800 underline decoration-slate-300 hover:decoration-slate-800 transition-colors"
+          >
+            nhcx.abdm.gov.in
+          </a>
+          ). It sits on health data. It is not DPDP law. Hub counts move; we do not republish
+          them as a census. The Mirror does not file claims and does not give UHI or NHCX
+          their own route.
+        </p>
+      </section>
+
       {/* ── The gap DPDP cannot reach ────────────────────────────── */}
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
