@@ -118,7 +118,11 @@ export default function CdscoPage() {
           </a>
           ) is standardised drug codification across apps. We did not scrape a live
           registry dump (the public host returned 403; a local page scrape is the witness).
-          This is not a CDSCO licence path and not MDSW.
+          This is not a CDSCO licence path and not MDSW. The exchange floor is on{' '}
+          <Link href="/abdm" className="text-amber-800 underline decoration-amber-200 hover:decoration-amber-800 transition-colors">
+            /abdm
+          </Link>
+          .
         </p>
       </section>
 
@@ -264,6 +268,12 @@ export default function CdscoPage() {
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← NABH alignment
+        </Link>
+        <Link
+          href="/abdm"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← ABDM alignment
         </Link>
       </div>
     </main>

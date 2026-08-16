@@ -195,7 +195,7 @@ export default function SahiPage() {
         </p>
       </section>
 
-      {/* ── Pillar II · CLCI / BHTS (chip, not a new route) ───────── */}
+      {/* ── Pillar II · CLCI / BHTS (chip; full floor on /abdm) ─── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
         <div className="flex flex-wrap items-center gap-3 mb-2">
           <span className="text-xs font-mono text-slate-600">Pillar II</span>
@@ -216,7 +216,11 @@ export default function SahiPage() {
             nrces.in/bhts
           </a>
           ). They are the vocabulary floor Pillar II assumes. Not a new ethics code. Not a
-          BODH benchmark. This page does not name academic hosts.
+          BODH benchmark. This page does not name academic hosts. The exchange floor is on{' '}
+          <Link href="/abdm" className="text-sky-700 underline decoration-sky-200 hover:decoration-sky-700 transition-colors">
+            /abdm
+          </Link>
+          .
         </p>
       </section>
 
@@ -388,6 +392,12 @@ export default function SahiPage() {
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← CDSCO alignment
+        </Link>
+        <Link
+          href="/abdm"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← ABDM alignment
         </Link>
         <Link
           href="/governance-models"

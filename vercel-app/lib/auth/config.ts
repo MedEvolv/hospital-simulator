@@ -26,6 +26,7 @@ export const GATED_PREFIXES = [
   '/dpdp',
   '/nabh',
   '/cdsco',
+  '/abdm',
   '/governance-models',
   '/governance',
   '/history',

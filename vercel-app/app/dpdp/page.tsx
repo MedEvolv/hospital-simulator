@@ -194,7 +194,7 @@ export default function DpdpPage() {
         </p>
       </section>
 
-      {/* ── UHI + NHCX (chips, not a new route) ──────────────────── */}
+      {/* ── UHI + NHCX (chips; exchange floor lives on /abdm) ───── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
         <div className="flex flex-wrap items-center gap-3 mb-2">
           <span className="text-xs font-mono text-slate-600">Consent substrate · exchange</span>
@@ -231,8 +231,12 @@ export default function DpdpPage() {
             nhcx.abdm.gov.in
           </a>
           ). It sits on health data. It is not DPDP law. Hub counts move; we do not republish
-          them as a census. The Mirror does not file claims and does not give UHI or NHCX
-          their own route.
+          them as a census. The Mirror does not file claims. Consent Monday stays this
+          page. The exchange floor is on{' '}
+          <Link href="/abdm" className="text-slate-800 underline decoration-slate-300 hover:decoration-slate-800 transition-colors">
+            /abdm
+          </Link>
+          .
         </p>
       </section>
 
@@ -356,6 +360,12 @@ export default function DpdpPage() {
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← CDSCO alignment
+        </Link>
+        <Link
+          href="/abdm"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← ABDM alignment
         </Link>
         <Link
           href="/governance-models"

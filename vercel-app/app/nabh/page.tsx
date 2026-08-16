@@ -114,7 +114,11 @@ export default function NabhPage() {
         <p className="text-sm text-slate-600 leading-relaxed">
           e-Sushrut Clinic / HMIS lite is an NHA product on ABDM M1-M4. It is not a NABH
           objective element. Digital Health 2nd Ed already talks interoperability. Do not
-          confuse the SaaS with this bar.
+          confuse the SaaS with this bar. Product map:{' '}
+          <Link href="/abdm" className="text-emerald-800 underline decoration-emerald-200 hover:decoration-emerald-800 transition-colors">
+            /abdm
+          </Link>
+          .
         </p>
       </section>
 
@@ -261,6 +265,12 @@ export default function NabhPage() {
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← CDSCO alignment
+        </Link>
+        <Link
+          href="/abdm"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← ABDM alignment
         </Link>
       </div>
     </main>

@@ -149,6 +149,12 @@ export default function ConfigureScreen() {
               CDSCO alignment
             </Link>
             <Link
+              href="/abdm"
+              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+            >
+              ABDM alignment
+            </Link>
+            <Link
               href="/history"
               className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
             >
