@@ -177,6 +177,24 @@ export default function SahiPage() {
         </div>
       </section>
 
+      {/* ── Pillar IV · BODH (chip, not a new route) ────────────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Pillar IV</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-sky-50 text-sky-800 border-sky-200">
+            BODH
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          Pillar IV is research, innovation, and evidence generation. PIB (PRID 2229226,
+          17 February 2026) launched BODH with SAHI as a benchmarking platform for
+          testing health-AI tools before scale. It is voluntary. It is not a CDSCO or
+          NABH gate. The Mirror does not run BODH benchmarks and does not give BODH
+          its own route. Academic host names are omitted here; estate records still
+          disagree.
+        </p>
+      </section>
+
       {/* ── The gap ─────────────────────────────────────────────────── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-6 bg-white/40">
         <h2 className="text-sm font-medium text-slate-800 mb-3">Where SAHI is strong &mdash; and where it is silent</h2>
@@ -333,6 +351,18 @@ export default function SahiPage() {
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← DPDP alignment
+        </Link>
+        <Link
+          href="/nabh"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← NABH alignment
+        </Link>
+        <Link
+          href="/cdsco"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← CDSCO alignment
         </Link>
         <Link
           href="/governance-models"

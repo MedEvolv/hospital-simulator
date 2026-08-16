@@ -175,6 +175,25 @@ export default function DpdpPage() {
         </div>
       </section>
 
+      {/* ── CERT-In dual clock (chip, not a new route) ───────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Section 9 · dual clock</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
+            CERT-In 6-hour
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          DPDP §9 is notice to the Board and to data principals after a personal-data
+          breach. CERT-In Directions of 28 April 2022 (IT Act s.70B) are a separate
+          binding clock: listed cyber incidents, including attacks on AI/ML systems in
+          Annexure I, must be reported to CERT-In within 6 hours. A hospital ransomware
+          event can hit both. The Mirror does not file those notices. It rehearses the
+          governance cascade (see The Credential Cascade) before either clock starts on
+          live systems. CERT-In has no Mirror route of its own.
+        </p>
+      </section>
+
       {/* ── The gap DPDP cannot reach ────────────────────────────── */}
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
@@ -283,6 +302,18 @@ export default function DpdpPage() {
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← SAHI alignment
+        </Link>
+        <Link
+          href="/nabh"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← NABH alignment
+        </Link>
+        <Link
+          href="/cdsco"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← CDSCO alignment
         </Link>
         <Link
           href="/governance-models"

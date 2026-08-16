@@ -185,6 +185,18 @@ export default function GovernanceModelsPage() {
           ← DPDP alignment
         </Link>
         <Link
+          href="/nabh"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← NABH alignment
+        </Link>
+        <Link
+          href="/cdsco"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← CDSCO alignment
+        </Link>
+        <Link
           href="/"
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
