@@ -1,18 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'
+import { SESSION_COOKIE } from '@/lib/auth/config'
+import { decideAuth } from '@/lib/auth/gate'
 
-export function middleware(request: NextRequest) {
-  const hostname = request.headers.get("host")?.split(":")[0];
+export async function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host')?.split(':')[0]
 
-  if (hostname === "sandbox-v2.archlife.in") {
-    const url = request.nextUrl.clone();
-    url.protocol = "https:";
-    url.host = "mirror.archlife.in";
-    return NextResponse.redirect(url, 308);
+  if (hostname === 'sandbox-v2.archlife.in') {
+    const url = request.nextUrl.clone()
+    url.protocol = 'https:'
+    url.host = 'mirror.archlife.in'
+    return NextResponse.redirect(url, 308)
   }
 
-  return NextResponse.next();
+  const decision = await decideAuth({
+    pathname: request.nextUrl.pathname,
+    sessionCookie: request.cookies.get(SESSION_COOKIE)?.value,
+    secret: process.env.OTP_SESSION_SECRET ?? '',
+  })
+
+  if (decision.type === 'redirect') {
+    return NextResponse.redirect(new URL(decision.location, request.url))
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: "/:path*",
-};
+  matcher: '/:path*',
+}

@@ -269,7 +269,7 @@ export default function HistoryPage() {
       <div className="border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-[10px] font-mono text-slate-500 hover:text-slate-700 transition-colors uppercase tracking-widest">
+            <Link href="/home" className="text-[10px] font-mono text-slate-500 hover:text-slate-700 transition-colors uppercase tracking-widest">
               ← Home
             </Link>
             <span className="text-slate-800">|</span>
@@ -350,7 +350,7 @@ export default function HistoryPage() {
                 : 'Account-linked history is not enabled here. Run a new scenario to continue in the current browser session.'}
             </p>
             <Link
-              href="/"
+              href="/home"
               className="inline-block bg-slate-200 text-slate-900 font-medium text-sm px-5 py-2.5 rounded-lg hover:bg-white transition-colors"
             >
               Run a scenario

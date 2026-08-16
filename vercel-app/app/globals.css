@@ -23,3 +23,26 @@
     }
   }
 }
+
+@layer components {
+  @keyframes im-splash-drift {
+    from {
+      transform: scale(1.04) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.09) translate3d(-1.4%, 0.8%, 0);
+    }
+  }
+
+  .im-splash-bg {
+    animation: im-splash-drift 56s ease-in-out alternate infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .im-splash-bg {
+      animation: none;
+      transform: none;
+    }
+  }
+}

@@ -88,7 +88,7 @@ export default function DpdpPage() {
         <p className="text-xs font-mono text-slate-500 tracking-widest uppercase">
           Institutional Mirror v2 · Policy Alignment
         </p>
-        <Link href="/" className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors">
+        <Link href="/home" className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors">
           ← Home
         </Link>
       </div>

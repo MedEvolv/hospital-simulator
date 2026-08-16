@@ -197,7 +197,7 @@ export default function GovernanceModelsPage() {
           ← CDSCO alignment
         </Link>
         <Link
-          href="/"
+          href="/home"
           className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
         >
           ← Run a scenario

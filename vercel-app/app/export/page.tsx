@@ -202,7 +202,7 @@ export default function ExportPage() {
             </button>
           )}
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
           >
             New scenario
@@ -220,7 +220,7 @@ export default function ExportPage() {
             Export requires a completed scenario run. Run a scenario first to generate exportable artifacts.
           </p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="bg-slate-50 text-slate-950 font-medium py-2.5 px-6 rounded-lg hover:bg-white transition-colors text-sm"
           >
             Run a scenario →

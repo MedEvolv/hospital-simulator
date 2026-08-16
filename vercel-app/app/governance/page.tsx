@@ -82,7 +82,7 @@ export default function GovernancePage() {
             </button>
           )}
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
           >
             New scenario
@@ -102,7 +102,7 @@ export default function GovernancePage() {
             You can also use it standalone with default metrics as a training exercise.
           </p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="mt-3 text-xs text-slate-600 border border-slate-300 hover:border-slate-500 px-3 py-1.5 rounded transition-colors"
           >
             Run a scenario first →

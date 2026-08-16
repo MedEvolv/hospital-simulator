@@ -197,7 +197,7 @@ export default function ResultsScreen() {
             </p>
           </div>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="shrink-0 text-xs font-medium text-sky-700 border border-sky-700 hover:bg-sky-900/40 px-3 py-1.5 rounded transition-colors"
           >
             Run your own →
