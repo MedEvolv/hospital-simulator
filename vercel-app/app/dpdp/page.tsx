@@ -14,12 +14,12 @@ const SECTIONS: DSection[] = [
   {
     sec: '5 & 6', label: 'Consent · Purpose Limitation',
     quote: 'Consent must be free, informed, specific, conditional, and capability-based. Consent must be unbundled from other matters and is limited to the purpose for which it was given.',
-    response: 'The Mirror processes no personal data. It operates on synthetic institutional data generated for governance rehearsal, so no consent basis is required — a structural compliance posture rather than a workflow. The ontological disclaimer visible on every screen encodes the single, fixed purpose (governance rehearsal, not clinical work), so there is no purpose-drift liability. Where a hospital wants to pilot an AI tool on live data, the consent audit is step one of its Monday-Morning Protocol; the Mirror rehearse that audit under stress, ahead of any real deployment.',
+    response: 'The Mirror processes no personal data. It operates on synthetic institutional data generated for governance rehearsal, so no consent basis is required — a structural compliance posture rather than a workflow. The ontological disclaimer visible on every screen encodes the single, fixed purpose (governance rehearsal, not clinical work), so there is no purpose-drift liability. Where a hospital wants to pilot an AI tool on live data, the consent audit is step one of its Monday-Morning Protocol; the Mirror rehearses that audit under stress, ahead of any real deployment.',
   },
   {
     sec: '8', label: 'Automated Decision-Making & Profiling',
     quote: 'The data fiduciary shall give the data principal meaningful information about the logic involved, and at least one human intervention to obtain and convey their point of view, where a decision is taken based solely on automated processing.',
-    response: 'The Mirror does not invoke §8 — it rehearses it. Its refusal mechanism produces, in simulation: a logged decision the system could not make, a stated reason (value misalignment / uncertainty band exceeded / harm threshold), and a human-review handoff. This is the audit trail §8(4) asks for, pre-deployment. Where §8 guarantees a human review path, the Mirror rehearse whether that path stays live: the value-drift signal measures whether human review is degrading into automation bias — the quality question §8(3) guarantees but does not verify.',
+    response: 'The Mirror does not invoke §8 — it rehearses it. Its refusal mechanism produces, in simulation: a logged decision the system could not make, a stated reason (value misalignment / uncertainty band exceeded / harm threshold), and a human-review handoff. This is the audit trail §8(4) asks for, pre-deployment. Where §8 guarantees a human review path, the Mirror rehearses whether that path stays live: the value-drift signal measures whether human review is degrading into automation bias — the quality question §8(3) guarantees but does not verify.',
   },
   {
     sec: '9', label: 'Data Breach Notification',
@@ -275,6 +275,22 @@ export default function DpdpPage() {
           and were revalidated August 2026.
         </p>
       </section>
+
+      {/* ── Related ─────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-4 mt-8 mb-2">
+        <Link
+          href="/sahi"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← SAHI alignment
+        </Link>
+        <Link
+          href="/governance-models"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← Governance Models
+        </Link>
+      </div>
     </main>
   )
 }

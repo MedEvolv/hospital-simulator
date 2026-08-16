@@ -326,6 +326,22 @@ export default function SahiPage() {
         </p>
       </section>
 
+      {/* ── Related ─────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-4 mb-8">
+        <Link
+          href="/dpdp"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← DPDP alignment
+        </Link>
+        <Link
+          href="/governance-models"
+          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded transition-colors"
+        >
+          ← Governance Models
+        </Link>
+      </div>
+
       {/* ── Citation ────────────────────────────────────────────────── */}
       <section className="border-t border-slate-200 pt-6">
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
