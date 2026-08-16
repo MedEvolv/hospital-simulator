@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CHALLENGE_COOKIE, SESSION_COOKIE, OTP_TTL_SECONDS } from '@/lib/auth/config'
+import { ACCESS_COPY } from '@/lib/auth/access-types'
+import { getAccessStatus } from '@/lib/auth/access-lookup'
+import { CHALLENGE_COOKIE, OTP_TTL_SECONDS } from '@/lib/auth/config'
+import { cookieBase } from '@/lib/auth/cookies'
 import { createChallengeToken, generateOtp, isValidEmail, normalizeEmail } from '@/lib/auth/otp'
 import { getOtpProvider, sendOtpEmail, sendSupabaseOtp } from '@/lib/auth/provider'
 import { sessionSecretConfigured } from '@/lib/auth/session'
 
-function cookieBase() {
-  return {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    path: '/',
-  }
+function deny(status: string, error: string, extra: Record<string, unknown> = {}) {
+  return NextResponse.json({ ok: false, status, error, ...extra }, { status: 403 })
 }
 
 export async function POST(req: NextRequest) {
@@ -29,6 +27,19 @@ export async function POST(req: NextRequest) {
       { ok: false, configured: false, error: 'OTP not configured' },
       { status: 503 },
     )
+  }
+
+  const access = await getAccessStatus(email)
+  if (access.status !== 'approved') {
+    if (access.status === 'pending') {
+      return deny('pending', ACCESS_COPY.received, { setup: access.setup })
+    }
+    if (access.status === 'denied' || access.status === 'revoked') {
+      return deny(access.status, ACCESS_COPY.notOpened, { setup: access.setup })
+    }
+    return deny('unknown', access.setup ? ACCESS_COPY.setup : ACCESS_COPY.requestFirst, {
+      setup: access.setup,
+    })
   }
 
   try {

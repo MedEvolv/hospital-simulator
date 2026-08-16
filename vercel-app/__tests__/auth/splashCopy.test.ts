@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import { ACCESS_COPY, ACCESS_LABELS } from '@/lib/auth/access-types'
 
 describe('splash vs project home copy', () => {
   it('does not put the old homepage argument on the public splash', () => {
@@ -10,5 +11,35 @@ describe('splash vs project home copy', () => {
     expect(door).toMatch(/This side is the ward/)
     expect(door).not.toMatch(/What did this cost us/)
     expect(home).toMatch(/What did this cost us/)
+  })
+
+  it('puts intake on the splash as the first action', () => {
+    const door = readFileSync(join(__dirname, '../../components/SplashDoor.tsx'), 'utf8')
+    const intake = readFileSync(join(__dirname, '../../components/AccessIntake.tsx'), 'utf8')
+    const types = readFileSync(join(__dirname, '../../lib/auth/access-types.ts'), 'utf8')
+    expect(door).toMatch(/AccessIntake/)
+    expect(ACCESS_LABELS.full_name).toBe('Name')
+    expect(ACCESS_LABELS.organisation).toBe('Company')
+    expect(ACCESS_LABELS.role).toBe('Position')
+    expect(ACCESS_LABELS.work_email).toBe('Email')
+    expect(ACCESS_LABELS.linkedin_url).toBe('LinkedIn page')
+    expect(intake).toContain('ACCESS_LABELS.full_name')
+    expect(intake).toContain('ACCESS_LABELS.organisation')
+    expect(intake).toContain('ACCESS_LABELS.role')
+    expect(intake).toContain('ACCESS_LABELS.work_email')
+    expect(intake).toContain('ACCESS_LABELS.linkedin_url')
+    expect(intake).toContain('ACCESS_LABELS.organisation_type')
+    expect(intake).toContain('ACCESS_LABELS.city')
+    expect(intake).toContain('ACCESS_LABELS.mirror_for')
+    expect(intake).toContain('ACCESS_LABELS.use_sentence')
+    expect(intake).toContain('ACCESS_COPY.tickContact')
+    expect(intake).toContain('ACCESS_COPY.received')
+    expect(types).toContain(ACCESS_COPY.received)
+    expect(intake).not.toMatch(/Nimisha|HealthSutra|ABHA|Google login|fiduciary|programme name|how they found|mail-merge/i)
+    expect(intake).not.toMatch(/\u2014/)
+    const queue = readFileSync(join(__dirname, '../../app/admin/access/page.tsx'), 'utf8')
+    expect(queue).toMatch(/mailto:/)
+    expect(queue).toMatch(/normalizeLinkedInUrl/)
+    expect(queue).toContain('ACCESS_COPY.outreachNote')
   })
 })

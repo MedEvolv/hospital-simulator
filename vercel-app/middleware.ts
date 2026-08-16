@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SESSION_COOKIE } from '@/lib/auth/config'
+import { clearAuthCookies } from '@/lib/auth/cookies'
 import { decideAuth } from '@/lib/auth/gate'
 
 export async function middleware(request: NextRequest) {
@@ -19,7 +20,11 @@ export async function middleware(request: NextRequest) {
   })
 
   if (decision.type === 'redirect') {
-    return NextResponse.redirect(new URL(decision.location, request.url))
+    const res = NextResponse.redirect(new URL(decision.location, request.url))
+    if (decision.clearSession) {
+      clearAuthCookies(res)
+    }
+    return res
   }
 
   return NextResponse.next()

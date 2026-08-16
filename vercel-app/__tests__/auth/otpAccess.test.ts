@@ -8,8 +8,10 @@ import { createChallengeToken, generateOtp, isValidEmail, readChallengeToken, ve
 import { createSessionToken, readSessionToken } from '@/lib/auth/session'
 import { decideAuth } from '@/lib/auth/gate'
 import { isGatedPath, isPublicPath, safeNextPath } from '@/lib/auth/config'
+import { approvedStubRow, putMemoryAccess, resetMemoryAccess } from '@/lib/auth/access-memory'
 
 const SECRET = 'test-otp-session-secret-32chars-min'
+const APPROVED = 'approved@lab.in'
 
 describe('public vs gated paths', () => {
   it('keeps the splash public and the old homepage gated', () => {
@@ -21,6 +23,8 @@ describe('public vs gated paths', () => {
     expect(isGatedPath('/cdsco')).toBe(true)
     expect(isGatedPath('/governance-models')).toBe(true)
     expect(isGatedPath('/governance')).toBe(true)
+    expect(isGatedPath('/admin/access')).toBe(true)
+    expect(isGatedPath('/admin')).toBe(false)
     expect(isPublicPath('/api/auth/request')).toBe(true)
     expect(isPublicPath('/api/auth/verify')).toBe(true)
   })
@@ -61,27 +65,50 @@ describe('OTP local verify (stub path)', () => {
 })
 
 describe('middleware gate', () => {
+  const env = { ...process.env }
+
+  beforeEach(() => {
+    resetMemoryAccess()
+    process.env = { ...env, ACCESS_STORE: 'memory' }
+    putMemoryAccess(approvedStubRow(APPROVED))
+  })
+
+  afterEach(() => {
+    process.env = { ...env }
+    resetMemoryAccess()
+  })
+
   it('lets unauthenticated visitors stay on the splash', async () => {
     const decision = await decideAuth({ pathname: '/', sessionCookie: null, secret: SECRET })
     expect(decision).toEqual({ type: 'next' })
   })
 
   it('redirects unauthenticated explainer and home routes to the splash', async () => {
-    for (const pathname of ['/dpdp', '/sahi', '/nabh', '/cdsco', '/governance-models', '/governance', '/home']) {
+    for (const pathname of ['/dpdp', '/sahi', '/nabh', '/cdsco', '/governance-models', '/governance', '/home', '/admin/access']) {
       const decision = await decideAuth({ pathname, sessionCookie: null, secret: SECRET })
       expect(decision.type).toBe('redirect')
       if (decision.type === 'redirect') {
         expect(decision.location.startsWith('/')).toBe(true)
-        expect(decision.location.includes('/dpdp') || decision.location === '/' || decision.location.startsWith('/?next=')).toBe(true)
+        expect(decision.clearSession).toBeUndefined()
       }
     }
   })
 
-  it('lets a valid session into /home and /dpdp', async () => {
-    const cookie = await createSessionToken('doc@hospital.in', SECRET)
+  it('lets a valid approved session into /home and /dpdp', async () => {
+    const cookie = await createSessionToken(APPROVED, SECRET)
     const home = await decideAuth({ pathname: '/home', sessionCookie: cookie, secret: SECRET })
     const dpdp = await decideAuth({ pathname: '/dpdp', sessionCookie: cookie, secret: SECRET })
     expect(home).toEqual({ type: 'next' })
     expect(dpdp).toEqual({ type: 'next' })
+  })
+
+  it('clears a session cookie when the email is revoked', async () => {
+    putMemoryAccess(approvedStubRow(APPROVED, { status: 'revoked', approved_at: null, revoked_at: new Date().toISOString() }))
+    const cookie = await createSessionToken(APPROVED, SECRET)
+    const decision = await decideAuth({ pathname: '/home', sessionCookie: cookie, secret: SECRET })
+    expect(decision.type).toBe('redirect')
+    if (decision.type === 'redirect') {
+      expect(decision.clearSession).toBe(true)
+    }
   })
 })

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ACCESS_COPY } from '@/lib/auth/access-types'
+import { getAccessStatus } from '@/lib/auth/access-lookup'
 import {
   CHALLENGE_COOKIE,
   SESSION_COOKIE,
@@ -6,6 +8,7 @@ import {
   DEFAULT_AFTER_LOGIN,
   safeNextPath,
 } from '@/lib/auth/config'
+import { cookieBase } from '@/lib/auth/cookies'
 import {
   bumpChallengeAttempts,
   isValidEmail,
@@ -15,15 +18,6 @@ import {
 } from '@/lib/auth/otp'
 import { getOtpProvider, verifySupabaseOtp } from '@/lib/auth/provider'
 import { createSessionToken, sessionSecretConfigured } from '@/lib/auth/session'
-
-function cookieBase() {
-  return {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    path: '/',
-  }
-}
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
@@ -41,6 +35,19 @@ export async function POST(req: NextRequest) {
       { ok: false, configured: false, error: 'OTP not configured' },
       { status: 503 },
     )
+  }
+
+  const access = await getAccessStatus(email)
+  if (access.status !== 'approved') {
+    const error =
+      access.status === 'pending'
+        ? ACCESS_COPY.received
+        : access.status === 'unknown'
+          ? ACCESS_COPY.requestFirst
+          : ACCESS_COPY.notOpened
+    const res = NextResponse.json({ ok: false, status: access.status, error }, { status: 403 })
+    res.cookies.set(CHALLENGE_COOKIE, '', { ...cookieBase(), maxAge: 0 })
+    return res
   }
 
   const challenge = await readChallengeToken(req.cookies.get(CHALLENGE_COOKIE)?.value, secret)
@@ -63,6 +70,16 @@ export async function POST(req: NextRequest) {
     } else {
       res.cookies.set(CHALLENGE_COOKIE, '', { ...cookieBase(), maxAge: 0 })
     }
+    return res
+  }
+
+  const still = await getAccessStatus(email)
+  if (still.status !== 'approved') {
+    const res = NextResponse.json(
+      { ok: false, status: still.status, error: ACCESS_COPY.notOpened },
+      { status: 403 },
+    )
+    res.cookies.set(CHALLENGE_COOKIE, '', { ...cookieBase(), maxAge: 0 })
     return res
   }
 

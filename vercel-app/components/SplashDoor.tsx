@@ -3,13 +3,16 @@
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { AccessIntake } from '@/components/AccessIntake'
 import { OtpLogin } from '@/components/OtpLogin'
+import { ACCESS_COPY } from '@/lib/auth/access-types'
 import { safeNextPath } from '@/lib/auth/config'
 
 function SplashInner() {
   const params = useSearchParams()
   const nextPath = safeNextPath(params.get('next'))
   const [inside, setInside] = useState(false)
+  const [door, setDoor] = useState<'intake' | 'otp'>('intake')
 
   useEffect(() => {
     let cancelled = false
@@ -61,8 +64,8 @@ function SplashInner() {
 
       <div className="relative z-20 px-4 pb-6 sm:absolute sm:inset-0 sm:flex sm:items-center sm:justify-center sm:px-4 sm:pb-0">
         <section
-          aria-label="OTP login"
-          className="im-glass-card w-full max-w-sm mx-auto rounded-2xl border border-white/30 bg-black/35 backdrop-blur-md shadow-[0_24px_80px_rgba(0,0,0,0.55)] p-6 sm:p-7"
+          aria-label="Access intake"
+          className="im-glass-card w-full max-w-sm mx-auto rounded-2xl border border-white/30 bg-black/35 backdrop-blur-md shadow-[0_24px_80px_rgba(0,0,0,0.55)] p-6 sm:p-7 max-h-[min(90dvh,46rem)] overflow-y-auto"
         >
           <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/60 mb-3">
             Institutional Mirror
@@ -74,7 +77,7 @@ function SplashInner() {
             This side is the ward. The reflection is the rehearsal.
           </p>
           <p className="text-xs text-white/65 leading-relaxed mb-6">
-            OTP for practitioners who will use this with a real institution. The alignment work is not a public brief. Not NABH certification. Not a claim that the Mirror certifies a lab.
+            Practitioner door for a real institution. Alignment work is not a public brief. Not NABH certification. Not a claim that the Mirror certifies a lab.
           </p>
           {inside ? (
             <Link
@@ -83,11 +86,22 @@ function SplashInner() {
             >
               Enter the work
             </Link>
+          ) : door === 'intake' ? (
+            <AccessIntake onSwitchToOtp={() => setDoor('otp')} />
           ) : (
-            <OtpLogin nextPath={nextPath} />
+            <div className="space-y-4">
+              <OtpLogin nextPath={nextPath} />
+              <button
+                type="button"
+                onClick={() => setDoor('intake')}
+                className="w-full text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white"
+              >
+                {ACCESS_COPY.backToIntake}
+              </button>
+            </div>
           )}
           <p className="mt-5 text-[10px] leading-relaxed text-white/45">
-            We use your email only to prove you can receive a code and open this door. We do not train on it. We do not score you. Synthetic scenarios stay synthetic.
+            {ACCESS_COPY.otpPrivacy}
           </p>
         </section>
       </div>
