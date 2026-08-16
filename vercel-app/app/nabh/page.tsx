@@ -16,19 +16,19 @@ const CHAPTERS = [
 const SCENARIOS = [
   {
     name: 'The Hallucinated Discharge Summary',
-    map: 'IMS.2.c tells a hospital to use a clinical decision support system to create customized care plans. The standard does not ask whether a tired resident still reads the output. The Mirror rehearses that review collapsing under Friday bed-pressure.',
+    map: 'IMS.2 is the IT-operations and data-driven-decision standard. IMS.2.c (Excellence) asks the hospital to use a clinical decision support system to create customized care plans. That is an adopt instruction. It does not ask whether a tired resident still reads the output. The Mirror rehearses that review collapsing under Friday bed-pressure.',
   },
   {
     name: 'Triage AI Under Mass Casualty Conditions',
-    map: 'DOM and IMS assume digital operations and decision support are standing. They do not score what happens when Level-2 triage suggestions become de-facto Level-3 under a 40-patient surge. The Mirror does.',
+    map: 'DOM is Digital Operations Management: standing IT, application monitoring, disaster recovery, access control. IMS.2.c treats CDSS as an Excellence adopt. Neither chapter scores what happens when Level-2 triage suggestions become de-facto Level-3 under a 40-patient surge. The Mirror does.',
   },
   {
     name: 'The Invisible Queue',
-    map: 'Throughput dashboards sit inside IMS excellence language. Equity of who is delayed is not an AI-governance objective element. The scheduling-optimiser scenario makes that harm visible without pretending NABH already scores it.',
+    map: 'IMS.2.d (Commitment) asks for a digital dashboard of quality-of-care. IMS.2.f (Excellence) asks for analytical dashboards. Equity of who is delayed is not an objective element. The scheduling-optimiser scenario makes that harm visible without pretending NABH already scores it.',
   },
   {
     name: 'The Credential Cascade',
-    map: 'The public Digital Health Accreditation page names cybersecurity and patient-data privacy as programme scope. It is still a maturity bar, not a 6-hour incident clock. CERT-In lives on the DPDP page as the dual clock. The Mirror rehearses credential failure under clinical load.',
+    map: 'DIS.2 is data-security controls against breach. DOM.5 is access control, including digital credential and authentication management (DOM.5.a, Core). That is a maturity bar, not a 6-hour incident clock. CERT-In lives on the DPDP page as the dual clock. The Mirror rehearses credential failure under clinical load.',
   },
 ]
 
@@ -39,7 +39,7 @@ const LIMITS = [
   },
   {
     title: 'No AI-governance OE today',
-    body: 'The 2nd Edition is a digital-maturity standard. CDSS appears as an instruction to adopt (IMS.2.c). There is no objective element that requires an institutional AI governance unit, an override log, or a failure-mode rehearsal.',
+    body: 'The 2nd Edition is a digital-maturity standard. CDSS appears as IMS.2.c, scored Excellence. Artificial intelligence and machine learning appear in the introductory global-trends essay, not as objective elements. There is no OE that requires an institutional AI governance unit, an override log, or a failure-mode rehearsal.',
   },
   {
     title: 'Two instruments, not one',
@@ -90,7 +90,7 @@ export default function NabhPage() {
           <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">2nd Edition, September 2025 (hospital standard)</p>
           <ul className="text-sm text-slate-600 space-y-1">
             <li>Eight chapters: three clinical, five non-clinical</li>
-            <li>182 objective elements: 17 Core, 57 Commitment, 53 Achievement, 55 Excellence</li>
+            <li>38 standards, 182 objective elements: 17 Core, 57 Commitment, 53 Achievement, 55 Excellence</li>
             <li>Core elements are mandatorily assessed each cycle</li>
           </ul>
         </div>
@@ -118,9 +118,11 @@ export default function NabhPage() {
           ))}
         </div>
         <p className="text-xs text-slate-500 leading-relaxed">
-          Chapter titles and OE counts are from the table of contents and foreword of the
-          2nd Edition already held in the estate. Individual objective-element text is not
-          republished here. The printed/full standard is listed at Rs 1,000 on nabh.co.
+          Chapter titles and counts are from the 2nd Edition digital guidebook (September 2025,
+          ISBN 978-81-980234-0-7). NABH owns this text. This page does not republish the 182
+          objective elements, long clause wording, or tables. The full OE list is NABH&rsquo;s
+          document. The nabh.co shop listing (Rs 1,000) is the printed edition; that print copy
+          is not used here.
         </p>
       </section>
 
@@ -128,14 +130,15 @@ export default function NabhPage() {
         <h2 className="text-sm font-medium text-slate-800 mb-3">Where NABH is strong, and where it is silent</h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-3">
           NABH Digital Health is authoritative on <span className="text-slate-800">whether the hospital has
-          standing digital operations:</span> infrastructure, HIS/EMR use, a named DPO under DPDP,
-          dashboards, and CDSS adoption.
+          standing digital operations:</span> infrastructure (DIS), operations and access control (DOM),
+          a named Data Protection Officer under DPDP (IMS.2.b, Excellence), quality dashboards
+          (IMS.2.d), and CDSS adoption (IMS.2.c).
         </p>
         <p className="text-sm text-slate-600 leading-relaxed">
           It is <span className="text-slate-800">silent on AI governance itself:</span> no requirement to
           name an AI owner, keep an override log, or rehearse automation bias under surge.
-          IMS.2.c (held local copy) asks the hospital to use a CDSS for customized care plans.
-          Examples given include drug-interaction alerts, clinical guidelines, and diagnostic
+          IMS.2.c asks the hospital to use a CDSS for customized care plans. Interpretation
+          examples include drug-interaction alerts, clinical guidelines, and diagnostic
           decision support. That is an adopt instruction, not a failure-mode rehearsal.
         </p>
       </section>
@@ -202,7 +205,7 @@ export default function NabhPage() {
           >
             <span className="italic">Digital Health Accreditation Programme for Hospitals.</span>
           </a>{' '}
-          Public explainer, not the full OE list.
+          Public explainer. The Mirror does not certify.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed mb-2">
           NABH.{' '}
@@ -214,13 +217,14 @@ export default function NabhPage() {
           >
             <span className="italic">Digital Health Standards shop page.</span>
           </a>{' '}
-          2nd Edition for hospitals listed at Rs 1,000 (scraped 16 August 2026). Full OE
-          text is behind that purchase. This page does not dump it.
+          Printed 2nd Edition listed at Rs 1,000 (scraped 16 August 2026). That print
+          edition is not the file used for this page and has not been purchased here.
         </p>
         <p className="text-xs text-slate-600 leading-relaxed">
           HIS/EMR product certification is a separate instrument (1st Edition September 2024;
-          2nd Edition draft public notice 22 July 2026). Chapter titles cited above come from
-          an estate-held copy of the hospital 2nd Edition, not from a new shop download.
+          2nd Edition draft public notice 22 July 2026). Named codes on this page (IMS.2.c,
+          IMS.2.d, IMS.2.f, IMS.2.b, DIS.2, DOM.5.a) are cited from the digital guidebook,
+          with short paraphrase only. The 182-item OE list stays in NABH&rsquo;s document.
           Links revalidated August 2026.
         </p>
       </section>
