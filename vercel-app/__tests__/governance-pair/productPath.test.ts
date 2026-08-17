@@ -59,7 +59,7 @@ describe('product path invokes the HRM pair', () => {
         audited: boolean
         plan: string[]
         instrument_keys: string[]
-        citations: Array<{ id: string; source_pointer: string }>
+        citations: Array<{ id: string; claim_type: string }>
       }
       audited_steps: Array<{ tier: string }>
     }

@@ -13,7 +13,6 @@
 import type { ScenarioConfig } from '@/lib/scenarios/schema'
 import {
   attachCitations,
-  type GraphEdgeCitation,
   type InstrumentCitation,
 } from './citations'
 import policy from './governance-policy.json'
@@ -98,7 +97,6 @@ export interface AdvisorResult {
   engine: 'knowledge-layer'
   audited_step_count?: number
   citations: InstrumentCitation[]
-  citation_edges: GraphEdgeCitation[]
 }
 
 export interface AuditorResult {
@@ -197,6 +195,18 @@ export function advise(situation: string): AdvisorResult {
   if (/\bbodhi(?:-s|-m)?\b/.test(low) && !/\bbodh\b/.test(low)) {
     hits.delete('instrument--bodh-2026')
   }
+  if (/\bdpdp\b/.test(low)) {
+    hits.add('instrument--dpdp-act-2023')
+  }
+  if (/\b(?:mdr|cdsco)\b/.test(low)) {
+    hits.add('instrument--cdsco-medical-device-rules')
+  }
+  if (/\babdm\b/.test(low)) {
+    hits.add('instrument--abdm')
+  }
+  if (/\bnabh\b/.test(low)) {
+    hits.add('instrument--nabh-digital-health-standards')
+  }
 
   const instruments = validateCitations([...hits].sort())
   const pillars = new Set<string>()
@@ -227,7 +237,6 @@ export function advise(situation: string): AdvisorResult {
     plan: composePlan(instruments),
     engine: 'knowledge-layer',
     citations: cited.citations,
-    citation_edges: cited.citation_edges,
   }
 }
 

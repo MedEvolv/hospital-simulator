@@ -58,15 +58,7 @@ interface ScenarioRunBlock {
         id: string
         title: string
         layer: number[]
-        legal_force: string
         one_line_force: string
-        source_pointer: string
-      }>
-      citation_edges?: Array<{
-        id: string
-        type: string
-        from_id: string
-        to_id: string
         claim_type: string
       }>
     }
@@ -310,12 +302,9 @@ export default function ResultsScreen() {
                     {' · layer '}
                     {cite.layer.join('/')}
                     {' · '}
-                    {cite.legal_force}
+                    {cite.claim_type}
                     {'. '}
                     {cite.one_line_force}
-                    {' ['}
-                    {cite.source_pointer}
-                    {']'}
                   </li>
                 ))}
               </ul>

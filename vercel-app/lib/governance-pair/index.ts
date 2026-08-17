@@ -14,6 +14,5 @@ export {
   citationPack,
   citationsForInstrumentKeys,
   payloadHasAxisScores,
-  type GraphEdgeCitation,
   type InstrumentCitation,
 } from './citations'

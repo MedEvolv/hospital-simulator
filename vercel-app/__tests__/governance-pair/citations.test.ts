@@ -9,6 +9,7 @@ import {
   citationPack,
   pairForScenario,
   payloadHasAxisScores,
+  advise,
 } from '@/lib/governance-pair'
 import { computeFiveSignals } from '@/lib/scenarios/runner'
 import { getScenarioById } from '@/lib/scenarios/registry'
@@ -17,25 +18,27 @@ import type { PerformanceScores } from '@/lib/types'
 const ROOT = join(__dirname, '../..')
 
 describe('run path cites HGR instruments from the pack', () => {
-  it('citation pack has ids/titles/layer/force/source and no axis scores', () => {
+  it('citation pack has id/title/layer/one-line force/claim_type and no axis scores', () => {
     const pack = citationPack()
     expect(pack.instruments.length).toBe(22)
-    expect(pack.edges.length).toBeGreaterThan(0)
+    expect((pack as { edges?: unknown }).edges).toBeUndefined()
     const dpdp = pack.instruments.find((row) => row.id === 'IND-LAW-DPDP-001')
     expect(dpdp?.title).toMatch(/Digital Personal Data Protection Act/)
     expect(dpdp?.layer).toEqual([1])
-    expect(dpdp?.legal_force).toBe('binding_statute')
-    expect(dpdp?.source_pointer).toBe('SRC-IND-MEITY-DPDP-ACT-2023')
+    expect(dpdp?.one_line_force).toMatch(/Binding statute/)
+    expect(dpdp?.claim_type).toBe('INFERENCE')
     expect(JSON.stringify(pack)).not.toMatch(/regulatory_significance/)
     expect(JSON.stringify(pack)).not.toMatch(/trajectory_significance/)
     expect(JSON.stringify(pack)).not.toMatch(/mandatory:\s*false/)
     const nhrp = pack.instruments.find((row) => row.id === 'IND-POL-NHRP-001')
+    expect(nhrp?.claim_type).toBe('UNKNOWN')
     expect(nhrp?.one_line_force).toMatch(/draft SHALL/)
     expect(nhrp?.one_line_force).not.toMatch(/funded centre that is operating/)
     const bodh = pack.instruments.find((row) => row.id === 'IND-INF-BODH-001')
+    expect(bodh?.claim_type).toBe('UNKNOWN')
     expect(bodh?.one_line_force).toMatch(/PIB is not gazette/)
     const disha = pack.instruments.find((row) => row.id === 'IND-LAW-DISHA-000')
-    expect(disha?.legal_force).toBe('unknown')
+    expect(disha?.claim_type).toBe('UNKNOWN')
     expect(disha?.pair_key).toBeUndefined()
   })
 
@@ -49,6 +52,16 @@ describe('run path cites HGR instruments from the pack', () => {
     const packIds = new Set(citationPack().instruments.map((row) => row.id))
     expect(ids.every((id) => packIds.has(id))).toBe(true)
     expect(pair.advisor.citations.some((row) => row.id === 'IND-LAW-DPDP-001' || row.id === 'IND-POL-SAHI-001')).toBe(true)
+  })
+
+  it('a situation naming DPDP/MDR/ABDM/NABH attaches those four citations', () => {
+    const advice = advise('Hospital asks whether DPDP, MDR, ABDM, and NABH apply to this AI note.')
+    const ids = advice.citations.map((row) => row.id)
+    expect(ids).toContain('IND-LAW-DPDP-001')
+    expect(ids).toContain('IND-LAW-CDSCO-MDR-001')
+    expect(ids).toContain('IND-INF-ABDM-001')
+    expect(ids).toContain('IND-STD-NABH-DH-001')
+    expect(JSON.stringify(advice)).not.toContain('regulatory_significance')
   })
 
   it('run-scenario stores the pair that now carries citations', () => {
