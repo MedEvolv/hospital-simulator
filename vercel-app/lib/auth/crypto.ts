@@ -41,6 +41,18 @@ export async function hmacSha256Base64Url(secret: string, data: string): Promise
   return bytesToBase64Url(new Uint8Array(signature))
 }
 
+export async function hmacSha256Hex(secret: string, data: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data))
+  return Array.from(new Uint8Array(signature), (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 export async function sha256Base64Url(data: string): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', encoder.encode(data))
   return bytesToBase64Url(new Uint8Array(digest))

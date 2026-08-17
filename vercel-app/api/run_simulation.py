@@ -837,20 +837,81 @@ class handler(BaseHTTPRequestHandler):
 # GLP OPTIMAL ALLOCATION  (PyGuLP integration)
 # ==============================================================================
 
+# Four room-equivalent allocations. EIC is a count beside the model, not a Goal.
+# STI here is simulated ED room-flow (admissions / utilisation in scoring_engine),
+# held in tension with PSS/PES/SSS. It is not PIB consult volume, NHCX TAT,
+# SUGAM licence counts, NABH M3, or BODH launch. Those names are refused.
+# HGR two-axis ordinals (A binds-now / B trajectory) never enter this objective.
+GLP_ALLOCATION_GOALS = ("PSS", "PES", "SSS", "STI")
+
+FORBIDDEN_GLP_GOAL_PROXIES = (
+    "PIB", "282M", "consult_count", "NABH_M3", "M3", "BODH",
+    "SUGAM", "SUGAM-800", "NHCX", "NHCX_TAT", "TAT",
+    "CERT-In", "axis_a", "axis_b", "AXIS_A", "AXIS_B",
+    "hgr_axis", "ai_readiness", "licence_count", "grant_count",
+    "EIC",
+)
+
+HGR_AXIS_SCORE_KEYS = (
+    "axis_a", "axis_b", "axisA", "axisB", "hgr_axis_a", "hgr_axis_b",
+)
+
+
+def _assert_glp_goals_allowed(names) -> None:
+    """Refuse any Goal name that is not PSS/PES/SSS/STI.
+
+    PIB 282M, NABH M3, BODH launch, SUGAM-800, NHCX TAT, EIC, and HGR axis
+    A/B must never enter add_goal. Tests call this directly.
+    """
+    names = tuple(names)
+    extra = [n for n in names if n not in GLP_ALLOCATION_GOALS]
+    if extra:
+        raise ValueError(
+            "GLP add_goal refused: "
+            f"{extra}. Allowed allocation goals are {GLP_ALLOCATION_GOALS}. "
+            "PIB consult counts, NABH M3, BODH launch, SUGAM-800, NHCX TAT, "
+            "and HGR axis A/B are not goals. EIC is a count outside the objective."
+        )
+    if names != GLP_ALLOCATION_GOALS:
+        raise ValueError(
+            f"GLP goals must be exactly {GLP_ALLOCATION_GOALS}, got {names}"
+        )
+
+
+def _build_glp_goal_specs(params, actual_scores: dict):
+    """Build the four allocation goals. Extra keys on actual_scores are ignored."""
+    specs = [
+        ("PSS", params.safety_weight,     actual_scores.get("patient_safety_score", 0)),
+        ("PES", params.experience_weight, actual_scores.get("patient_experience_score", 0)),
+        ("SSS", params.staff_weight,      actual_scores.get("staff_stress_score", 0)),
+        ("STI", params.throughput_weight, actual_scores.get("system_throughput_index", 0)),
+    ]
+    _assert_glp_goals_allowed([name for name, _, _ in specs])
+    return specs
+
+
+def _hgr_axes_present_in_scores(actual_scores: dict) -> bool:
+    keys = {str(k) for k in (actual_scores or {})}
+    return any(k in keys or k.lower() in {x.lower() for x in keys} for k in HGR_AXIS_SCORE_KEYS)
+
+
 def _compute_glp_optimal(params, profile: str, actual_scores: dict) -> dict:
     """
     Compute the mathematically optimal resource allocation using Goal Linear
     Programming via PyGuLP (KCDH / AIDE Lab, IIT Bombay) and compare it to
     the actual simulation outcome.
 
-    Four weighted goals:
+    Four weighted goals (room-equivalent allocations):
       safety_weight     → PSS (Patient Safety Score)
       experience_weight → PES (Patient Experience Score)
       staff_weight      → SSS (Staff Stress Score)
-      throughput_weight → STI (System Throughput Index)
+      throughput_weight → STI (simulated ED flow — not national consult volume)
 
     EIC is a raw event count, not a weighted allocation dimension — reported
     alongside the GLP results without entering the objective function.
+
+    objective_value is the solver's weighted-deviation scalar. It is not a
+    run grade and must not be shown as one. HGR axis A/B never mix into it.
 
     PyGuLP API note:
       solve_weighted() returns a plain dict:
@@ -862,13 +923,17 @@ def _compute_glp_optimal(params, profile: str, actual_scores: dict) -> dict:
         }
     """
     total_rooms = PROFILE_ROOM_COUNTS.get(profile, 5)
+    actual_scores = actual_scores or {}
 
-    goal_specs = [
-        ("PSS", params.safety_weight,     actual_scores.get("patient_safety_score", 0)),
-        ("PES", params.experience_weight, actual_scores.get("patient_experience_score", 0)),
-        ("SSS", params.staff_weight,      actual_scores.get("staff_stress_score", 0)),
-        ("STI", params.throughput_weight, actual_scores.get("system_throughput_index", 0)),
-    ]
+    # Axis ordinals, if a caller stuffed them onto the score dict, stay unused.
+    if _hgr_axes_present_in_scores(actual_scores):
+        actual_scores = {
+            k: v for k, v in actual_scores.items()
+            if str(k) not in HGR_AXIS_SCORE_KEYS
+            and str(k).lower() not in {x.lower() for x in HGR_AXIS_SCORE_KEYS}
+        }
+
+    goal_specs = _build_glp_goal_specs(params, actual_scores)
 
     try:
         import pulp

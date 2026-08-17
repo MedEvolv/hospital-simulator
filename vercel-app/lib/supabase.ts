@@ -108,20 +108,18 @@ export async function appendGovernanceEvents(
 }
 
 /**
- * Fetch all non-deleted runs for the current user, most recent first.
+ * Fetch all non-deleted runs for the given OTP user id, most recent first.
  * Returns empty array if unauthenticated or persistence disabled.
+ * Identity is the OTP-derived user id, not supabase.auth.getUser().
  */
-export async function fetchUserRuns(limit = 20): Promise<RunRecord[]> {
-  if (!supabaseUrl || !supabaseAnon) return []
+export async function fetchUserRuns(userId: string, limit = 20): Promise<RunRecord[]> {
+  if (!supabaseUrl || !supabaseAnon || !userId) return []
 
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return []
-
     const { data, error } = await supabase
       .from('simulation_runs')
       .select('id, scenario_id, five_signals, run_metadata, created_at')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false })
       .limit(limit)
@@ -141,18 +139,15 @@ export async function fetchUserRuns(limit = 20): Promise<RunRecord[]> {
 /**
  * Fetch a single run by id (only if owned by current user).
  */
-export async function fetchRun(runId: string): Promise<RunRecord | null> {
-  if (!supabaseUrl || !supabaseAnon) return null
+export async function fetchRun(runId: string, userId: string): Promise<RunRecord | null> {
+  if (!supabaseUrl || !supabaseAnon || !userId) return null
 
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
-
     const { data, error } = await supabase
       .from('simulation_runs')
       .select('*')
       .eq('id', runId)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('is_deleted', false)
       .single()
 
@@ -171,18 +166,15 @@ export async function fetchRun(runId: string): Promise<RunRecord | null> {
 /**
  * Soft-archive an authenticated user's run by setting is_deleted = true. This helper does not establish that hard deletion is prohibited at the database level.
  */
-export async function softDeleteRun(runId: string): Promise<boolean> {
-  if (!supabaseUrl || !supabaseAnon) return false
+export async function softDeleteRun(runId: string, userId: string): Promise<boolean> {
+  if (!supabaseUrl || !supabaseAnon || !userId) return false
 
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return false
-
     const { error } = await supabase
       .from('simulation_runs')
       .update({ is_deleted: true })
       .eq('id', runId)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
 
     if (error) {
       console.error('[supabase] softDeleteRun error:', error.message)

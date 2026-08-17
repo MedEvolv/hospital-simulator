@@ -315,10 +315,7 @@ export default function ScenarioSandbox() {
     }
   }
 
-  // ── Composite score: equally weighted across 5 signals (SSS inverted) ────────
-  function compositeScore(run: SlotRun): number {
-    return Math.round((run.pss + run.pes + (100 - run.sss) + run.eic + run.sti) / 5)
-  }
+  // RULE-A1: do not average PSS/PES/SSS/EIC/STI into a composite grade.
 
   const bothComplete = runs.A && runs.B
 
@@ -490,9 +487,6 @@ export default function ScenarioSandbox() {
                     <span className="text-red-400">{run.criticalInsightCount}</span>
                   </div>
                 )}
-                <div className={`ml-auto text-[10px] font-mono border px-2 py-0.5 rounded ${styles.badge}`}>
-                  Composite {compositeScore(run)}
-                </div>
               </div>
             </div>
           )}
@@ -504,9 +498,6 @@ export default function ScenarioSandbox() {
   // ── Comparison summary ────────────────────────────────────────────────────────
   function renderComparison() {
     if (!runs.A || !runs.B) return null
-    const scoreA = compositeScore(runs.A)
-    const scoreB = compositeScore(runs.B)
-    const overallWinner: SlotId | 'tie' = scoreA > scoreB + 2 ? 'A' : scoreB > scoreA + 2 ? 'B' : 'tie'
 
     return (
       <div className="border border-slate-200 rounded-xl overflow-hidden mt-8">
@@ -521,15 +512,9 @@ export default function ScenarioSandbox() {
             </p>
           </div>
           <div className="text-right">
-            {overallWinner === 'tie' ? (
-              <span className="text-[10px] font-mono text-slate-600 border border-slate-300 px-2.5 py-1.5 rounded">
-                Comparable outcomes
-              </span>
-            ) : (
-              <div className={`text-[10px] font-mono border px-2.5 py-1.5 rounded ${SLOT_STYLES[overallWinner].winner}`}>
-                Slot {overallWinner} · composite {overallWinner === 'A' ? scoreA : scoreB}
-              </div>
-            )}
+            <span className="text-[10px] font-mono text-slate-600 border border-slate-300 px-2.5 py-1.5 rounded">
+              Five signals held separate
+            </span>
           </div>
         </div>
 
@@ -565,11 +550,9 @@ export default function ScenarioSandbox() {
             )}
           </div>
           <div className="space-y-2 text-center">
-            <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Difference</p>
-            <p className="text-lg font-mono text-slate-600">
-              {scoreA > scoreB ? '+' : ''}{scoreA - scoreB}
-            </p>
-            <p className="text-[10px] font-mono text-slate-600">composite pts</p>
+            <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Signals</p>
+            <p className="text-lg font-mono text-slate-600">5</p>
+            <p className="text-[10px] font-mono text-slate-600">uncollapsed</p>
           </div>
           <div className="space-y-2 text-right">
             <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Slot B insights</p>
@@ -584,9 +567,8 @@ export default function ScenarioSandbox() {
         <div className="border-t border-slate-200 px-6 py-4 bg-slate-50/40">
           <p className="text-xs text-slate-500 leading-relaxed">
             <span className="text-slate-600 font-medium">Interpretation note: </span>
-            Composite scores reflect equally weighted governance health across five signals.
-            A higher composite score indicates less institutional stress — not better patient care per se.
-            Scenarios with more stressors may surface more learning value even if composite scores are lower.
+            Compare PSS, PES, SSS, EIC, and STI one at a time. There is no overall grade.
+            High STI with low PSS or PES is the pattern to watch — throughput is not quality.
           </p>
         </div>
       </div>

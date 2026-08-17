@@ -129,6 +129,36 @@ class NoCompositeInvariantTests(unittest.TestCase):
                 msg=f"{path} still serializes a composite institutional_efficacy_score key",
             )
 
+    def test_history_page_does_not_render_composite(self):
+        path = os.path.join(REPO_ROOT, "vercel-app", "app", "history", "page.tsx")
+        with open(path, "r", encoding="utf-8") as fh:
+            src = fh.read()
+        self.assertNotIn("let composite", src)
+        self.assertNotRegex(
+            src,
+            r"\(\(s\.PSS\?\.value",
+            msg="history page must not average the five signals into a headline",
+        )
+
+    def test_sandbox_does_not_render_composite(self):
+        path = os.path.join(REPO_ROOT, "vercel-app", "components", "ScenarioSandbox.tsx")
+        with open(path, "r", encoding="utf-8") as fh:
+            src = fh.read()
+        self.assertNotIn("function compositeScore", src)
+        self.assertNotIn("composite pts", src)
+        self.assertNotIn("Composite {", src)
+
+    def test_glp_panel_does_not_show_objective_as_grade(self):
+        path = os.path.join(REPO_ROOT, "vercel-app", "app", "results", "page.tsx")
+        with open(path, "r", encoding="utf-8") as fh:
+            src = fh.read()
+        start = src.find("function GlpPanel")
+        self.assertGreater(start, 0)
+        panel = src[start:src.find("function GovernanceTimeline", start)]
+        self.assertNotIn("{glp.objective_value}", panel)
+        self.assertIn("d_minus", panel)
+        self.assertIn("d_plus", panel)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

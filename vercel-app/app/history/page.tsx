@@ -9,14 +9,15 @@
  * Anonymous runs are not queried.
  * Persistence is best-effort and may be unavailable.
  *
- * Each run card links back to results by re-hydrating sessionStorage
- * from the run_data and redirecting to /results.
+ * Each run card reopens by fetching the saved-run shape and writing
+ * the same results payload a fresh run would store.
  */
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase, type RunRecord } from '@/lib/supabase'
+import { fromSavedRun, isResultsPayload } from '@/lib/domain/saved-run'
+import { type RunRecord } from '@/lib/supabase'
 import { SESSION_KEY } from '@/lib/types'
 import AssumptionsPanel from '@/components/AssumptionsPanel'
 
@@ -98,15 +99,7 @@ function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
 
   const signals = run.five_signals as Record<string, { value: number }> | null
 
-  // Composite score
-  let composite: number | null = null
-  if (signals) {
-    const s = signals
-    composite = Math.round(
-      ((s.PSS?.value ?? 50) + (s.PES?.value ?? 50) + (100 - (s.SSS?.value ?? 50)) +
-       (s.EIC?.value ?? 50) + (s.STI?.value ?? 50)) / 5
-    )
-  }
+  // RULE-A1: five signals stay separate. Do not average them into a composite / IES headline.
 
   return (
     <div className="border border-slate-200 rounded-lg p-5 bg-white/20 hover:border-slate-300 hover:bg-white/40 transition-all">
@@ -123,18 +116,6 @@ function RunCard({ run, onReopen, isReopening = false }: RunCardProps) {
             )}
             <span className="text-[10px] font-mono text-slate-600">{createdAt}</span>
           </div>
-        </div>
-        <div className="text-right shrink-0">
-          {composite !== null && (
-            <div>
-              <p className="text-[10px] font-mono text-slate-500 mb-0.5">composite</p>
-              <p className={`text-xl font-mono ${
-                composite >= 70 ? 'text-slate-700'
-                  : composite >= 40 ? 'text-amber-400'
-                  : 'text-red-400'
-              }`}>{composite}</p>
-            </div>
-          )}
         </div>
       </div>
 
@@ -184,37 +165,22 @@ export default function HistoryPage() {
   const [reopening, setReopening] = useState<string | null>(null)   // run id being fetched
   const [error, setError] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
       try {
-        // Check auth state
-        const { data: { session } } = await supabase.auth.getSession()
-        const userId = session?.user.id ?? null
-        setIsAuthenticated(!!userId)
-        setCurrentUserId(userId)
-
-        if (!userId) {
+        const res = await fetch('/api/history', { credentials: 'include' })
+        if (res.status === 401) {
+          setIsAuthenticated(false)
           setRuns([])
           setLoading(false)
           return
         }
+        if (!res.ok) throw new Error('history unavailable')
 
-        // Load recent runs — intentionally omits run_data (potentially large JSONB).
-        // run_data is fetched lazily on "Re-open" to avoid loading 200-event blobs
-        // for 20 rows simultaneously.
-        const { data, error: dbError } = await supabase
-          .from('simulation_runs')
-          .select('id, scenario_id, five_signals, run_metadata, created_at')
-          .eq('user_id', userId)
-          .eq('is_deleted', false)
-          .order('created_at', { ascending: false })
-          .limit(20)
-
-        if (dbError) throw new Error(dbError.message)
-
-        setRuns((data ?? []) as RunRecord[])
+        const payload = await res.json() as { authenticated?: boolean; runs?: RunRecord[] }
+        setIsAuthenticated(Boolean(payload.authenticated))
+        setRuns(payload.runs ?? [])
       } catch (e) {
         setError('Run history is temporarily unavailable.')
       } finally {
@@ -226,35 +192,35 @@ export default function HistoryPage() {
   }, [])
 
   async function reopenRun(run: RunRecord) {
-    if (!currentUserId || !run.id) {
+    if (!run.id) {
       setError('This saved run is not available to this session.')
       return
     }
 
-    // Lazy-fetch run_data only when the user clicks "Re-open" — avoids loading
-    // 200-event blobs for every visible row on mount.
     setReopening(run.id)
     try {
-      const { data, error: dbError } = await supabase
-        .from('simulation_runs')
-        .select('run_data')
-        .eq('id', run.id)
-        .eq('user_id', currentUserId)
-        .eq('is_deleted', false)
-        .single()
-
-      if (dbError || !data?.run_data) {
+      const res = await fetch(`/api/history/${run.id}`, { credentials: 'include' })
+      if (res.status === 401) {
+        setError('This saved run is not available to this session.')
+        return
+      }
+      if (res.status === 422) {
+        setError('This saved run cannot be reopened — it was stored without a full report.')
+        return
+      }
+      if (!res.ok) {
         setError('Could not load run data. The run may have been archived.')
         return
       }
 
-      const storedData = data.run_data as { events?: unknown[]; [key: string]: unknown }
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-        ...storedData,
-        run_id: run.id,
-        _from_history: true,
-        _disclaimer: 'This is a scenario-based governance simulation. It does not predict reality.',
-      }))
+      const payload = await res.json() as { report?: unknown }
+      const report = fromSavedRun(payload.report)
+      if (!report || !isResultsPayload(report)) {
+        setError('This saved run cannot be reopened — it was stored without a full report.')
+        return
+      }
+
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(report))
       router.push('/results')
     } catch (e) {
       setError('Could not load this saved run right now.')

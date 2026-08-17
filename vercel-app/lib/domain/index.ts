@@ -24,3 +24,4 @@
 export * from './signals'
 export * from './moral-reckoning'
 export * from './run-result'
+export * from './saved-run'

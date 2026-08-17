@@ -197,6 +197,7 @@ export interface SimEvent {
 export interface GlpOptimal {
   status: 'optimal' | 'unavailable' | 'error'
   total_rooms?: number
+  /** Solver diagnostic only. Never display as a run grade (RULE-A1). */
   objective_value?: number
   deviations?: Record<string, {
     target: number

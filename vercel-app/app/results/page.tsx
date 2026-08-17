@@ -14,6 +14,7 @@ import ExpertFeedbackForm from '@/components/ExpertFeedbackForm'
 
 // InstitutionalMap eventLog prop type (inline, not exported from component)
 type MapEventEntry = { event_type: string; timestamp: number; payload: Record<string, unknown> }
+import { isResultsPayload } from '@/lib/domain/saved-run'
 import {
   SESSION_KEY, CAPACITY_KEY,
   type SimulationReport, type PatientProfile, type CapacityConfig,
@@ -82,14 +83,20 @@ export default function ResultsScreen() {
   useEffect(() => {
     const raw = sessionStorage.getItem(SESSION_KEY)
     if (!raw) { router.replace('/'); return }
-    let parsed: SimulationReport
+    let parsed: unknown
     try {
       parsed = JSON.parse(raw)
     } catch {
       router.replace('/')
       return
     }
-    setReport(parsed)
+    // Defense for leftover sessionStorage from the old `{ events }` persist.
+    // The fix is one saved-run shape, not optional-chaining interpretation.
+    if (!isResultsPayload(parsed)) {
+      router.replace('/history')
+      return
+    }
+    setReport(parsed as SimulationReportV2)
 
     // Capacity — prefer value stored by page.tsx (user-set), fall back to report echo
     const capRaw = sessionStorage.getItem(CAPACITY_KEY)
@@ -838,6 +845,7 @@ function NamedList({ title, items, accent }: { title: string; items: string[]; a
 }
 
 function GlpPanel({ glp }: { glp: NonNullable<SimulationReport['glp_optimal']> }) {
+  // RULE-A1 / HGR I6: never render glp.objective_value as a grade. Table of d+/d- only.
   if (glp.status !== 'optimal' || !glp.deviations) return null
   return (
     <div className="space-y-4">

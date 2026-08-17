@@ -14,17 +14,17 @@ const SECTIONS: DSection[] = [
   {
     sec: '5 & 6', label: 'Consent · Purpose Limitation',
     quote: 'Consent must be free, informed, specific, conditional, and capability-based. Consent must be unbundled from other matters and is limited to the purpose for which it was given.',
-    response: 'The Mirror processes no personal data. It operates on synthetic institutional data generated for governance rehearsal, so no consent basis is required — a structural compliance posture rather than a workflow. The ontological disclaimer visible on every screen encodes the single, fixed purpose (governance rehearsal, not clinical work), so there is no purpose-drift liability. Where a hospital wants to pilot an AI tool on live data, the consent audit is step one of its Monday-Morning Protocol; the Mirror rehearses that audit under stress, ahead of any real deployment.',
+    response: 'The Mirror processes no personal data. It operates on synthetic institutional data generated for governance rehearsal, so no consent basis is required: a structural compliance posture rather than a workflow. The ontological disclaimer visible on every screen encodes the single, fixed purpose (governance rehearsal, not clinical work), so there is no purpose-drift liability. Where a hospital wants to pilot an AI tool on live data, the consent audit is step one of its Monday-Morning Protocol; the Mirror rehearses that audit under stress, ahead of any real deployment. Section 6 is the unbundled-consent hook for AI training. Diagnostic consent does not cover training.',
   },
   {
-    sec: '8', label: 'Automated Decision-Making & Profiling',
-    quote: 'The data fiduciary shall give the data principal meaningful information about the logic involved, and at least one human intervention to obtain and convey their point of view, where a decision is taken based solely on automated processing.',
-    response: 'The Mirror does not invoke §8 — it rehearses it. Its refusal mechanism produces, in simulation: a logged decision the system could not make, a stated reason (value misalignment / uncertainty band exceeded / harm threshold), and a human-review handoff. This is the audit trail §8(4) asks for, pre-deployment. Where §8 guarantees a human review path, the Mirror rehearses whether that path stays live: the value-drift signal measures whether human review is degrading into automation bias — the quality question §8(3) guarantees but does not verify.',
+    sec: '8', label: 'General obligations of Data Fiduciary',
+    quote: 'Section 8 is headed General obligations of Data Fiduciary. Where personal data is likely to be used to make a decision that affects the Data Principal, or disclosed to another Data Fiduciary, the fiduciary shall ensure its completeness, accuracy, and consistency.',
+    response: 'That is 8(3): a data-quality duty on the records that feed a decision. It is not a patient right to inspect model internals, and it is not a statutory human-review workflow. The Mirror processes no personal data. What it rehearses is whether the inputs that would feed a decision stay complete, accurate, and consistent under strain. Section 8 creates no automated-decision right, no explainability right, and no right to human review. The string "human review" does not appear in the Act or in the DPDP Rules, 2025. Data Principal rights in the Act are exhaustively ss.11 (access), 12 (correction and erasure), 13 (grievance redressal), and 14 (nomination).',
   },
   {
-    sec: '9', label: 'Data Breach Notification',
-    quote: 'The data fiduciary shall give notice to the Data Principal and the Data Protection Authority of any personal data breach.',
-    response: 'The Mirror provides the institutional analogue: value-drift detection is the breach-detection layer for institutional behaviour. Where DPDP §9 detects a data breach, the Mirror detects a governance-drift breach — staff overrides quietly stopping, throughput bought with care shortcuts, trust eroding under load. The same detection-assess-respond logic DPDP uses for data the Mirror applies to behaviour. Neither law nor standard yet asks institutions to rehearse this before deployment; the Mirror does.',
+    sec: '8(5) & 8(6)', label: 'Safeguards · Breach intimation',
+    quote: 'The Data Fiduciary shall protect personal data by taking reasonable security safeguards to prevent a personal data breach, and shall intimate the Board and each affected Data Principal of a personal data breach in the prescribed form and manner.',
+    response: '8(5) is the safeguard duty. 8(6) is breach intimation to the Board and to affected Data Principals. The Rs 250 crore ceiling sits on Schedule item 1, which attaches to an 8(5) failure. The Mirror does not file those notices. It rehearses the governance cascade before 8(6) or the CERT-In 6-hour clock starts on live systems.',
   },
   {
     sec: 'Joint Data Fiduciary (Rules, 2025)', label: 'Shared Liability',
@@ -37,15 +37,15 @@ const SECTIONS: DSection[] = [
 const GAP_POINTS = [
   {
     title: 'Governance rehearsal under stress',
-    body: 'DPDP lets institutions audit data flows and consent chains, but it cannot rehearse algorithmic-governance failure under strain. The Mirror stress-tests the human-review pathways §8 guarantees — overrides, escalation, the point at which trust should refuse — before real patient data ever touches the system. DPDP detects after breach; the Mirror rehearses before failure.',
+    body: 'DPDP lets institutions audit data flows and consent chains, but it cannot rehearse algorithmic-governance failure under strain. The Mirror stress-tests whether a human look stays live: overrides, escalation, the point at which trust should refuse, before real patient data ever touches the system. That human look is not a DPDP Section 8 right. It is NABL ISO 15189:2022 clause 7.3, NABH Digital Health Standards 2nd Edition, SAHI Rec 6 and Rec 22 (advisory), and professional duty. DPDP detects after breach; the Mirror rehearses before failure.',
   },
   {
     title: 'Synthetic-data compliance posture',
-    body: 'Institutions hesitate to pilot because liability attaches to real patient data. The Mirror rehearses on synthetic institutional data: the governance posture is proven without the consent audit, the anonymisation trap, or the breach-liability surface that blocks piloting on live data. The anonymisation trap — de-identification does not equal legal anonymisation once metadata links to patient IDs — is eliminated by design.',
+    body: 'Institutions hesitate to pilot because liability attaches to real patient data. The Mirror rehearses on synthetic institutional data: the governance posture is proven without the consent audit, the anonymisation trap, or the breach-liability surface that blocks piloting on live data. The anonymisation trap (de-identification does not equal legal anonymisation once metadata links to patient IDs) is eliminated by design.',
   },
   {
     title: 'Institutional accountability, not just data accountability',
-    body: 'DPDP remedies are data-centric. When an AI system causes harm, the data fiduciary is liable — but institutional behaviour drift is invisible to DPDP. The Mirror makes that drift legible: value-drift score, refusal count, stress under load. It is the breach-detection layer for behaviour the way DPDP §9 is for data.',
+    body: 'DPDP remedies are data-centric. When an AI system causes harm, the data fiduciary is liable, but institutional behaviour drift is invisible to DPDP. The Mirror makes that drift legible: value-drift score, refusal count, stress under load. It is the breach-detection layer for behaviour the way DPDP 8(6) is for data.',
   },
 ]
 
@@ -57,8 +57,8 @@ const STACK = [
     nature: 'Data-protection law · Govt. of India',
     nameClass: 'text-slate-800',
     tagClass: 'bg-slate-100 text-slate-600 border-slate-300',
-    gives: 'The legal floor — non-negotiable accountability for consent, data principal rights, automated decision-making with human review, and breach liability.',
-    lacks: 'Silent on AI governance itself: no algorithmic impact assessment, no model-audit requirement, no behavioural monitoring under stress.',
+    gives: 'The legal floor: non-negotiable accountability for consent, Data Principal rights (ss.11-14), data quality under 8(3), security safeguards under 8(5), and breach intimation under 8(6).',
+    lacks: 'Silent on AI governance itself: no algorithmic impact assessment, no model-audit requirement, no behavioural monitoring under stress, and no GDPR Article 22 equivalent. No human-review right in the Act or Rules 2025.',
   },
   {
     name: 'SAHI',
@@ -66,7 +66,7 @@ const STACK = [
     nature: 'National strategy · MoHFW, Feb 2026',
     nameClass: 'text-sky-700',
     tagClass: 'bg-sky-900/40 text-sky-700 border-sky-200/60',
-    gives: 'The direction — five pillars, seven guiding principles, priority actions for trustworthy AI in healthcare.',
+    gives: 'The direction: five pillars, seven guiding principles, priority actions for trustworthy AI in healthcare. Rec 6 (communication of use, limits, and risk) and Rec 22 (escalation path) are advisory strategy. They bind no one.',
     lacks: 'No implementation tool for institutions with no IT staff, no governance committee, and no budget for either.',
   },
   {
@@ -75,7 +75,7 @@ const STACK = [
     nature: 'Accreditation standard · 2nd Ed, Sep 2025',
     nameClass: 'text-emerald-300',
     tagClass: 'bg-emerald-900/30 text-emerald-300 border-emerald-800/60',
-    gives: 'The bar — 182 objective elements defining a digital-maturity baseline, including CDSS adoption and information management.',
+    gives: 'The bar: 182 objective elements defining a digital-maturity baseline, including CDSS adoption and information management.',
     lacks: 'Assumes deployed systems behave. No failure-mode rehearsal under stress.',
   },
 ]
@@ -100,7 +100,7 @@ export default function DpdpPage() {
         </h1>
         <p className="text-lg text-slate-700 leading-relaxed mb-4">
           How Institutional Mirror responds to the Digital Personal Data Protection (DPDP) Act, 2023
-          and the Data Protection Rules, 2025 — India&rsquo;s data-protection floor for healthcare AI.
+          and the Data Protection Rules, 2025: India&rsquo;s data-protection floor for healthcare AI.
         </p>
         <div className="border-l-2 border-slate-800 pl-4 py-1">
           <p className="text-sm text-slate-700 leading-relaxed">
@@ -115,42 +115,45 @@ export default function DpdpPage() {
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">What DPDP is</h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-4">
-          The Digital Personal Data Protection Act, 2023 — with the 2025 Rules — governs the
+          The Digital Personal Data Protection Act, 2023, with the 2025 Rules, governs the
           processing of digital personal data. It establishes the data fiduciary, the data principal,
-          explicit consent, data principal rights (access, correction, erasure, portability),
-          automated decision-making with a right to human review, breach notification, and a penalty
-          regime reaching <span className="text-slate-800 font-medium">up to &#8376;250 crore</span>.
-          It is a generic privacy law: it governs personal-data processing, regardless of whether the
-          processor is an AI system.
+          explicit consent, Data Principal rights (access, correction and erasure, grievance,
+          nomination), general obligations of the Data Fiduciary including data quality and
+          safeguards, breach intimation, and a penalty regime reaching{' '}
+          <span className="text-slate-800 font-medium">up to &#8376;250 crore</span> on Schedule
+          item 1 (an 8(5) failure). It is a generic privacy law: it governs personal-data processing,
+          regardless of whether the processor is an AI system. It does not create a right to human
+          review of automated decisions.
         </p>
         <div className="border border-slate-200 rounded-lg p-4 bg-white/40">
           <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">What it governs</p>
           <ul className="text-sm text-slate-600 space-y-1">
-            <li>Consent architecture (Sections 5 &amp; 6 — unbundled, granular, purpose-limited)</li>
-            <li>Data principal rights (Section 7)</li>
-            <li>Automated decision-making + human review (Section 8)</li>
-            <li>Breach detection and notification (Section 9)</li>
+            <li>Consent architecture (Sections 5 &amp; 6: unbundled, granular, purpose-limited)</li>
+            <li>Data Principal rights (ss.11-14: access, correction and erasure, grievance, nomination)</li>
+            <li>General obligations of Data Fiduciary (Section 8): 8(3) data quality; 8(5) safeguards; 8(6) breach intimation</li>
             <li>Joint data fiduciary liability (Rules, 2025)</li>
           </ul>
         </div>
       </section>
 
-      {/* ── Where DPDP is strong — and where it is silent ───────────── */}
+      {/* ── Where DPDP is strong, and where it is silent ───────────── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-6 bg-white/40">
-        <h2 className="text-sm font-medium text-slate-800 mb-3">Where DPDP is strong — and where it is silent</h2>
+        <h2 className="text-sm font-medium text-slate-800 mb-3">Where DPDP is strong, and where it is silent</h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-3">
           DPDP is authoritative on <span className="text-slate-800">data-processing accountability:</span>
-          the consent architecture, the data-principal rights, the breach-liability surface.
-          Institutions that get this wrong face penalties up to &#8376;250 crore, personally.
+          the consent architecture, the Data Principal rights, the 8(5) safeguard and 8(6) breach-intimation surface.
+          Institutions that get 8(5) wrong face penalties up to &#8376;250 crore (Schedule item 1).
         </p>
         <p className="text-sm text-slate-600 leading-relaxed">
           It is <span className="text-slate-800">silent on AI governance itself:</span> no definition of AI, no
           model-audit requirement, no algorithmic impact assessment, no obligation to monitor
           algorithmic behaviour post-deployment, and no notion of institutional value drift or
-          behavioural governance under stress. Section 8 is the one bridge — it treats automated
-          decision-making as a data-processing consequence, not a system-of-systems governance
-          problem. The gap between what DPDP protects and what AI governance requires is precisely
-          the gap the Mirror fills.
+          behavioural governance under stress. Section 8 is not an automated-decision bridge. It is
+          a fiduciary-obligations section. The closest the DPDP family comes to an algorithm duty is
+          Rules 2025, r.13(3): a Significant Data Fiduciary must observe due diligence to verify that
+          technical measures, including algorithmic software, are not likely to pose a risk to the
+          rights of Data Principals. That is still not human review. The gap between what DPDP
+          protects and what AI governance requires is precisely the gap the Mirror fills.
         </p>
       </section>
 
@@ -175,16 +178,54 @@ export default function DpdpPage() {
         </div>
       </section>
 
+      {/* ── Human look lives outside DPDP s.8 ────────────────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">Human look</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
+            Not Section 8
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          A qualified human must inspect the clinical evidence before sign-off. The practice is
+          right. The DPDP citation was wrong. Cite{' '}
+          <span className="text-slate-800">NABL ISO 15189:2022 clause 7.3</span> (an AI aid is a
+          non-standard examination method requiring validation; final report authorisation is
+          reserved to a qualified medical doctor);{' '}
+          <span className="text-slate-800">NABH Digital Health Standards, 2nd Edition (September 2025)</span>;{' '}
+          <span className="text-slate-800">SAHI Rec 6</span> (communication of use, limits, and risk)
+          and <span className="text-slate-800">Rec 22</span> (escalation path), which are advisory
+          strategy and bind no one; and the signing clinician&rsquo;s professional and medical-council
+          duty. Never cite DPDP Section 8 for human review.
+        </p>
+      </section>
+
+      {/* ── GDPR Article 22 is EU ─────────────────────────────────── */}
+      <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
+        <div className="flex flex-wrap items-center gap-3 mb-2">
+          <span className="text-xs font-mono text-slate-600">GDPR Article 22</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
+            EU law
+          </span>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          The right commonly attributed to DPDP Section 8 is GDPR Article 22. That is EU law. It
+          gives a data subject the right not to be subject to a decision based solely on automated
+          processing and, where such processing is permitted, the right to obtain human intervention.
+          India has not legislated an equivalent. Teach the gap. Do not import the duty.
+        </p>
+      </section>
+
       {/* ── CERT-In dual clock (chip, not a new route) ───────────── */}
       <section className="mb-10 border border-slate-200 rounded-lg p-5 bg-white/30">
         <div className="flex flex-wrap items-center gap-3 mb-2">
-          <span className="text-xs font-mono text-slate-600">Section 9 · dual clock</span>
+          <span className="text-xs font-mono text-slate-600">Section 8(6) · dual clock</span>
           <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border bg-slate-100 text-slate-600 border-slate-300">
             CERT-In 6-hour
           </span>
         </div>
         <p className="text-sm text-slate-600 leading-relaxed">
-          DPDP §9 is notice to the Board and to data principals after a personal-data
+          DPDP 8(6) is intimation to the Board and to affected Data Principals after a personal-data
           breach. CERT-In Directions of 28 April 2022 (IT Act s.70B) are a separate
           binding clock: listed cyber incidents, including attacks on AI/ML systems in
           Annexure I, must be reported to CERT-In within 6 hours. A hospital ransomware
@@ -260,7 +301,7 @@ export default function DpdpPage() {
       {/* ── The gap DPDP cannot reach ────────────────────────────── */}
       <section className="mb-10">
         <h2 className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-4">
-          What DPDP cannot rehearse — and what the Mirror provides
+          What DPDP cannot rehearse, and what the Mirror provides
         </h2>
         <div className="space-y-3">
           {GAP_POINTS.map((g, i) => (
@@ -282,7 +323,7 @@ export default function DpdpPage() {
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-3">
           No single instrument governs AI in healthcare. A hospital deploying AI in 2026 answers to three
-          at once &mdash; and the same gap runs through all of them.
+          at once, and the same gap runs through all of them.
         </p>
         <p className="text-sm text-slate-700 leading-relaxed mb-6">
           <span className="text-slate-800">DPDP is the floor.</span>{' '}
@@ -319,19 +360,19 @@ export default function DpdpPage() {
         <div className="mt-6 border-l-2 border-slate-800 pl-4 py-1">
           <p className="text-sm text-slate-700 leading-relaxed">
             India now has the strategy (SAHI, 2026), the accreditation bar (NABH Digital Health Standards,
-            2025), and the data-protection floor (DPDP, 2023–25). Together they tell hospitals to adopt
+            2025), and the data-protection floor (DPDP, 2023-25). Together they tell hospitals to adopt
             clinical AI, mature their digital operations, and protect patient data. What none of them
-            provides is a way to rehearse governance failure &mdash; to watch trust erode, ethical debt
-            accumulate, and human review degrade under a deterministic, repeatable stress test, before any
+            provides is a way to rehearse governance failure: to watch trust erode, ethical debt
+            accumulate, and the human look degrade under a deterministic, repeatable stress test, before any
             of it happens to real patients. Institutional Mirror is that rehearsal layer: it operationalises
             SAHI&rsquo;s oversight and accountability principles, stress-tests the digital maturity NABH
-            certifies, and rehearses the data-protection obligations DPDP imposes &mdash; all on synthetic
+            certifies, and rehearses the data-protection obligations DPDP imposes, all on synthetic
             data, before a single patient datum enters the equation.
           </p>
         </div>
         <p className="text-xs text-slate-500 leading-relaxed mt-3">
           A scenario-based governance simulation on synthetic data. It does not predict reality, make clinical
-          decisions, or evaluate real patients &mdash; itself an expression of the safety and data-protection
+          decisions, or evaluate real patients: itself an expression of the safety and data-protection
           principles the stack is built on.
         </p>
       </section>
