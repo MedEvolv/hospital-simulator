@@ -52,7 +52,8 @@ class GlpGoalAllowlistTests(unittest.TestCase):
 
     def test_forbidden_proxies_include_hgr_false_counts(self):
         joined = " ".join(FORBIDDEN_GLP_GOAL_PROXIES)
-        for token in ("PIB", "BODH", "SUGAM", "NHCX", "EIC", "axis_a", "axis_b"):
+        for token in ("PIB", "BODH", "SUGAM", "NHCX", "EIC", "axis_a", "axis_b",
+                      "regulatory_significance", "trajectory_significance"):
             self.assertIn(token, joined)
 
     def test_build_specs_returns_only_allowlisted_names(self):
@@ -94,6 +95,12 @@ class GlpGoalAllowlistTests(unittest.TestCase):
     def test_refuse_axis_a_as_goal_name(self):
         with self.assertRaises(ValueError):
             _assert_glp_goals_allowed(["PSS", "PES", "SSS", "STI", "axis_a"])
+
+    def test_refuse_regulatory_significance_as_goal_name(self):
+        with self.assertRaises(ValueError):
+            _assert_glp_goals_allowed(
+                ["PSS", "PES", "SSS", "STI", "regulatory_significance"]
+            )
 
     def test_refuse_nabh_m3_bodh_sugam_nhcx(self):
         for proxy in ("NABH_M3", "BODH", "SUGAM-800", "NHCX_TAT"):

@@ -54,6 +54,21 @@ interface ScenarioRunBlock {
       gaps: string[]
       plan: string[]
       engine: string
+      citations?: Array<{
+        id: string
+        title: string
+        layer: number[]
+        legal_force: string
+        one_line_force: string
+        source_pointer: string
+      }>
+      citation_edges?: Array<{
+        id: string
+        type: string
+        from_id: string
+        to_id: string
+        claim_type: string
+      }>
     }
     audited_steps: Array<{
       step: number
@@ -281,6 +296,31 @@ export default function ResultsScreen() {
           <p className="text-xs text-slate-600 mb-2">
             Instruments: {sr.governance_pair.advisor.instruments.join(' · ') || 'none selected'}
           </p>
+          {sr.governance_pair.advisor.citations && sr.governance_pair.advisor.citations.length > 0 && (
+            <div className="mb-4">
+              <p className="text-[10px] font-mono text-slate-500 tracking-widest uppercase mb-2">
+                Citations (HGR instruments as knowledge, not scores)
+              </p>
+              <ul className="space-y-2">
+                {sr.governance_pair.advisor.citations.map((cite) => (
+                  <li key={cite.id} className="text-xs text-slate-700 leading-relaxed">
+                    <span className="font-mono">{cite.id}</span>
+                    {' · '}
+                    {cite.title}
+                    {' · layer '}
+                    {cite.layer.join('/')}
+                    {' · '}
+                    {cite.legal_force}
+                    {'. '}
+                    {cite.one_line_force}
+                    {' ['}
+                    {cite.source_pointer}
+                    {']'}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <p className="text-xs text-slate-600 mb-4">
             Pillars {sr.governance_pair.advisor.pillars.join(', ') || 'none'}
             {' · '}

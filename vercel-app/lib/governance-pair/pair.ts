@@ -11,6 +11,11 @@
  */
 
 import type { ScenarioConfig } from '@/lib/scenarios/schema'
+import {
+  attachCitations,
+  type GraphEdgeCitation,
+  type InstrumentCitation,
+} from './citations'
 import policy from './governance-policy.json'
 
 type InstrumentKey = keyof typeof INSTRUMENT_LABELS
@@ -92,6 +97,8 @@ export interface AdvisorResult {
   plan: string[]
   engine: 'knowledge-layer'
   audited_step_count?: number
+  citations: InstrumentCitation[]
+  citation_edges: GraphEdgeCitation[]
 }
 
 export interface AuditorResult {
@@ -205,6 +212,7 @@ export function advise(situation: string): AdvisorResult {
   for (const p of pillarList) pillarNotes[p] = PILLARS[p]
   const gapNotes: Record<string, string> = {}
   for (const g of gapList) gapNotes[g] = GAPS[g]
+  const cited = attachCitations(instruments)
 
   return {
     model: 'GovernanceAdvisor (H)',
@@ -218,6 +226,8 @@ export function advise(situation: string): AdvisorResult {
     gap_notes: gapNotes,
     plan: composePlan(instruments),
     engine: 'knowledge-layer',
+    citations: cited.citations,
+    citation_edges: cited.citation_edges,
   }
 }
 

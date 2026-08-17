@@ -1,0 +1,420 @@
+{
+  "generated_at": "2026-08-17",
+  "source": "01_Projects/Healthcare_Governance_Research/policies/india",
+  "graph_source": "ontology/india-graph.yaml (read-only; 96 nodes / 97 edges frozen)",
+  "claim_hygiene": "Axis A/B omitted. YAML ordinals are INFERENCE, not SOURCE_FACT. UNKNOWN instruments (DISHA, NHRP draft, BODH) stay unknown. PIB is not gazette.",
+  "instruments": [
+    {
+      "id": "IND-ETH-ICMR-AI-001",
+      "title": "Ethical Guidelines for Application of Artificial Intelligence in Biomedical Research and Healthcare",
+      "layer": [
+        4
+      ],
+      "legal_force": "guidance",
+      "one_line_force": "ICMR ethics guidance (2023). Authorship, not a gazette penalty machine.",
+      "source_pointer": "SRC-IND-ICMR-AI-ETHICS-2023",
+      "pair_key": "instrument--icmr-ai-ethics-2023"
+    },
+    {
+      "id": "IND-INF-ABDM-001",
+      "title": "Ayushman Bharat Digital Mission",
+      "layer": [
+        5
+      ],
+      "legal_force": "infrastructure_policy",
+      "one_line_force": "National digital health infrastructure (ABHA, registries, UHI, NHCX). Exchange floor, not a model-behaviour code.",
+      "source_pointer": "SRC-IND-ABDM-HUB-001",
+      "pair_key": "instrument--abdm"
+    },
+    {
+      "id": "IND-INF-BODH-001",
+      "title": "BODH benchmarking platform",
+      "layer": [
+        5
+      ],
+      "legal_force": "infrastructure_policy",
+      "one_line_force": "PIB and Rajya Sabha describe a benchmarking platform hosted with IIT Kanpur. No retrieved market-access duty. PIB is not gazette.",
+      "source_pointer": "SRC-IND-PIB-2026-001",
+      "pair_key": "instrument--bodh-2026"
+    },
+    {
+      "id": "IND-LAW-CDSCO-MDR-001",
+      "title": "Medical Devices Rules, 2017 as amended",
+      "layer": [
+        1
+      ],
+      "legal_force": "delegated_rules",
+      "one_line_force": "Delegated medical-device rules as amended. Licensing and classification, including software that meets the medical-device definition.",
+      "source_pointer": "SRC-IND-CDSCO-HUB-001",
+      "pair_key": "instrument--cdsco-medical-device-rules"
+    },
+    {
+      "id": "IND-LAW-DISHA-000",
+      "title": "Digital Information Security in Healthcare Act (DISHA) - draft, not shown enacted",
+      "layer": [
+        1
+      ],
+      "legal_force": "unknown",
+      "one_line_force": "Draft comments path exists. Not shown enacted. Legal force unknown.",
+      "source_pointer": "SRC-IND-MOHFW-DISHA-DRAFT"
+    },
+    {
+      "id": "IND-LAW-DPDP-001",
+      "title": "Digital Personal Data Protection Act, 2023 and Digital Personal Data Protection Rules, 2025",
+      "layer": [
+        1
+      ],
+      "legal_force": "binding_statute",
+      "one_line_force": "Binding statute and Rules (Act 22 of 2023; G.S.R. 846(E), 13 Nov 2025). Staggered commencement. Not a health-specific code. PIB is not gazette.",
+      "source_pointer": "SRC-IND-MEITY-DPDP-ACT-2023",
+      "pair_key": "instrument--dpdp-act-2023"
+    },
+    {
+      "id": "IND-LAW-JANVISHWAS-001",
+      "title": "Jan Vishwas (Amendment of Provisions) Act, 2023",
+      "layer": [
+        1
+      ],
+      "legal_force": "binding_statute",
+      "one_line_force": "Binding statute amending specified penalties. Health-AI clause relevance unknown.",
+      "source_pointer": "SRC-IND-JANVISHWAS-GAZETTE-2023"
+    },
+    {
+      "id": "IND-POL-AIGOV-001",
+      "title": "India AI Governance Guidelines",
+      "layer": [
+        2
+      ],
+      "legal_force": "guidance",
+      "one_line_force": "India AI Governance Guidelines. Guidance, not a health-AI statute.",
+      "source_pointer": "SRC-IND-PIB-AIGOV-2228315",
+      "pair_key": "instrument--meity-indiaai"
+    },
+    {
+      "id": "IND-POL-HDM-001",
+      "title": "National Digital Health Mission Health Data Management Policy",
+      "layer": [
+        2,
+        5
+      ],
+      "legal_force": "infrastructure_policy",
+      "one_line_force": "NDHM Health Data Management Policy. Infrastructure policy for NDHE participants. Participation described as voluntary.",
+      "source_pointer": "SRC-IND-ABDM-HDM-PDF",
+      "pair_key": "instrument--abdm"
+    },
+    {
+      "id": "IND-POL-INDIAAI-001",
+      "title": "IndiaAI Mission",
+      "layer": [
+        2,
+        5
+      ],
+      "legal_force": "strategy",
+      "one_line_force": "MeitY IndiaAI Mission strategy and funding line. Cabinet PIB outlay is press, not an audited ledger.",
+      "source_pointer": "SRC-IND-PIB-INDIAAI-2012375",
+      "pair_key": "instrument--meity-indiaai"
+    },
+    {
+      "id": "IND-POL-NHRP-001",
+      "title": "National Health Research Policy 2026 (draft / unpinned)",
+      "layer": [
+        2
+      ],
+      "legal_force": "draft_policy",
+      "one_line_force": "DHR draft policy. Clause 4.6.4.1 is a draft SHALL for validation capability. Not an observed funded centre. Not gazette.",
+      "source_pointer": "SRC-IND-DHR-NHRP-DRAFT-2026",
+      "pair_key": "instrument--nhrp-2026"
+    },
+    {
+      "id": "IND-POL-NMDP-001",
+      "title": "National Medical Devices Policy, 2023",
+      "layer": [
+        2
+      ],
+      "legal_force": "strategy",
+      "one_line_force": "National Medical Devices Policy, 2023. Strategy. Not a substitute for MDR licensing.",
+      "source_pointer": "SRC-IND-NMDP-GAZETTE-2023"
+    },
+    {
+      "id": "IND-POL-SAHI-001",
+      "title": "Strategic Approach to Healthcare Innovation",
+      "layer": [
+        2
+      ],
+      "legal_force": "strategy",
+      "one_line_force": "Strategy document (February 2026). Not gazetted duty. PIB is not gazette.",
+      "source_pointer": "SRC-IND-ABDM-2026-001",
+      "pair_key": "instrument--sahi-2026"
+    },
+    {
+      "id": "IND-REG-CDSCO-MDSW-001",
+      "title": "Guidance Document on Medical Device Software under MDR-2017",
+      "layer": [
+        1,
+        4
+      ],
+      "legal_force": "guidance",
+      "one_line_force": "CDSCO guidance under MDR-2017. Binding force is MDR, not this PDF. Not new law.",
+      "source_pointer": "SRC-IND-CDSCO-MDSW-2026",
+      "pair_key": "instrument--cdsco-medical-device-rules"
+    },
+    {
+      "id": "IND-REG-CERTIN-001",
+      "title": "CERT-In Directions under section 70B of the Information Technology Act, 2000",
+      "layer": [
+        1
+      ],
+      "legal_force": "direction",
+      "one_line_force": "CERT-In directions under IT Act s.70B. Six-hour incident report and 180-day logs for bound ICT classes.",
+      "source_pointer": "SRC-IND-CERTIN-2022-PDF"
+    },
+    {
+      "id": "IND-REG-IRDAI-TPA-001",
+      "title": "IRDAI (Third Party Administrators - Health Services) (Amendment) Regulations, 2026",
+      "layer": [
+        1,
+        6
+      ],
+      "legal_force": "delegated_rules",
+      "one_line_force": "IRDAI TPA Health Services Amendment Regulations 2026. Gazette. Registration and housekeeping. Not a health-data AI instrument.",
+      "source_pointer": "SRC-IND-IRDAI-TPA-AMD-2026"
+    },
+    {
+      "id": "IND-REG-NDCT-001",
+      "title": "New Drugs and Clinical Trials Rules, 2019",
+      "layer": [
+        1,
+        4
+      ],
+      "legal_force": "delegated_rules",
+      "one_line_force": "New Drugs and Clinical Trials Rules, 2019. Delegated rules. G.S.R. 227(E) file not pinned this pass.",
+      "source_pointer": "SRC-IND-CDSCO-NDCT-HUB"
+    },
+    {
+      "id": "IND-STD-EHR-001",
+      "title": "Electronic Health Record Standards for India 2016",
+      "layer": [
+        3
+      ],
+      "legal_force": "standard",
+      "one_line_force": "EHR Standards for India 2016. Standard. Body PDF not fully extracted this pass.",
+      "source_pointer": "SRC-IND-MOHFW-EHR-2016"
+    },
+    {
+      "id": "IND-STD-NABH-DH-001",
+      "title": "NABH Digital Health Certification and Accreditation programmes",
+      "layer": [
+        3
+      ],
+      "legal_force": "accreditation",
+      "one_line_force": "Voluntary NABH digital-health certification and accreditation programmes. Not gazetted law.",
+      "source_pointer": "SRC-IND-NABH-DH-CERT",
+      "pair_key": "instrument--nabh-digital-health-standards"
+    },
+    {
+      "id": "IND-STD-NABH-HISEMR-001",
+      "title": "NABH Digital Health Standards for HIS/EMR Systems",
+      "layer": [
+        3
+      ],
+      "legal_force": "accreditation",
+      "one_line_force": "Voluntary NABH HIS/EMR product standards. Eligibility includes an ABDM M3 compliance certificate. Not a statutory duty on all vendors.",
+      "source_pointer": "SRC-IND-NABH-HISEMR",
+      "pair_key": "instrument--nabh-digital-health-standards"
+    },
+    {
+      "id": "IND-STD-TELEMED-001",
+      "title": "Telemedicine Practice Guidelines (March 2020)",
+      "layer": [
+        2,
+        4
+      ],
+      "legal_force": "guideline",
+      "one_line_force": "Practice guideline (March 2020). Not a statute.",
+      "source_pointer": "SRC-IND-MOHFW-TELEMED-PDF",
+      "pair_key": "instrument--telemedicine-guidelines-2020"
+    },
+    {
+      "id": "IND-WRK-NAIDM-001",
+      "title": "NBEMS AI in Healthcare training programme (seed NAIDM line)",
+      "layer": [
+        2,
+        7
+      ],
+      "legal_force": "unknown",
+      "one_line_force": "NBEMS AI-in-healthcare training line. Legal force unknown. Not an escalation office.",
+      "source_pointer": "SRC-IND-PIB-NBEMS-AI-2232864",
+      "pair_key": "instrument--naidm-2026"
+    }
+  ],
+  "edges": [
+    {
+      "id": "REL-0001",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-LAW-DPDP-001",
+      "to_id": "INS-MEITY",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0002",
+      "type": "ENFORCED_BY",
+      "from_id": "IND-LAW-DPDP-001",
+      "to_id": "INS-DPBI",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0009",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-INF-ABDM-001",
+      "to_id": "INS-NHA",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0015",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-POL-HDM-001",
+      "to_id": "INS-NHA",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0016",
+      "type": "GOVERNS",
+      "from_id": "IND-POL-HDM-001",
+      "to_id": "ACT-HIP",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0021",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-STD-NABH-DH-001",
+      "to_id": "INS-NABH",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0022",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-STD-NABH-HISEMR-001",
+      "to_id": "INS-NABH",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0023",
+      "type": "GOVERNS",
+      "from_id": "IND-STD-NABH-HISEMR-001",
+      "to_id": "ACT-HIS-EMR-VENDOR",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0027",
+      "type": "ENFORCED_BY",
+      "from_id": "IND-LAW-CDSCO-MDR-001",
+      "to_id": "INS-CDSCO",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0028",
+      "type": "DEPENDS_ON",
+      "from_id": "IND-REG-CDSCO-MDSW-001",
+      "to_id": "IND-LAW-CDSCO-MDR-001",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0029",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-REG-CDSCO-MDSW-001",
+      "to_id": "INS-CDSCO",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0035",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-POL-NMDP-001",
+      "to_id": "INS-DOP",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0036",
+      "type": "ENFORCED_BY",
+      "from_id": "IND-REG-CERTIN-001",
+      "to_id": "INS-CERTIN",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0037",
+      "type": "GOVERNS",
+      "from_id": "IND-REG-CERTIN-001",
+      "to_id": "ACT-ICT-BOUND-CLASS",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0043",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-ETH-ICMR-AI-001",
+      "to_id": "INS-ICMR",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0044",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-POL-SAHI-001",
+      "to_id": "INS-NHA",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0045",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-INF-BODH-001",
+      "to_id": "INS-NHA",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0046",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-INF-BODH-001",
+      "to_id": "INS-IITK",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0048",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-POL-INDIAAI-001",
+      "to_id": "INS-MEITY",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0050",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-POL-AIGOV-001",
+      "to_id": "INS-MEITY",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0051",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-WRK-NAIDM-001",
+      "to_id": "INS-NBEMS",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0052",
+      "type": "ENFORCED_BY",
+      "from_id": "IND-REG-NDCT-001",
+      "to_id": "INS-CDSCO",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0055",
+      "type": "IMPLEMENTED_BY",
+      "from_id": "IND-REG-IRDAI-TPA-001",
+      "to_id": "INS-IRDAI",
+      "claim_type": "SOURCE_FACT"
+    },
+    {
+      "id": "REL-0056",
+      "type": "ENFORCED_BY",
+      "from_id": "IND-REG-IRDAI-TPA-001",
+      "to_id": "INS-IRDAI",
+      "claim_type": "SOURCE_FACT"
+    }
+  ]
+}

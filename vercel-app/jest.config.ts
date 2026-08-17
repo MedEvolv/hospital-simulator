@@ -25,6 +25,7 @@ const config: Config = {
         // Relax for tests — no need for strict JSX transform in unit tests
         jsx: 'react',
         esModuleInterop: true,
+        resolveJsonModule: true,
       },
     }],
   },

@@ -38,7 +38,8 @@ describe('HRM pair honesty labels', () => {
     expect(JSON.stringify(pair)).not.toMatch(/funded centre that is operating/)
     expect(JSON.stringify(pair)).not.toContain('objective_value')
     expect(JSON.stringify(pair)).not.toContain('axis_a')
-    expect(JSON.stringify(pair)).not.toContain('SOURCE_FACT')
+    expect(JSON.stringify(pair)).not.toContain('regulatory_significance')
+    expect(JSON.stringify(pair)).not.toContain('trajectory_significance')
   })
 
   it('Eka BODHI-S without the word BODH does not select MoHFW BODH', () => {

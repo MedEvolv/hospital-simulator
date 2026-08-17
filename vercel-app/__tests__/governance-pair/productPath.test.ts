@@ -21,6 +21,7 @@ describe('product path invokes the HRM pair', () => {
     expect(src).not.toMatch(/DEEPSEEK_API_KEY/)
     expect(src).not.toMatch(/objective_value/)
     expect(src).not.toMatch(/system_throughput_index:.+pair/)
+    expect(src).not.toMatch(/regulatory_significance/)
   })
 
   it('results page reads scenario_run.governance_pair, not a second explainer', () => {
@@ -28,6 +29,9 @@ describe('product path invokes the HRM pair', () => {
     expect(src).toMatch(/sr\?\.governance_pair/)
     expect(src).toMatch(/Advisor then Auditor/)
     expect(src).toMatch(/audited_steps/)
+    expect(src).toMatch(/advisor\.citations/)
+    expect(src).toMatch(/HGR instruments as knowledge, not scores/)
+    expect(src).not.toMatch(/regulatory_significance/)
   })
 
   it('pair module has no DeepSeek client key path', () => {
@@ -51,7 +55,12 @@ describe('product path invokes the HRM pair', () => {
     const res = await pairPost(req)
     expect(res.status).toBe(200)
     const body = await res.json() as {
-      advisor: { audited: boolean; plan: string[]; instrument_keys: string[] }
+      advisor: {
+        audited: boolean
+        plan: string[]
+        instrument_keys: string[]
+        citations: Array<{ id: string; source_pointer: string }>
+      }
       audited_steps: Array<{ tier: string }>
     }
     expect(body.advisor.audited).toBe(true)
@@ -59,6 +68,10 @@ describe('product path invokes the HRM pair', () => {
     expect(body.advisor.plan[body.advisor.plan.length - 1].startsWith('Land at Monday')).toBe(true)
     expect(body.advisor.instrument_keys).toContain('instrument--nhrp-2026')
     expect(body.advisor.instrument_keys).toContain('instrument--bodh-2026')
+    const citeIds = body.advisor.citations.map((row) => row.id)
+    expect(citeIds).toContain('IND-POL-NHRP-001')
+    expect(citeIds).toContain('IND-INF-BODH-001')
+    expect(JSON.stringify(body)).not.toContain('regulatory_significance')
   })
 
   it('POST /api/governance-pair with a scenarioId calls pairForScenario', async () => {

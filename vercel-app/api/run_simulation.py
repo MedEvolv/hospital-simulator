@@ -849,11 +849,12 @@ FORBIDDEN_GLP_GOAL_PROXIES = (
     "SUGAM", "SUGAM-800", "NHCX", "NHCX_TAT", "TAT",
     "CERT-In", "axis_a", "axis_b", "AXIS_A", "AXIS_B",
     "hgr_axis", "ai_readiness", "licence_count", "grant_count",
-    "EIC",
+    "EIC", "regulatory_significance", "trajectory_significance",
 )
 
 HGR_AXIS_SCORE_KEYS = (
     "axis_a", "axis_b", "axisA", "axisB", "hgr_axis_a", "hgr_axis_b",
+    "regulatory_significance", "trajectory_significance",
 )
 
 
