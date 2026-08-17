@@ -46,6 +46,23 @@ interface ScenarioRunBlock {
   }
   governance_timeline: unknown[]
   reflective_insights: ReflectiveInsight[]
+  governance_pair?: {
+    advisor: {
+      audited: boolean
+      instruments: string[]
+      pillars: string[]
+      gaps: string[]
+      plan: string[]
+      engine: string
+    }
+    audited_steps: Array<{
+      step: number
+      action: string
+      tier: string
+      verify: string
+      equilibrium: boolean
+    }>
+  }
 }
 
 type SimulationReportV2 = SimulationReport & { scenario_run?: ScenarioRunBlock; _sample?: boolean }
@@ -250,6 +267,39 @@ export default function ResultsScreen() {
           </>
         )}
       </header>
+
+      {sr?.governance_pair && (
+        <section className="border border-slate-200 rounded-lg p-5 mb-10 bg-white">
+          <p className="text-xs font-mono text-slate-500 tracking-widest uppercase mb-2">
+            HRM pair · Advisor then Auditor
+          </p>
+          <p className="text-sm text-slate-700 mb-3">
+            {sr.governance_pair.advisor.audited
+              ? 'Audited. Each plan step was classified by the Auditor. Knowledge layer only.'
+              : 'Advisor plan was not audited. Do not treat this as a governed run.'}
+          </p>
+          <p className="text-xs text-slate-600 mb-2">
+            Instruments: {sr.governance_pair.advisor.instruments.join(' · ') || 'none selected'}
+          </p>
+          <p className="text-xs text-slate-600 mb-4">
+            Pillars {sr.governance_pair.advisor.pillars.join(', ') || 'none'}
+            {' · '}
+            Gaps {sr.governance_pair.advisor.gaps.join(', ') || 'none'}
+          </p>
+          <ol className="space-y-2">
+            {sr.governance_pair.audited_steps.map((step) => (
+              <li key={step.step} className="text-xs text-slate-700 font-mono leading-relaxed">
+                {step.step}. [{step.tier}] {step.action}
+                <span className="block text-slate-500 font-sans mt-0.5">{step.verify}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="text-[10px] text-slate-500 mt-4">
+            PIB is not gazette. NHRP 4.6.4.1 is a DHR draft SHALL, not a funded centre.
+            BODH is a voluntary SAHI/PIB benchmark, not a gate. Axis scores are not in these signals.
+          </p>
+        </section>
+      )}
 
       {/* ── Command Center — scenario runs only ───────────────────── */}
       {sr && fiveSignals && (

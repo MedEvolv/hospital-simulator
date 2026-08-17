@@ -159,14 +159,10 @@ export default function GovernanceModelsPage() {
           How they run
         </p>
         <p className="text-sm text-slate-600 leading-relaxed max-w-3xl">
-          The models run on the estate&rsquo;s own runtime — the same code that
-          produced the sample outputs above. The tier classification is
-          deterministic and never an LLM call; every decision is logged to an
-          append-only record; and T2 actions queue for human approval. The full
-          documentation set, training report, and instrument cards live in the
-          governance curriculum. When the live console is up, it is reachable
-          through a cloudflared tunnel from the estate — the tunnel lives only
-          while the host machine is on, by design.
+          The pair runs on each scenario at /home: Advisor plans, then each step
+          is run through the Auditor. The mark is audited. The knowledge layer is
+          deterministic and never an LLM call. DeepSeek is not in the browser
+          bundle. The Decision Lattice remains the enforcer. The Builder decides.
         </p>
       </div>
 

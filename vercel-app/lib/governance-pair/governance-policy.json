@@ -1,0 +1,95 @@
+{
+  "_comment": "Governance policy — the single source for tier registries, signals, baseline rules, and checklists. Read by the Advisor (signals + baseline), the Auditor (tiers + checklists), and the lattice (tiers). Policy governs classification and proposal; the lattice's enforcement spine (path guards, T3 no-queue, O_EXCL claim, append-only log) stays in code per ADR amendment 2026-08-15.",
+  "tiers": {
+    "T0": {
+      "label": "Autonomous",
+      "ops": ["safe_write", "safe_overwrite", "safe_delete", "read", "list", "search", "grep", "draft", "summarize", "explain", "diff", "status", "log", "find", "create_doc", "append_note", "preview", "compute", "compare", "extract_text", "validate_json", "lint_local", "commit_feature_branch"],
+      "default": "allowed",
+      "logged": true
+    },
+    "T1": {
+      "label": "Confirmable",
+      "ops": ["packet_release", "model_above_budget", "shared_file_overwrite", "push_non_main", "spend_past_cap", "kanban_rewrite", "calendar_write"],
+      "default": "confirm",
+      "timeout_hours": 24,
+      "timeout_default": "allowed"
+    },
+    "T2": {
+      "label": "Human-required",
+      "ops": ["deploy", "merge_to_main", "git_push_force", "publish_public", "external_write", "credential_use", "paid_model_call", "modify_covenant", "modify_adr", "rename_canon", "delete_tree", "taste_file_write", "dmz_write", "personal_documents_write"],
+      "default": "human",
+      "never_default": true,
+      "approval_window_hours": 24
+    },
+    "T3": {
+      "label": "Prohibited",
+      "ops": ["patient_data_access", "patient_data_train", "safekeeping_delete", "git_dir_delete", "dmz_hard_write"],
+      "default": "prohibited",
+      "no_queue": true
+    }
+  },
+  "signals": {
+    "dpdp": ["instrument--dpdp-act-2023"],
+    "consent": ["instrument--dpdp-act-2023", "instrument--abdm"],
+    "automated decision": ["instrument--dpdp-act-2023"],
+    "human review": ["instrument--nabh-digital-health-standards", "instrument--sahi-2026"],
+    "sign-off": ["instrument--nabh-digital-health-standards"],
+    "medical device": ["instrument--cdsco-medical-device-rules"],
+    "samd": ["instrument--cdsco-medical-device-rules"],
+    "diagnos": ["instrument--cdsco-medical-device-rules", "instrument--sahi-2026"],
+    "telemedicine": ["instrument--telemedicine-guidelines-2020"],
+    "triage": ["instrument--telemedicine-guidelines-2020", "instrument--sahi-2026"],
+    "symptom": ["instrument--telemedicine-guidelines-2020", "instrument--sahi-2026"],
+    "asha": ["instrument--telemedicine-guidelines-2020"],
+    "rural": ["instrument--telemedicine-guidelines-2020"],
+    "strategy": ["instrument--sahi-2026"],
+    "governance unit": ["instrument--sahi-2026"],
+    "governance committee": ["instrument--sahi-2026"],
+    "discharge": ["instrument--sahi-2026"],
+    "summary": ["instrument--sahi-2026"],
+    "diverge": ["instrument--dpdp-act-2023", "instrument--nabh-digital-health-standards"],
+    "disagree": ["instrument--nabh-digital-health-standards"],
+    "vaidya": ["instrument--sahi-2026"],
+    "ayush": ["instrument--meity-indiaai"],
+    "aikosh": ["instrument--meity-indiaai"],
+    "escalation": ["instrument--sahi-2026", "instrument--nabh-digital-health-standards"],
+    "ethics": ["instrument--icmr-ai-ethics-2023"],
+    "research": ["instrument--icmr-ai-ethics-2023", "instrument--nhrp-2026"],
+    "train": ["instrument--dpdp-act-2023", "instrument--icmr-ai-ethics-2023"],
+    "retrospective": ["instrument--dpdp-act-2023"],
+    "archive": ["instrument--abdm"],
+    "validation": ["instrument--nhrp-2026", "instrument--bodh-2026"],
+    "re-validat": ["instrument--nhrp-2026", "instrument--bodh-2026"],
+    "validated": ["instrument--nhrp-2026", "instrument--bodh-2026"],
+    "measured": ["instrument--nhrp-2026"],
+    "outcome": ["instrument--nhrp-2026"],
+    "referral": ["instrument--nhrp-2026"],
+    "benchmark": ["instrument--bodh-2026"],
+    "dataset": ["instrument--bodh-2026"],
+    "national health": ["instrument--nhrp-2026"],
+    "naidm": ["instrument--naidm-2026"],
+    "abdm": ["instrument--abdm"],
+    "uhi": ["instrument--abdm"],
+    "nhcx": ["instrument--abdm"],
+    "drug registry": ["instrument--abdm"],
+    "health records": ["instrument--abdm"],
+    "accreditation": ["instrument--nabh-digital-health-standards"],
+    "nabh": ["instrument--nabh-digital-health-standards"],
+    "hospital standard": ["instrument--nabh-digital-health-standards"],
+    "indiaai": ["instrument--meity-indiaai"],
+    "meity": ["instrument--meity-indiaai"],
+    "data protection board": ["instrument--dpdp-act-2023"],
+    "penalty": ["instrument--dpdp-act-2023"],
+    "fine": ["instrument--dpdp-act-2023"]
+  },
+  "baseline": {
+    "always_ai": ["instrument--sahi-2026"],
+    "patient_data": ["instrument--dpdp-act-2023"]
+  },
+  "checklists": {
+    "publish": ["SAHI: communication of use/limits/risk (Rec 6); escalation path exists (Rec 22)."],
+    "deploy": ["CDSCO: confirm SaMD status or document the grey-zone decision.", "SAHI: communication of use/limits/risk (Rec 6); escalation path exists (Rec 22)."],
+    "patient_data": ["DPDP: Section 6 consent covers the use (unbundled for AI training); 8(5) safeguards and 8(6) breach notification ready; 8(3) completeness, accuracy and consistency where the data feeds a decision affecting the patient. Human sign-off duty is NABL ISO 15189:2022 clause 7.3, not DPDP Section 8."],
+    "contact": ["SAHI: communication of use/limits/risk (Rec 6); escalation path exists (Rec 22)."]
+  }
+}

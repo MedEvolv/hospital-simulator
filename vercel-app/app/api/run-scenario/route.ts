@@ -24,6 +24,7 @@ import { persistAttributedRun } from '@/lib/auth/runs-db'
 import { assertUserIdWhenSession, userIdFromOtpCookie } from '@/lib/auth/run-identity'
 import { readSessionToken } from '@/lib/auth/session'
 import { toSavedRun } from '@/lib/domain/saved-run'
+import { pairForScenario } from '@/lib/governance-pair'
 import { getScenarioById } from '@/lib/scenarios/registry'
 import { runScenario } from '@/lib/scenarios/runner'
 import { appendGovernanceEvents } from '@/lib/supabase'
@@ -206,6 +207,7 @@ export async function POST(req: NextRequest) {
       five_signals: scenarioResult.fiveSignals,
       governance_timeline: scenarioResult.governanceTimeline,
       reflective_insights: scenarioResult.reflectiveInsights,
+      governance_pair: pairForScenario(scenario),
     },
     _disclaimer: 'This is a scenario-based governance simulation. It does not predict reality.',
   }
