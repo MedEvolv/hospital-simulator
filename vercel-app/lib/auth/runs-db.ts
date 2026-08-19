@@ -1,13 +1,17 @@
 /**
  * Server-side simulation_runs access attributed to the OTP user id.
  * Uses the service role so RLS does not require a Supabase Auth session.
- * Callers must already have verified the OTP cookie.
+ * Owner id comes from the OTP session → run owner module, not supabase.auth.
  */
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { isResultsPayload, toSavedRun } from '@/lib/domain/saved-run'
 import { supabaseServiceConfig } from './access-lookup'
-import { persistRun, type RunRecord } from '@/lib/supabase'
+import { type RunRecord } from '@/lib/supabase'
+
+/** Identity helpers: session → owner id. History may keep importing `userIdFromOtpCookie`. */
+export { runOwnerFromRequest, userIdFromOtpCookie } from './run-identity'
+export type { RunOwnerRequest } from './run-identity'
 
 function serviceClient(): SupabaseClient | null {
   const cfg = supabaseServiceConfig()
@@ -21,7 +25,7 @@ export async function persistAttributedRun(record: RunRecord): Promise<string | 
   const saved = toSavedRun(record.run_data)
   const row: RunRecord = { ...record, run_data: saved }
   const sb = serviceClient()
-  if (!sb) return persistRun(row)
+  if (!sb) return null
 
   const { data, error } = await sb
     .from('simulation_runs')

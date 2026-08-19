@@ -259,14 +259,24 @@ describe('persist -> list -> reopen -> results', () => {
     const userId = await otpUserIdFromEmail(EMAIL, SECRET)
     const live = makeReport()
 
-    const persistedId = await persistAttributedRun({
+    expect(await persistAttributedRun({
       user_id: userId,
       scenario_id: 'hallucinated-discharge-summary',
       run_data: live,
       five_signals: { PSS: { value: 70 } },
       run_metadata: { scenarioName: 'The Hallucinated Discharge Summary', seed: 42 },
+    })).toBeNull()
+    expect(persistRunMock).not.toHaveBeenCalled()
+
+    store.set('stored-run-1', {
+      id: 'stored-run-1',
+      user_id: userId,
+      scenario_id: 'hallucinated-discharge-summary',
+      run_data: toSavedRun(live),
+      five_signals: { PSS: { value: 70 } },
+      run_metadata: { scenarioName: 'The Hallucinated Discharge Summary', seed: 42 },
+      created_at: '2026-08-16T18:00:00.000Z',
     })
-    expect(persistedId).toBe('stored-run-1')
     const stored = store.get('stored-run-1')
     expect(stored).toBeDefined()
     expect(isResultsPayload(stored?.run_data)).toBe(true)

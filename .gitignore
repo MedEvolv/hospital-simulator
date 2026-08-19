@@ -63,3 +63,11 @@ engine/
 # Misc
 .Rhistory
 hospstim\ archive.zip
+
+# Local auth/debug dumps (never commit)
+vercel-app/otp-body.json
+vercel-app/otp.json
+vercel-app/splash.html
+vercel-app/page.js
+vercel-app/chunk972.js
+*.bak

@@ -12,28 +12,15 @@
  *   - Stores review_note so future LLM prompts know not to repeat this rec
  */
 
-import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-function supabase() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!,
-  )
-}
-
-function requireAdmin(req: Request): boolean {
-  const auth = req.headers.get('Authorization') ?? ''
-  return auth === `Bearer ${process.env.ADMIN_PASSWORD ?? ''}`
-}
+import { NextRequest, NextResponse } from 'next/server'
+import { adminServiceClient, requireLearningAdmin } from '@/lib/auth/admin-gate'
 
 export async function PATCH(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  if (!requireAdmin(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const denied = await requireLearningAdmin(req)
+  if (denied) return denied
 
   const body = await req.json().catch(() => ({}))
   const action: string = body.action
@@ -43,9 +30,11 @@ export async function PATCH(
     return NextResponse.json({ error: 'action must be "approve" or "reject"' }, { status: 400 })
   }
 
-  const sb = supabase()
+  const sb = adminServiceClient()
+  if (!sb) {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+  }
 
-  // Fetch the recommendation
   const { data: rec, error: fetchErr } = await sb
     .from('pending_recommendations')
     .select('*')
@@ -71,18 +60,13 @@ export async function PATCH(
     return NextResponse.json({ ok: true, action: 'rejected' })
   }
 
-  // ---- approve ----
-
-  // 1. Mark recommendation approved
   await sb
     .from('pending_recommendations')
     .update({ status: 'approved', review_note: reviewNote, reviewed_at: now })
     .eq('id', params.id)
 
-  // 2. If metric_threshold: apply to simulation_config
   if (rec.category === 'metric_threshold') {
     const configKey: string = rec.target
-    // recommended_value is stored as JSON-encoded string; unwrap if needed
     let newVal = rec.recommended_value
     try { newVal = JSON.parse(rec.recommended_value) } catch { /* already primitive */ }
 
@@ -92,7 +76,6 @@ export async function PATCH(
     )
   }
 
-  // 3. Immutable audit log
   await sb.from('applied_changes').insert({
     recommendation_id: params.id,
     category: rec.category,

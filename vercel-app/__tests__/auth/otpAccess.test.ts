@@ -26,7 +26,7 @@ describe('public vs gated paths', () => {
     expect(isGatedPath('/history')).toBe(true)
     expect(isGatedPath('/sandbox')).toBe(true)
     expect(isGatedPath('/admin/access')).toBe(true)
-    expect(isGatedPath('/admin')).toBe(false)
+    expect(isGatedPath('/admin')).toBe(true)
     expect(isPublicPath('/api/auth/request')).toBe(true)
     expect(isPublicPath('/api/auth/verify')).toBe(true)
   })
@@ -86,7 +86,7 @@ describe('middleware gate', () => {
   })
 
   it('redirects unauthenticated explainer and home routes to the splash', async () => {
-    for (const pathname of ['/dpdp', '/sahi', '/nabh', '/cdsco', '/governance-models', '/governance', '/home', '/admin/access', '/history']) {
+    for (const pathname of ['/dpdp', '/sahi', '/nabh', '/cdsco', '/governance-models', '/governance', '/home', '/admin', '/admin/access', '/history']) {
       const decision = await decideAuth({ pathname, sessionCookie: null, secret: SECRET })
       expect(decision.type).toBe('redirect')
       if (decision.type === 'redirect') {

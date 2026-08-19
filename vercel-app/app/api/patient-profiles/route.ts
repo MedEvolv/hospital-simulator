@@ -16,7 +16,9 @@
  * layer and should produce varied, realistic Indian hospital patients.
  */
 
+import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { runOwnerFromRequest } from '@/lib/auth/run-identity'
 import type { PatientProfile } from '@/lib/types'
 
 const deepseek = new OpenAI({
@@ -119,7 +121,12 @@ function fallbackProfile(id: string, triage: string): PatientProfile {
 
 // ── Route handler ──────────────────────────────────────────────────────────────
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const owner = await runOwnerFromRequest(req)
+  if (!owner) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   let patient_ids: string[]              = []
   let triage_map: Record<string, string> = {}
   let profile = 'Government Hospital'
@@ -131,7 +138,7 @@ export async function POST(req: Request) {
     profile     = body.profile      ?? 'Government Hospital'
 
     if (patient_ids.length === 0) {
-      return Response.json({ profiles: {} })
+      return NextResponse.json({ profiles: {} })
     }
 
     // Cap at 40 patients per call to stay within token limits

@@ -36,7 +36,7 @@ export const GATED_PREFIXES = [
   '/report',
   '/inspector',
   '/export',
-  '/admin/access',
+  '/admin',
 ] as const
 
 export function isGatedPath(pathname: string): boolean {

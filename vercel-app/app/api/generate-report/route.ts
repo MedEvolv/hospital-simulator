@@ -1,4 +1,6 @@
+import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { runOwnerFromRequest } from '@/lib/auth/run-identity'
 import type { SimulationReport } from '@/lib/types'
 
 const deepseek = new OpenAI({
@@ -638,13 +640,18 @@ Write the two sections exactly as specified in your system prompt. Follow the vo
 
 // ── Route handler ─────────────────────────────────────────────────────────────
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const owner = await runOwnerFromRequest(req)
+  if (!owner) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   let body: { role: string; result: SimulationReport; survey?: Record<string, string | string[]> }
 
   try {
     body = await req.json()
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 })
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
   const { role, result, survey = null } = body

@@ -74,12 +74,27 @@ Return a JSON object with this exact structure — no other text:
 }}"""
 
 
+def _service_key() -> str:
+    return (
+        os.environ.get('SUPABASE_SERVICE_KEY', '').strip()
+        or os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '').strip()
+    )
+
+
+def _supabase_url() -> str:
+    return (
+        os.environ.get('SUPABASE_URL', '').strip()
+        or os.environ.get('NEXT_PUBLIC_SUPABASE_URL', '').strip()
+    )
+
+
 def _supabase_client():
     from supabase import create_client
-    return create_client(
-        os.environ['SUPABASE_URL'],
-        os.environ['SUPABASE_SERVICE_KEY'],
-    )
+    url = _supabase_url()
+    key = _service_key()
+    if not url or not key:
+        raise RuntimeError('Supabase service is not configured')
+    return create_client(url, key)
 
 
 def count_unanalysed_runs(supabase) -> list:
@@ -174,9 +189,12 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
-        # Verify internal secret
+        secret = os.environ.get('WORKFLOW_SECRET', '').strip()
+        if len(secret) < 8:
+            self._send_error(401, 'Unauthorized')
+            return
         auth = self.headers.get('Authorization', '')
-        expected = f"Bearer {os.environ.get('WORKFLOW_SECRET', '')}"
+        expected = f'Bearer {secret}'
         if auth != expected:
             self._send_error(401, 'Unauthorized')
             return
@@ -260,7 +278,6 @@ class handler(BaseHTTPRequestHandler):
         self._send_json(status, {'error': message})
 
     def _send_cors_headers(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 

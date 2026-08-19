@@ -3,27 +3,18 @@
  * Returns learning cycles ordered newest first, with recommendation counts.
  */
 
-import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server'
+import { adminServiceClient, requireLearningAdmin } from '@/lib/auth/admin-gate'
 
-function supabase() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!,
-  )
-}
+export async function GET(req: NextRequest) {
+  const denied = await requireLearningAdmin(req)
+  if (denied) return denied
 
-function requireAdmin(req: Request): boolean {
-  const auth = req.headers.get('Authorization') ?? ''
-  return auth === `Bearer ${process.env.ADMIN_PASSWORD ?? ''}`
-}
-
-export async function GET(req: Request) {
-  if (!requireAdmin(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const sb = adminServiceClient()
+  if (!sb) {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
   }
 
-  const sb = supabase()
   const { data, error } = await sb
     .from('learning_cycles')
     .select(`
@@ -33,6 +24,6 @@ export async function GET(req: Request) {
     .order('created_at', { ascending: false })
     .limit(50)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Lookup failed' }, { status: 500 })
   return NextResponse.json({ cycles: data })
 }

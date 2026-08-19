@@ -339,13 +339,27 @@ VALID_PROFILES = set(PROFILE_ROOM_COUNTS.keys())
 # breaks the simulation response.
 # ---------------------------------------------------------------------------
 
+def _service_key() -> str:
+    return (
+        os.environ.get('SUPABASE_SERVICE_KEY', '').strip()
+        or os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '').strip()
+    )
+
+
+def _supabase_url() -> str:
+    return (
+        os.environ.get('SUPABASE_URL', '').strip()
+        or os.environ.get('NEXT_PUBLIC_SUPABASE_URL', '').strip()
+    )
+
+
 def _supabase_configured() -> bool:
-    """Return True only if both required Supabase env vars are present and non-empty."""
-    url = os.environ.get('SUPABASE_URL', '').strip()
-    key = os.environ.get('SUPABASE_SERVICE_KEY', '').strip()
+    """True when a URL and either service-key name is present. Keep both names."""
+    url = _supabase_url()
+    key = _service_key()
     if not url or not key:
-        print("SUPABASE NOT CONFIGURED: SUPABASE_URL or SUPABASE_SERVICE_KEY missing. "
-              "Persistence skipped. Add both env vars in Vercel dashboard to enable.")
+        print("SUPABASE NOT CONFIGURED: URL or service key missing. "
+              "Config fetch skipped. Set SUPABASE_SERVICE_KEY or SUPABASE_SERVICE_ROLE_KEY.")
         return False
     return True
 
@@ -356,7 +370,7 @@ def _fetch_sim_config() -> dict:
         return {}
     try:
         from supabase import create_client
-        sb = create_client(os.environ['SUPABASE_URL'], os.environ['SUPABASE_SERVICE_KEY'])
+        sb = create_client(_supabase_url(), _service_key())
         rows = sb.table('simulation_config').select('key, value').execute()
         return {r['key']: r['value'] for r in (rows.data or [])}
     except Exception as e:
@@ -368,32 +382,8 @@ def _fetch_sim_config() -> dict:
 
 def _persist_run(profile: str, duration_ticks: int, seed: int,
                  result: dict, event_log: list, survey_data: dict | None = None) -> str | None:
-    """Insert a simulation_runs row. Returns the UUID or None on error."""
-    if not _supabase_configured():
-        return None
-    try:
-        from supabase import create_client
-        print(f"SUPABASE PERSIST: attempting insert — profile={profile}, ticks={duration_ticks}, seed={seed}")
-        sb = create_client(os.environ['SUPABASE_URL'], os.environ['SUPABASE_SERVICE_KEY'])
-        row = sb.table('simulation_runs').insert({
-            'profile': profile,
-            'duration_ticks': duration_ticks,
-            'seed': seed,
-            'result': result,
-            'event_log': event_log,
-            'survey_data': survey_data or None,
-        }).execute()
-        if not row.data:
-            print(f"SUPABASE PERSIST: insert returned no data — possible RLS policy block or schema mismatch")
-            return None
-        run_id = row.data[0]['id']
-        print(f"SUPABASE PERSIST: success — run_id={run_id}")
-        return run_id
-    except Exception as e:
-        import traceback
-        print(f"SUPABASE PERSISTENCE ERROR: {e}")
-        print(traceback.format_exc())
-        return None
+    """Python hop returns a report only. OTP persist lives in TypeScript runs-db."""
+    return None
 
 
 def _build_declared_values(profile: str, survey_data: dict):
@@ -654,7 +644,9 @@ def _fire_learning_cycle(run_id: str):
     """Fire-and-forget POST to /api/learning_cycle. Silently ignored on error."""
     def _call():
         try:
-            secret = os.environ.get('WORKFLOW_SECRET', '')
+            secret = os.environ.get('WORKFLOW_SECRET', '').strip()
+            if len(secret) < 8:
+                return
             vercel_url = os.environ.get('VERCEL_URL', '')
             if not vercel_url:
                 return
@@ -789,11 +781,8 @@ class handler(BaseHTTPRequestHandler):
                 actual_scores=report["performance_scores"],
             )
 
-            # Persist to Supabase — DB failure must never break the simulation response
-            run_id_db = _persist_run(profile, duration_ticks, seed, report, event_log, survey_data or None)
-            if run_id_db:
-                report["run_id_db"] = run_id_db
-                _fire_learning_cycle(run_id_db)
+            # OTP-attributed persist lives in runs-db. This hop does not write.
+            _persist_run(profile, duration_ticks, seed, report, event_log, survey_data or None)
 
             if sim_config:
                 report["sim_config"] = sim_config
