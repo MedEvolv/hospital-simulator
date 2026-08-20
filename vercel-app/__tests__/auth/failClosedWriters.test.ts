@@ -236,4 +236,22 @@ describe('source guards: dual keys, owner, no stray dumps', () => {
     expect(appIgnore).toMatch(/otp\.json/)
     expect(appIgnore).toMatch(/\*\.bak/)
   })
+
+  it('handlers do not return String(err) or str(exc) to clients (M4)', () => {
+    const report = read('app/api/generate-report/route.ts')
+    const profiles = read('app/api/patient-profiles/route.ts')
+    const feedback = read('app/api/feedback/route.ts')
+    const runSim = read('api/run_simulation.py')
+    const cycle = read('api/learning_cycle.py')
+    for (const src of [report, profiles, feedback]) {
+      expect(src).not.toMatch(/error:\s*String\(err\)/)
+      expect(src).not.toMatch(/error:\s*err\.message/)
+    }
+    expect(runSim).not.toMatch(/_send_error\(500,\s*str\(exc\)\)/)
+    expect(cycle).not.toMatch(/_send_error\(500,\s*str\(exc\)\)/)
+    expect(report).toMatch(/console\.error\('\[generate-report\] DeepSeek error:'/)
+    expect(profiles).toMatch(/fallback_exception/)
+    expect(feedback).toMatch(/Lookup failed/)
+    expect(feedback).toMatch(/Update failed/)
+  })
 })

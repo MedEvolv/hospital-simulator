@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { fromSavedRun, isResultsPayload } from '@/lib/domain/saved-run'
 import { type RunRecord } from '@/lib/supabase'
+import { markHistoryReopen } from '@/lib/client/history-reopen'
 import { SESSION_KEY } from '@/lib/types'
 import AssumptionsPanel from '@/components/AssumptionsPanel'
 
@@ -221,6 +222,7 @@ export default function HistoryPage() {
       }
 
       sessionStorage.setItem(SESSION_KEY, JSON.stringify(report))
+      markHistoryReopen()
       router.push('/results')
     } catch (e) {
       setError('Could not load this saved run right now.')

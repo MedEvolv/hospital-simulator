@@ -223,6 +223,6 @@ Return ONLY a single valid JSON object where each key is a patient_id and the va
     for (const id of patient_ids) {
       profiles[id] = fallbackProfile(id, triage_map[id] ?? 'UNKNOWN')
     }
-    return Response.json({ profiles, source: 'fallback_exception', error: String(err) })
+    return Response.json({ profiles, source: 'fallback_exception' })
   }
 }

@@ -15,6 +15,7 @@ import ExpertFeedbackForm from '@/components/ExpertFeedbackForm'
 // InstitutionalMap eventLog prop type (inline, not exported from component)
 type MapEventEntry = { event_type: string; timestamp: number; payload: Record<string, unknown> }
 import { isResultsPayload } from '@/lib/domain/saved-run'
+import { consumeHistoryReopenSkip } from '@/lib/client/history-reopen'
 import {
   SESSION_KEY, CAPACITY_KEY,
   type SimulationReport, type PatientProfile, type CapacityConfig,
@@ -160,6 +161,8 @@ export default function ResultsScreen() {
     }
 
     if (patientIds.length === 0) return
+
+    if (consumeHistoryReopenSkip()) return
 
     fetch('/api/patient-profiles', {
       method: 'POST',

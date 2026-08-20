@@ -712,7 +712,6 @@ export async function POST(req: NextRequest) {
     return Response.json({ narrative: raw })
   } catch (err) {
     console.error('[generate-report] DeepSeek error:', err)
-    // Return fallback narrative with a flag so the client can show a soft warning
-    return Response.json({ narrative: fallbackNarrative, fallback: true, error: String(err) })
+    return Response.json({ narrative: fallbackNarrative, fallback: true })
   }
 }

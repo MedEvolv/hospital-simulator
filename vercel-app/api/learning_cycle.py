@@ -263,7 +263,8 @@ class handler(BaseHTTPRequestHandler):
             })
 
         except Exception as exc:
-            self._send_error(500, str(exc))
+            self.log_message('learning_cycle error: %s', exc)
+            self._send_error(500, 'Internal server error')
 
     def _send_json(self, status: int, data: dict):
         payload = json.dumps(data, default=str).encode('utf-8')

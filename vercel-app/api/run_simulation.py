@@ -797,7 +797,8 @@ class handler(BaseHTTPRequestHandler):
             self._send_json(200, report)
 
         except Exception as exc:
-            self._send_error(500, str(exc))
+            self.log_message('run_simulation error: %s', exc)
+            self._send_error(500, 'Internal server error')
 
     # ------------------------------------------------------------------ helpers
 
